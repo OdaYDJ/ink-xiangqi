@@ -1,10 +1,26 @@
 # 墨弈 · Ink Xiangqi
 
-A minimalist, experimental Chinese chess game for the browser: the familiar Xiangqi board and rules, painted like quiet ink on paper, with **seeded random starting formations**.
+> 一墨染，万象生；一局落，乾坤开。
+> *With a stroke of ink, a thousand forms arise. With a single move, the universe unfolds.*
+
+**墨弈** is a quiet game of Xiangqi (Chinese chess) that you play inside an ink-wash painting. The board is brushed onto Xuan paper, mist drifts across the river, bamboo moves in the wind at the edges of the page, and a soft pipa melody plays in the background.
+
+The rules are the ones Xiangqi players have always known. What changes is the opening: instead of the fixed traditional line-up, each game can deal a **new starting formation**. Every piece keeps its familiar role and its usual rank, but chariots, horses, elephants, cannons and even the General find new places — so the first moves of each game ask you to read the board afresh.
 
 > Familiar board. Familiar pieces. Unfamiliar formation.
 
+**墨弈**是一款在水墨畫中對弈的象棋遊戲。棋盤以毛筆畫於宣紙之上，楚河漢界間煙雲流動，竹影隨風輕搖，琵琶聲若有若無。規則仍是傳統象棋；不同的是開局——每一局都可以得到一個新的佈局。棋子職能與所在行列不變，位置卻重新排佈，每一局都需要重新觀局、重新思量。每一種佈局都以一種墨色命名（焦墨、濃墨、淡墨、松煙……），同一墨色永遠對應同一局面，可以分享給朋友重下同一盤棋。
+
 Play: https://odaydj.github.io/ink-xiangqi/ (once GitHub Pages is enabled)
+
+## How to play
+
+1. **Choose an opponent** — 初學 Easy, 棋手 Medium or 國手 Hard — or 雙人對弈 *Two players, one board* to play a friend on the same device.
+2. **Choose a starting formation** — 奇局 *Random* for a newly dealt formation, or 古局 *Classic* for the traditional one. Each random formation is named by an ink colour (墨色 / *Ink seed*); leave it blank for a random ink, tap the shuffle mark to draw one, or type a name to replay a formation someone shared.
+3. **Play Red.** Tap a piece to see where it can go, then tap a destination. Standard Xiangqi rules apply throughout, including the flying General and blocked horse legs and elephant eyes.
+4. In the game, 悔棋 *Undo* takes back your last move, 重來 *Restart* replays the same formation, and 易墨 *New ink* deals a new one. The move record is kept beside the board, in Chinese notation (炮二平五) or, in English, WXF notation (C2.5).
+
+The whole interface is available in Traditional Chinese and English; switch at any time.
 
 ## Features
 
@@ -37,12 +53,13 @@ Every candidate must pass `validateFormation` (`src/game/validator.ts`): correct
 
 A quiet pipa track loops in the background. It starts only after the player's first tap or key press, fades in at about 15% volume, and is controlled by the small ♫ mark in the bottom-right corner (hover or focus it for three volume levels). Mute and volume are remembered.
 
-The track itself is not in the repository. To add it:
+The game expects the track at `public/audio/pipa-xiangqi.mp3`. If the file is absent, the ♫ control stays hidden and the game is otherwise unaffected.
 
-1. Download a track from Pixabay, for example [烟雨江南 · Mist Over Jiangnan](https://pixabay.com/music/rnb-%E7%83%9F%E9%9B%A8%E6%B1%9F%E5%8D%97-mist-over-jiangnan-428654/) (RainStreetCat) or [夜游秦淮](https://pixabay.com/music/ambient-%E5%A4%9C%E6%B8%B8%E7%A7%A6%E6%B7%AE-517931/) (XunLang_Studio). Check the track page and the [Pixabay Content License](https://pixabay.com/service/license-summary/) first.
-2. Save it as `public/audio/pipa-xiangqi.mp3`.
+### Music credit and license
 
-Without the file the ♫ control simply stays hidden and the game is unaffected.
+**烟雨江南 · Mist Over Jiangnan** by **RainStreetCat**, from [Pixabay](https://pixabay.com/music/rnb-%E7%83%9F%E9%9B%A8%E6%B1%9F%E5%8D%97-mist-over-jiangnan-428654/).
+
+Used under the [Pixabay Content License](https://pixabay.com/service/license-summary/), which allows use in this game without attribution (credit is given here with thanks). The track is **not** covered by this project's copyright notice below and remains the work of its author. The license does not permit taking the audio file out of the game and distributing it on its own; if you want the track, download it from its Pixabay page.
 
 ## Development
 
@@ -60,10 +77,13 @@ Debug helper: `?fen=<Xiangqi FEN>` opens a pass-and-play game from any position,
 ## Structure
 
 ```
-src/game/        rules engine: board, pieces, move generation, game state, randomizer, validator
+src/game/        rules engine: board, pieces, move generation, game state, randomizer, validator, ink colours
 src/ai/          evaluation, minimax/alpha-beta search, move ordering, TT, difficulty, worker
-src/rendering/   board geometry, piece looks, animation timings, synthesized sounds
+src/audio/       background music controller
+src/i18n/        Traditional Chinese and English text
+src/rendering/   board geometry, brushwork, landscape, animation timings, synthesized sounds
 src/components/  React UI (menu, game, board, pieces, controls)
+public/audio/    background music (see "Music credit and license")
 tests/           Vitest suites
 ```
 
@@ -73,6 +93,22 @@ The engine and AI never depend on React; game state is plain JSON.
 
 Pushing to `main` runs `.github/workflows/deploy.yml`, which tests, builds and publishes `dist/` to GitHub Pages. In the repository settings choose **Settings → Pages → Build and deployment → Source → GitHub Actions**. The Vite `base` (`/ink-xiangqi/`) must match the repository name.
 
-## License
+## Credits
 
-TBD.
+Fonts are loaded from [Google Fonts](https://fonts.google.com/) and are used under the [SIL Open Font License 1.1](https://openfontlicense.org/):
+
+- **Zhi Mang Xing** — the 墨弈 title
+- **Ma Shan Zheng** — the couplet
+- **LXGW WenKai TC** — piece characters and the river
+- **Noto Serif TC** — Chinese text and notation
+- **Cormorant Garamond** — English text
+
+The game is built with [React](https://react.dev/), [Vite](https://vite.dev/) and [TypeScript](https://www.typescriptlang.org/), each under its own open-source license.
+
+## Copyright
+
+© 2026 Oda Jin. All rights reserved.
+
+The game's code, artwork (the brushwork, landscape, pieces and seals, which are generated by its own code) and text are the work of the author. No open-source license has been granted yet, so please ask before reusing or redistributing them.
+
+Third-party material keeps its own terms: the background music is covered by the Pixabay Content License (see *Music credit and license*), and the fonts and libraries by their respective licenses (see *Credits*).
