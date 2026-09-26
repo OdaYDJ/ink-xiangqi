@@ -2,14 +2,24 @@ import type { GameState } from '../game/gameState'
 import { chooseMove, type Difficulty } from './difficulty'
 import type { SearchResult } from './minimax'
 
+interface Pending {
+  state: GameState
+  difficulty: Difficulty
+  resolve: (r: SearchResult) => void
+  reject: (e: Error) => void
+}
+
+const onMainThread = (state: GameState, difficulty: Difficulty) =>
+  new Promise<SearchResult>((resolve) => setTimeout(() => resolve(chooseMove(state, difficulty)), 0))
+
 /**
  * Runs the AI in a Web Worker so the board stays responsive while it thinks.
- * Falls back to the main thread where workers are unavailable.
+ * If the worker can't be created or crashes, requests run on the main thread instead.
  */
 export class AiClient {
   private worker: Worker | null = null
   private nextId = 1
-  private pending = new Map<number, { resolve: (r: SearchResult) => void; reject: (e: Error) => void }>()
+  private pending = new Map<number, Pending>()
 
   constructor() {
     try {
@@ -29,19 +39,18 @@ export class AiClient {
   }
 
   requestMove(state: GameState, difficulty: Difficulty): Promise<SearchResult> {
-    if (!this.worker) return new Promise((resolve) => setTimeout(() => resolve(chooseMove(state, difficulty)), 0))
+    if (!this.worker) return onMainThread(state, difficulty)
     const id = this.nextId++
     return new Promise((resolve, reject) => {
-      this.pending.set(id, { resolve, reject })
+      this.pending.set(id, { state, difficulty, resolve, reject })
       this.worker!.postMessage({ id, state, difficulty })
     })
   }
 
-  /** Worker failed to load (e.g. blocked): answer queued requests on the main thread. */
   private fallBack() {
     this.worker?.terminate()
     this.worker = null
-    this.pending.forEach((p) => p.reject(new Error('AI worker unavailable')))
+    for (const p of this.pending.values()) onMainThread(p.state, p.difficulty).then(p.resolve, p.reject)
     this.pending.clear()
   }
 
