@@ -25,7 +25,7 @@ export interface Strings {
   seed: string
   seedPlaceholder: string
   seedError: string
-  /** Tooltip / accessible name for the clickable seed label. */
+  /** Tooltip / accessible name for the shuffle button beside the seed field. */
   seedDraw: string
   /** Ink-style names the seed label draws from when clicked. */
   inkNames: string[]
@@ -138,7 +138,7 @@ export const STRINGS: Record<Locale, Strings> = {
     seed: '墨局',
     seedPlaceholder: '隨機',
     seedError: '墨局名稱請用文字、數字、空格或「-」。',
-    seedDraw: '點擊換一個墨韻局名',
+    seedDraw: '換一個墨韻局名',
     inkNames: [
       '寒江獨釣', '煙雨江南', '空山新雨', '明月松間', '竹林聽雨', '孤舟蓑笠', '秋水長天', '平沙落雁',
       '漁舟唱晚', '清泉石上', '松風煮茗', '遠山含黛', '墨染千山', '雲深不知處', '溪山行旅', '疏影橫斜',
