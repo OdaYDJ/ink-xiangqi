@@ -146,8 +146,8 @@ body {
 }
 
 
-.brush-rule { display: block; }
-.brush-rule path { fill: var(--ink); fill-opacity: 0.55; }
+.brush-rule { display: block; overflow: visible; }
+.brush-rule__ink { fill: var(--ink); }
 
 /* ——— Seal ——— */
 .seal { display: block; overflow: visible; }

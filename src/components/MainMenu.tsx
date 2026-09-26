@@ -67,7 +67,7 @@ export default function MainMenu({ initialMode, seed, onSeedChange: setSeed, onS
         <p className="label">{t.playLabel}</p>
         <DifficultySelector onSelect={start} />
 
-        <BrushRule seed="menu-rule" width={150} />
+        <BrushRule seed="menu-rule" width={164} />
 
         <div className="menu__modes" role="radiogroup" aria-label={t.formationLabel}>
           {MODES.map((m) => (
