@@ -3,6 +3,7 @@ import {
   ADVISOR, CANNON, CHARIOT, ELEPHANT, GENERAL, HORSE, SOLDIER,
   makePiece, type PieceType, type Side,
 } from './piece'
+import { randomInk } from './inkColors'
 import { startingSquares, validateFormation } from './validator'
 
 export type GameMode = 'classic' | 'random'
@@ -14,18 +15,8 @@ export interface Formation {
   board: Board
 }
 
-export const SEED_PREFIX = 'INK-'
-
-/** Seeds are case-insensitive; `ink-7f3a92` and `INK-7F3A92` are the same formation. */
+/** Seeds are case-insensitive and ignore surrounding space; `ink-7f3a92` and `INK-7F3A92` are the same formation. */
 export const normalizeSeed = (seed: string): string => seed.trim().toUpperCase()
-
-/** A fresh seed like "INK-7F3A92". Uses the browser's crypto when available. */
-export function randomSeed(): string {
-  const n = globalThis.crypto?.getRandomValues
-    ? globalThis.crypto.getRandomValues(new Uint32Array(1))[0]
-    : Math.floor(Math.random() * 2 ** 32)
-  return SEED_PREFIX + (n & 0xffffff).toString(16).toUpperCase().padStart(6, '0')
-}
 
 /** Hashes a string to a 32-bit integer (FNV-1a followed by an avalanche mix). */
 function hashSeed(seed: string): number {
@@ -102,6 +93,6 @@ export function classicFormation(): Formation {
   return { mode: 'classic', seed: null, board: parseFen(CLASSIC_FEN) }
 }
 
-export function createFormation(mode: GameMode, seed: string = randomSeed()): Formation {
+export function createFormation(mode: GameMode, seed: string = randomInk()): Formation {
   return mode === 'classic' ? classicFormation() : generateFormation(seed)
 }

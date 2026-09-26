@@ -5,7 +5,7 @@ import {
   ADVISOR, CANNON, GENERAL, INVENTORY, PIECE_TYPES, SOLDIER, sideOf, typeOf, type Side,
 } from '../src/game/piece'
 import {
-  classicFormation, createFormation, createRng, generateFormation, normalizeSeed, randomSeed,
+  classicFormation, createFormation, createRng, generateFormation, normalizeSeed,
 } from '../src/game/randomizer'
 import { isInCheck } from '../src/game/rules'
 import { findFreeMaterial, SOLDIER_COLS, validateFormation } from '../src/game/validator'
@@ -125,10 +125,7 @@ describe('fairness check', () => {
   })
 })
 
-describe('seeds', () => {
-  it('look like INK-XXXXXX', () => {
-    for (let i = 0; i < 50; i++) expect(randomSeed()).toMatch(/^INK-[0-9A-F]{6}$/)
-  })
+describe('seed hashing', () => {
   it('rng is deterministic and in [0, 1)', () => {
     const a = createRng('x'), b = createRng('x')
     for (let i = 0; i < 100; i++) {

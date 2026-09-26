@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import type { Difficulty } from '../ai/difficulty'
 import { useLocale } from '../i18n/locale'
-import { normalizeSeed, randomSeed, type GameMode } from '../game/randomizer'
+import { randomInk, seedLabel, toSeed } from '../game/inkColors'
+import { normalizeSeed, type GameMode } from '../game/randomizer'
 import Couplet from './Couplet'
 import DifficultySelector from './DifficultySelector'
 import LanguageToggle from './LanguageToggle'
@@ -19,7 +20,7 @@ export interface GameConfig {
 
 interface MainMenuProps {
   initialMode: GameMode
-  /** The 墨局 field. Kept by the app so it survives trips to the game and back. */
+  /** The 墨色 field (a canonical ink or free text). Kept by the app so it survives trips to the game and back. */
   seed: string
   onSeedChange: (seed: string) => void
   onStart: (config: GameConfig) => void
@@ -30,22 +31,21 @@ const SEED_PATTERN = /^[\p{L}\p{N}\- ·]{1,32}$/u
 const MODES: GameMode[] = ['random', 'classic']
 
 export default function MainMenu({ initialMode, seed, onSeedChange: setSeed, onStart }: MainMenuProps) {
-  const { t } = useLocale()
+  const { t, locale } = useLocale()
   const [mode, setMode] = useState<GameMode>(initialMode)
   const [draws, setDraws] = useState(0)
   const cleanSeed = normalizeSeed(seed)
   const seedError = cleanSeed !== '' && !SEED_PATTERN.test(cleanSeed)
 
-  // The small shuffle mark draws a different ink-style name; the field is otherwise left exactly as the player set it.
+  // The small shuffle mark draws a different ink colour; the field is otherwise left exactly as the player set it.
   const drawInkName = () => {
-    const choices = t.inkNames.filter((n) => n !== seed)
-    setSeed(choices[Math.floor(Math.random() * choices.length)])
+    setSeed(randomInk(seed))
     setDraws((n) => n + 1)
   }
 
   const start = (opponent: Opponent) => {
     if (seedError) return
-    onStart({ mode, opponent, seed: cleanSeed || randomSeed() })
+    onStart({ mode, opponent, seed: cleanSeed ? toSeed(cleanSeed) : randomInk() })
   }
 
   return (
@@ -93,14 +93,14 @@ export default function MainMenu({ initialMode, seed, onSeedChange: setSeed, onS
                   id="seed"
                   key={draws}
                   className={`menu__seed-input${draws > 0 ? ' is-drawn' : ''}`}
-                  value={seed}
+                  value={seedLabel(seed, locale)}
                   placeholder={t.seedPlaceholder}
                   spellCheck={false}
                   autoComplete="off"
                   maxLength={32}
                   aria-invalid={seedError}
                   aria-describedby={seedError ? 'seed-error' : undefined}
-                  onChange={(e) => setSeed(e.target.value)}
+                  onChange={(e) => setSeed(toSeed(e.target.value))}
                 />
                 <button
                   type="button"

@@ -27,8 +27,6 @@ export interface Strings {
   seedError: string
   /** Tooltip / accessible name for the shuffle button beside the seed field. */
   seedDraw: string
-  /** Ink-style names the seed label draws from when clicked. */
-  inkNames: string[]
   twoPlayers: string
   switchLanguage: string
   switchLanguageLabel: string
@@ -76,28 +74,23 @@ export const STRINGS: Record<Locale, Strings> = {
     difficultyHint: { easy: 'plays at ease', medium: 'plans every move', hard: 'sees the whole board' },
     modes: { random: 'Random', classic: 'Classic' },
     formationLabel: 'Starting formation',
-    seed: 'Seed',
+    seed: 'Ink',
     seedPlaceholder: 'drawn at random',
-    seedError: 'Seeds use letters, digits, spaces and “-”.',
-    seedDraw: 'Draw an ink-style name',
-    inkNames: [
-      'Cold River Angler', 'Southern Rain', 'Hills After Rain', 'Moonlit Pines', 'Bamboo Rain', 'Lone Boat on Snow',
-      'Autumn Water', 'Geese on Sand', 'Fishermen at Dusk', 'Stone Spring', 'Wind in the Pines', 'Distant Hills',
-      'Ink on Peaks', 'Deep Clouds', 'Hill Travellers', 'Plum Shadows',
-    ],
+    seedError: 'Ink names use letters, digits, spaces and “-”.',
+    seedDraw: 'Draw another ink',
     twoPlayers: 'Two players, one board',
     switchLanguage: '中文',
     switchLanguageLabel: 'Switch to Chinese',
     controls: {
       undo: 'Undo',
       restart: 'Restart',
-      newFormation: 'New formation',
+      newFormation: 'New ink',
       soundOn: 'Sound on',
       soundOff: 'Sound off',
       menu: 'Menu',
       undoTitle: 'Take back your last move',
       restartTitle: 'Replay this formation from the start',
-      newFormationTitle: 'Deal a new random formation',
+      newFormationTitle: 'Draw another ink and deal its formation',
       label: 'Game controls',
     },
     status: {
@@ -115,7 +108,7 @@ export const STRINGS: Record<Locale, Strings> = {
       const who = o.you === 'won' ? 'you win' : o.you === 'lost' ? 'the computer wins' : `${side[o.winner]} wins`
       return `${how} · ${who}`
     },
-    meta: { twoPlayers: 'Two players', classic: 'Classic', custom: 'Custom position', seedTitle: 'Formation seed. Share it to replay this layout.' },
+    meta: { twoPlayers: 'Two players', classic: 'Classic', custom: 'Custom position', seedTitle: 'The ink of this formation. Share it to replay the layout.' },
     aiError: (d) => `The computer couldn’t find a move (${d}). Undo or restart to continue.`,
     backToMenu: 'Back to menu',
     boardLabel: 'Xiangqi board',
@@ -136,28 +129,23 @@ export const STRINGS: Record<Locale, Strings> = {
     difficultyHint: { easy: '落子從容', medium: '運籌帷幄', hard: '洞見乾坤' },
     modes: { random: '奇局', classic: '古局' },
     formationLabel: '開局',
-    seed: '墨局',
+    seed: '墨色',
     seedPlaceholder: '隨機',
-    seedError: '墨局名稱請用文字、數字、空格或「-」。',
-    seedDraw: '換一個墨韻局名',
-    inkNames: [
-      '寒江獨釣', '煙雨江南', '空山新雨', '明月松間', '竹林聽雨', '孤舟蓑笠', '秋水長天', '平沙落雁',
-      '漁舟唱晚', '清泉石上', '松風煮茗', '遠山含黛', '墨染千山', '雲深不知處', '溪山行旅', '疏影橫斜',
-      '野渡無人', '落霞孤鶩', '雪夜訪戴', '千里江山',
-    ],
+    seedError: '墨色名稱請用文字、數字、空格或「-」。',
+    seedDraw: '換一種墨色',
     twoPlayers: '雙人對弈',
     switchLanguage: 'English',
     switchLanguageLabel: '切換為英文',
     controls: {
       undo: '悔棋',
       restart: '重來',
-      newFormation: '換局',
+      newFormation: '易墨',
       soundOn: '有聲',
       soundOff: '靜音',
       menu: '返回',
       undoTitle: '收回上一步',
       restartTitle: '從頭再下這一局',
-      newFormationTitle: '換一個隨機佈局',
+      newFormationTitle: '換一種墨色，另開新局',
       label: '對局操作',
     },
     status: {
@@ -173,7 +161,7 @@ export const STRINGS: Record<Locale, Strings> = {
       const who = o.you === 'won' ? '你勝' : o.you === 'lost' ? '電腦勝' : o.winner === 'red' ? '紅方勝' : '黑方勝'
       return `${how} · ${who}`
     },
-    meta: { twoPlayers: '雙人', classic: '古局', custom: '自訂局面', seedTitle: '墨局，分享後可重現此局' },
+    meta: { twoPlayers: '雙人', classic: '古局', custom: '自訂局面', seedTitle: '此局墨色，分享後可重現此局' },
     aiError: (d) => `電腦沒能走出一步（${d}）。請悔棋或重來。`,
     backToMenu: '返回首頁',
     boardLabel: '象棋棋盘',

@@ -6,6 +6,7 @@ import {
 import { opponent, sideOf, type Side } from '../game/piece'
 import { findGeneral } from '../game/rules'
 import { parseFen } from '../game/board'
+import { seedLabel } from '../game/inkColors'
 import { describeMove as describeNotation, formatChinese, formatWxf } from '../game/notation'
 import { useLocale } from '../i18n/locale'
 import type { Outcome, Strings } from '../i18n/strings'
@@ -196,7 +197,7 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
           {level ? t.difficulty[level] : t.meta.twoPlayers}
           <span className="game__dot" aria-hidden="true">·</span>
           {formation.seed ? (
-            <span className="game__seed" title={t.meta.seedTitle}>{formation.seed}</span>
+            <span className="game__seed" title={t.meta.seedTitle}>{seedLabel(formation.seed, locale)}</span>
           ) : config.fen ? t.meta.custom : t.meta.classic}
         </p>
         <MoveRecord initialBoard={game.initialBoard} history={game.history} />

@@ -7,7 +7,8 @@ import { useLocale } from './i18n/locale'
 import MainMenu, { type GameConfig } from './components/MainMenu'
 import { parseFen } from './game/board'
 import { createGame } from './game/gameState'
-import { normalizeSeed, randomSeed, type GameMode } from './game/randomizer'
+import { randomInk, toSeed } from './game/inkColors'
+import { normalizeSeed, type GameMode } from './game/randomizer'
 
 const load = (key: string) => {
   try {
@@ -24,10 +25,10 @@ const save = (key: string, value: string) => {
   }
 }
 
-/** A shared link like …/ink-xiangqi/?seed=INK-7F3A92 opens the menu with that formation. */
+/** A shared link like …/ink-xiangqi/?seed=焦墨 (or ?seed=Scorched%20Ink) opens the menu with that formation. */
 const urlSeed = (() => {
   const s = new URLSearchParams(window.location.search).get('seed')
-  return s ? normalizeSeed(s) : null
+  return s ? toSeed(normalizeSeed(s)) : null
 })()
 
 /** …/?fen=<xiangqi fen> opens a pass-and-play game from that position (debugging, puzzles). */
@@ -70,7 +71,7 @@ export default function App() {
           config={config}
           soundOn={soundOn}
           onToggleSound={toggleSound}
-          onNewFormation={() => setConfig({ ...config, seed: randomSeed() })}
+          onNewFormation={() => setConfig({ ...config, seed: randomInk(config.seed) })}
           onMenu={() => setConfig(null)}
         />
       ) : (
