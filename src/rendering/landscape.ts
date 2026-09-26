@@ -196,7 +196,6 @@ export const BAMBOO: InkShape[] = (() => {
    into the empty paper, answering the stand in the lower-left. */
 
 export const SPRAY_WIDTH = 520
-export const SPRAY_HEIGHT = 380
 
 export const BAMBOO_SPRAY: InkShape[] = (() => {
   const shapes: InkShape[] = []
@@ -215,6 +214,31 @@ export const BAMBOO_SPRAY: InkShape[] = (() => {
   bambooCluster(shapes, main[0].x, main[0].y, 96, [72, 98], 66, 0.36)
   bambooCluster(shapes, side[1].x, side[1].y, 196, [138, 164, 118], 66, 0.38)
   return shapes
+})()
+
+/** Bounding box of painted shapes, read from their path coordinates. */
+function boundsOf(shapes: InkShape[]) {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+  for (const { d } of shapes) {
+    const nums = d.match(/-?\d+(?:\.\d+)?/g)!.map(Number)
+    for (let i = 0; i + 1 < nums.length; i += 2) {
+      minX = Math.min(minX, nums[i]); maxX = Math.max(maxX, nums[i])
+      minY = Math.min(minY, nums[i + 1]); maxY = Math.max(maxY, nums[i + 1])
+    }
+  }
+  return { minX, minY, maxX, maxY }
+}
+
+/**
+ * The spray's frame, fitted tightly around the painted leaves so nothing is
+ * cropped. Only the top and right edges cut the branch, which is meant to
+ * enter from beyond the corner.
+ */
+export const SPRAY_VIEWBOX = (() => {
+  const b = boundsOf(BAMBOO_SPRAY)
+  const x = Math.floor(b.minX - 6)
+  const height = Math.ceil(b.maxY + 6)
+  return { x, y: 0, width: SPRAY_WIDTH - x, height }
 })()
 
 function circlePath(cx: number, cy: number, r: number): string {

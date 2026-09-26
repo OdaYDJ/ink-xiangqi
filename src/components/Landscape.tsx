@@ -1,7 +1,66 @@
+import { useEffect, useState } from 'react'
+import { fitCorner, type CornerFit } from '../rendering/cornerFit'
 import {
   BAMBOO, BAMBOO_HEIGHT, BAMBOO_SPRAY, BAMBOO_WIDTH, BIRDS, LANDSCAPE_HEIGHT, LANDSCAPE_WIDTH, MOSS_DOTS, RIDGES,
-  SPRAY_HEIGHT, SPRAY_WIDTH, TREES, WATER, type InkShape,
+  SPRAY_VIEWBOX, TREES, WATER, type InkShape,
 } from '../rendering/landscape'
+
+/** The blocks of each screen the corner bamboo must leave readable. */
+const CONTENT_BLOCKS = '.menu__frontispiece, .menu__choices, .game__inscription, .board-wrap, .game__colophon > *'
+const SPRAY_ASPECT = SPRAY_VIEWBOX.width / SPRAY_VIEWBOX.height
+
+/**
+ * Keeps the top-right bamboo in proportion to the window and clear of the
+ * content, re-measuring whenever the window or the content changes size.
+ */
+function useCornerSpray(): CornerFit | null {
+  const [fit, setFit] = useState<CornerFit | null>(null)
+
+  useEffect(() => {
+    let frame = 0
+    const measure = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        const avoid = [...document.querySelectorAll(CONTENT_BLOCKS)].map((el) => el.getBoundingClientRect())
+        const next = fitCorner({
+          viewportWidth: window.innerWidth,
+          viewportHeight: window.innerHeight,
+          aspect: SPRAY_ASPECT,
+          avoid,
+          gap: Math.max(16, Math.min(40, window.innerWidth * 0.025)),
+          minWidth: Math.min(150, window.innerWidth * 0.34),
+        })
+        setFit((prev) =>
+          prev && Math.abs(prev.width - next.width) < 1 && prev.crowded === next.crowded ? prev : next,
+        )
+      })
+    }
+
+    const resize = new ResizeObserver(measure)
+    const observeBlocks = () => {
+      resize.disconnect()
+      resize.observe(document.documentElement)
+      document.querySelectorAll(CONTENT_BLOCKS).forEach((el) => resize.observe(el))
+      measure()
+    }
+    // Screens swap (menu ⇄ game) and blocks appear or disappear: re-attach and re-measure.
+    const root = document.querySelector('.app') ?? document.body
+    const mutations = new MutationObserver(observeBlocks)
+    mutations.observe(root, { childList: true, subtree: true })
+    window.addEventListener('resize', measure)
+    document.fonts?.ready.then(measure)
+    observeBlocks()
+
+    return () => {
+      cancelAnimationFrame(frame)
+      resize.disconnect()
+      mutations.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [])
+
+  return fit
+}
 
 const paint = (shapes: InkShape[]) =>
   shapes.map((s, i) => (
@@ -14,6 +73,7 @@ const paint = (shapes: InkShape[]) =>
  * `spreadKey` replays the "ink spreading into paper" entrance when it changes.
  */
 export default function Landscape({ spreadKey }: { spreadKey: string }) {
+  const spray = useCornerSpray()
   return (
     <div className="landscape" aria-hidden="true" key={spreadKey}>
       <svg
@@ -74,7 +134,12 @@ export default function Landscape({ spreadKey }: { spreadKey: string }) {
       <svg className="landscape__bamboo" viewBox={`0 0 ${BAMBOO_WIDTH} ${BAMBOO_HEIGHT}`} preserveAspectRatio="xMinYMax meet">
         {paint(BAMBOO)}
       </svg>
-      <svg className="landscape__spray" viewBox={`0 0 ${SPRAY_WIDTH} ${SPRAY_HEIGHT}`} preserveAspectRatio="xMaxYMin meet">
+      <svg
+        className={`landscape__spray${spray?.crowded ? ' is-crowded' : ''}`}
+        viewBox={`${SPRAY_VIEWBOX.x} ${SPRAY_VIEWBOX.y} ${SPRAY_VIEWBOX.width} ${SPRAY_VIEWBOX.height}`}
+        preserveAspectRatio="xMaxYMin meet"
+        style={spray ? { width: spray.width, height: spray.height } : { visibility: 'hidden' }}
+      >
         {paint(BAMBOO_SPRAY)}
       </svg>
     </div>

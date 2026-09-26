@@ -93,10 +93,11 @@ body {
   position: absolute;
   right: 0;
   top: 0;
-  width: min(29vw, 460px);
-  height: auto;
+  /* Width and height are set by useCornerSpray to fit the window and avoid the content. */
   opacity: 0.8;
+  transition: width 360ms ease, height 360ms ease, opacity 360ms ease;
 }
+.landscape__spray.is-crowded { opacity: 0.3; }
 .ink-fill { fill: var(--ink-wash); }
 .landscape__birds { animation: drift 40s ease-in-out infinite alternate; }
 @keyframes drift {
@@ -516,7 +517,8 @@ body {
 .lang-zh .difficulty__hint { font-style: normal; letter-spacing: 0.32em; margin-inline-end: -0.32em; font-size: 0.92rem; color: var(--ink-soft); }
 .lang-zh .menu__subtitle { letter-spacing: 0.6em; text-transform: none; font-size: 0.9rem; }
 .lang-zh .menu__seed { letter-spacing: 0.3em; text-transform: none; font-size: 0.85rem; }
-.lang-zh .menu__seed-field { width: 9.6em; }
+.lang-zh .menu__seed-field { width: 10.4em; }
+.lang-zh .menu__seed input { letter-spacing: 0.12em; }
 .lang-zh .menu__seed input::placeholder { font-style: normal; letter-spacing: 0.3em; }
 .lang-zh .status { font-style: normal; letter-spacing: 0.25em; font-size: 1.05rem; }
 .lang-zh .game__meta { letter-spacing: 0.25em; text-transform: none; font-size: 0.85rem; }
@@ -574,7 +576,6 @@ body {
   .record__move:not(:nth-last-child(-n + 2)) { display: none; }
   .controls { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
   .landscape__bamboo { height: min(46vh, 380px); opacity: 0.45; }
-  .landscape__spray { width: min(40vw, 260px); opacity: 0.55; }
 }
 
 @media (max-width: 720px) {
@@ -590,7 +591,6 @@ body {
   body { font-size: 16px; }
   .app { padding-inline: 12px; }
   .landscape__bamboo { display: none; }
-  .landscape__spray { width: 36vw; opacity: 0.35; }
   .game__meta { font-size: 0.72rem; }
 }
 
