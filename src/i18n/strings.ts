@@ -80,10 +80,9 @@ export const STRINGS: Record<Locale, Strings> = {
     seedError: 'Seeds use letters, digits, spaces and “-”.',
     seedDraw: 'Draw an ink-style name',
     inkNames: [
-      'Cold River Angler', 'Misty Southern Rain', 'Empty Hills After Rain', 'Pines Under the Moon',
-      'Rain on the Bamboo', 'Lone Boat on Snow', 'Autumn Water Long Sky', 'Geese on Level Sand',
-      'Fishermen at Dusk', 'Spring over Stones', 'Wind in the Pines', 'Distant Blue Hills',
-      'Ink on a Thousand Peaks', 'Clouds Too Deep to Find', 'Travellers in the Hills', 'Plum Shadows',
+      'Cold River Angler', 'Southern Rain', 'Hills After Rain', 'Moonlit Pines', 'Bamboo Rain', 'Lone Boat on Snow',
+      'Autumn Water', 'Geese on Sand', 'Fishermen at Dusk', 'Stone Spring', 'Wind in the Pines', 'Distant Hills',
+      'Ink on Peaks', 'Deep Clouds', 'Hill Travellers', 'Plum Shadows',
     ],
     twoPlayers: 'Two players, one board',
     switchLanguage: '中文',

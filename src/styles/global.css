@@ -299,7 +299,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  width: 16.5em;
+  /* Sized to the longest drawn name plus the shuffle mark. */
+  width: 14.5em;
   border-bottom: 1px solid rgba(37, 39, 43, 0.22);
   transition: border-color 200ms ease;
 }
@@ -515,6 +516,7 @@ body {
 .lang-zh .difficulty__hint { font-style: normal; letter-spacing: 0.32em; margin-inline-end: -0.32em; font-size: 0.92rem; color: var(--ink-soft); }
 .lang-zh .menu__subtitle { letter-spacing: 0.6em; text-transform: none; font-size: 0.9rem; }
 .lang-zh .menu__seed { letter-spacing: 0.3em; text-transform: none; font-size: 0.85rem; }
+.lang-zh .menu__seed-field { width: 9.6em; }
 .lang-zh .menu__seed input::placeholder { font-style: normal; letter-spacing: 0.3em; }
 .lang-zh .status { font-style: normal; letter-spacing: 0.25em; font-size: 1.05rem; }
 .lang-zh .game__meta { letter-spacing: 0.25em; text-transform: none; font-size: 0.85rem; }
