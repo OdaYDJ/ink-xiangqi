@@ -2,7 +2,6 @@ import { useState, type FormEvent } from 'react'
 import type { Difficulty } from '../ai/difficulty'
 import { useLocale } from '../i18n/locale'
 import { normalizeSeed, randomSeed, type GameMode } from '../game/randomizer'
-import BrushRule from './BrushRule'
 import Couplet from './Couplet'
 import DifficultySelector from './DifficultySelector'
 import LanguageToggle from './LanguageToggle'
@@ -64,66 +63,72 @@ export default function MainMenu({ initialMode, seed, onSeedChange: setSeed, onS
       </div>
 
       <div className="menu__choices">
-        <p className="label">{t.playLabel}</p>
-        <DifficultySelector onSelect={start} />
+        <section className="menu__section" aria-labelledby="menu-play">
+          <p className="label" id="menu-play">{t.playLabel}</p>
+          <DifficultySelector onSelect={start} />
+        </section>
 
-        <BrushRule seed="menu-rule" width={164} />
-
-        <div className="menu__modes" role="radiogroup" aria-label={t.formationLabel}>
-          {MODES.map((m) => (
-            <button
-              key={m}
-              type="button"
-              role="radio"
-              aria-checked={mode === m}
-              className={`quiet-button menu__mode${mode === m ? ' is-active' : ''}`}
-              onClick={() => setMode(m)}
-            >
-              {t.modes[m]}
-            </button>
-          ))}
-        </div>
-
-        {mode === 'random' && (
-          <form className="menu__seed" onSubmit={(e: FormEvent) => e.preventDefault()}>
-            <label htmlFor="seed">{t.seed}</label>
-            <span className="menu__seed-field">
-              <input
-                id="seed"
-                key={draws}
-                className={`menu__seed-input${draws > 0 ? ' is-drawn' : ''}`}
-                value={seed}
-                placeholder={t.seedPlaceholder}
-                spellCheck={false}
-                autoComplete="off"
-                maxLength={32}
-                aria-invalid={seedError}
-                aria-describedby={seedError ? 'seed-error' : undefined}
-                onChange={(e) => setSeed(e.target.value)}
-              />
+        <section className="menu__section" aria-labelledby="menu-formation">
+          <p className="label" id="menu-formation">{t.formationLabel}</p>
+          <div className="menu__modes" role="radiogroup" aria-labelledby="menu-formation">
+            {MODES.map((m) => (
               <button
+                key={m}
                 type="button"
-                className={`menu__seed-draw${draws > 0 ? ' is-drawn' : ''}`}
-                onClick={drawInkName}
-                title={t.seedDraw}
-                aria-label={t.seedDraw}
+                role="radio"
+                aria-checked={mode === m}
+                className={`quiet-button menu__mode${mode === m ? ' is-active' : ''}`}
+                onClick={() => setMode(m)}
               >
-                <svg key={draws} viewBox="0 0 20 20" width="19" height="19" aria-hidden="true">
-                  <path d="M2.5 6H5.5C9.5 6 10.5 14 14.5 14H17" />
-                  <path d="M2.5 14H5.5C9.5 14 10.5 6 14.5 6H17" />
-                  <path d="M14.8 3.8L17.2 6L14.8 8.2" />
-                  <path d="M14.8 11.8L17.2 14L14.8 16.2" />
-                </svg>
+                {t.modes[m]}
               </button>
-            </span>
-          </form>
-        )}
-        {seedError && <p id="seed-error" className="menu__error">{t.seedError}</p>}
+            ))}
+          </div>
 
-        <button type="button" className="quiet-button menu__local" onClick={() => start('human')}>
-          {t.twoPlayers}
-        </button>
-        <LanguageToggle className="menu__language" />
+          {mode === 'random' && (
+            <form className="menu__seed" onSubmit={(e: FormEvent) => e.preventDefault()}>
+              <label htmlFor="seed">{t.seed}</label>
+              <span className="menu__seed-field">
+                <input
+                  id="seed"
+                  key={draws}
+                  className={`menu__seed-input${draws > 0 ? ' is-drawn' : ''}`}
+                  value={seed}
+                  placeholder={t.seedPlaceholder}
+                  spellCheck={false}
+                  autoComplete="off"
+                  maxLength={32}
+                  aria-invalid={seedError}
+                  aria-describedby={seedError ? 'seed-error' : undefined}
+                  onChange={(e) => setSeed(e.target.value)}
+                />
+                <button
+                  type="button"
+                  className={`menu__seed-draw${draws > 0 ? ' is-drawn' : ''}`}
+                  onClick={drawInkName}
+                  title={t.seedDraw}
+                  aria-label={t.seedDraw}
+                >
+                  <svg key={draws} viewBox="0 0 20 20" width="19" height="19" aria-hidden="true">
+                    <path d="M2.5 6H5.5C9.5 6 10.5 14 14.5 14H17" />
+                    <path d="M2.5 14H5.5C9.5 14 10.5 6 14.5 6H17" />
+                    <path d="M14.8 3.8L17.2 6L14.8 8.2" />
+                    <path d="M14.8 11.8L17.2 14L14.8 16.2" />
+                  </svg>
+                </button>
+              </span>
+            </form>
+          )}
+          {seedError && <p id="seed-error" className="menu__error">{t.seedError}</p>}
+        </section>
+
+        <footer className="menu__footer">
+          <button type="button" className="quiet-button menu__local" onClick={() => start('human')}>
+            {t.twoPlayers}
+          </button>
+          <span className="menu__footer-dot" aria-hidden="true" />
+          <LanguageToggle className="menu__language" />
+        </footer>
       </div>
     </section>
   )

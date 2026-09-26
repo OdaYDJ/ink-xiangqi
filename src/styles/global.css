@@ -147,8 +147,6 @@ body {
 }
 
 
-.brush-rule { display: block; overflow: visible; }
-.brush-rule__ink { fill: var(--ink); }
 
 /* ——— Seal ——— */
 .seal { display: block; overflow: visible; }
@@ -208,9 +206,19 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 20px;
+  /* Sections are set apart by space alone: generous between, tight within. */
+  gap: clamp(34px, 5.2vh, 52px);
   padding-left: clamp(36px, 5vw, 72px);
 }
+.menu__section { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+.menu__section .label { margin-bottom: 2px; }
+.menu__footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: -6px;
+}
+.menu__footer-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-soft); opacity: 0.45; }
 /* A faint vertical ink hairline between the title leaf and the choices. */
 .menu__choices::before {
   content: '';
@@ -335,8 +343,8 @@ body {
 }
 .menu__seed input::placeholder { color: var(--ink-soft); opacity: 0.55; font-style: italic; text-transform: none; letter-spacing: 0.04em; }
 .menu__error { color: var(--cinnabar); font-size: 0.9rem; margin: -8px 0 0; }
-.menu__local { font-size: 0.95rem; }
-.menu__language { font-size: 0.9rem; margin-top: 6px; }
+.menu__local { font-size: 0.92rem; }
+.menu__language { font-size: 0.9rem; }
 
 /* ——— In game: a hanging scroll with inscription, painting and colophon ——— */
 .game {
@@ -582,6 +590,7 @@ body {
   .menu { flex-direction: column; gap: 28px; }
   .menu__title { font-size: 5.4rem; }
   .menu__choices { align-items: center; padding-left: 0; }
+  .menu__section { align-items: center; }
   .menu__choices::before { display: none; }
   .difficulty__option { align-items: center; text-align: center; }
   .menu__modes { justify-content: center; }
