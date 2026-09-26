@@ -7,6 +7,7 @@ import {
   pointAt, pointOf, pointX, type Stroke,
 } from '../rendering/boardRenderer'
 import { PIECE_RADIUS } from '../rendering/pieceRenderer'
+import { useLocale } from '../i18n/locale'
 import Piece from './Piece'
 import '../styles/board.css'
 import '../styles/pieces.css'
@@ -49,6 +50,7 @@ export default function Board({
   checkSquare = null, interactive = false, onPointClick,
 }: BoardProps) {
   const svgRef = useRef<SVGSVGElement>(null)
+  const { t } = useLocale()
   const occupied = new Set(pieces.map((p) => p.square))
   const drops = useMemo(() => splash(moveKey), [moveKey])
 
@@ -69,7 +71,7 @@ export default function Board({
       className={`board${interactive ? ' is-interactive' : ''}`}
       viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
       role="img"
-      aria-label="Xiangqi board"
+      aria-label={t.boardLabel}
       onPointerDown={handlePointer}
     >
       <defs>

@@ -18,6 +18,7 @@
   --title-font: 'Ma Shan Zheng', 'LXGW WenKai TC', 'Kaiti TC', 'STKaiti', 'KaiTi', serif;
   --brush-font: 'LXGW WenKai TC', 'Kaiti TC', 'STKaiti', 'KaiTi', 'BiauKai', serif;
   --song-font: 'Noto Serif TC', 'Songti TC', 'STSong', 'PMingLiU', serif;
+  --song-sc: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
   --ui-font: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino', Georgia, serif;
   color-scheme: light;
 }
@@ -40,6 +41,7 @@ body {
 }
 
 [lang='zh-Hant'] { font-family: var(--song-font); }
+[lang='zh-Hans'] { font-family: var(--song-sc); }
 
 .app {
   position: relative;
@@ -142,7 +144,7 @@ body {
   text-transform: uppercase;
   color: var(--ink-soft);
 }
-.label [lang='zh-Hant'] { letter-spacing: 0.3em; color: var(--ink-2); margin-right: 0.4em; }
+
 
 .brush-rule { display: block; }
 .brush-rule path { fill: var(--ink); fill-opacity: 0.55; }
@@ -162,7 +164,19 @@ body {
   justify-content: center;
   gap: clamp(40px, 9vw, 140px);
 }
-.menu__title-block { display: flex; align-items: flex-end; gap: 18px; }
+.menu__frontispiece { display: flex; flex-direction: column; align-items: center; gap: 22px; }
+.menu__title-block { display: flex; flex-direction: row-reverse; align-items: flex-start; gap: 20px; }
+.menu__couplet { font-size: 1.45rem; margin-top: 0.8rem; }
+.menu__translation {
+  margin: 0;
+  max-width: 19rem;
+  text-align: center;
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--ink-soft);
+  text-wrap: balance;
+}
 .menu__title {
   writing-mode: vertical-rl;
   font-family: var(--title-font);
@@ -173,7 +187,7 @@ body {
   letter-spacing: 0.05em;
   color: var(--ink);
 }
-.menu__signature { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-bottom: 0.6rem; }
+.menu__signature { display: flex; flex-direction: column; align-items: center; gap: 14px; align-self: flex-end; padding-bottom: 0.6rem; }
 .menu__subtitle {
   writing-mode: vertical-rl;
   margin: 0;
@@ -198,12 +212,14 @@ body {
   position: relative;
 }
 .difficulty__title {
-  font-size: 1.55rem;
-  letter-spacing: 0.18em;
+  font-size: 1.45rem;
+  letter-spacing: 0.04em;
   font-weight: 500;
+  min-width: 4.2em;
+  text-align: left;
   transition: color 200ms ease;
 }
-.difficulty__label { font-style: italic; color: var(--ink-soft); font-size: 1.05rem; transition: color 200ms ease; }
+.difficulty__hint { font-style: italic; color: var(--ink-soft); font-size: 0.98rem; transition: color 200ms ease; }
 .difficulty__option::before {
   content: '';
   position: absolute;
@@ -220,10 +236,9 @@ body {
 }
 .difficulty__option:hover::before,
 .difficulty__option:focus-visible::before { opacity: 0.9; transform: rotate(8deg) scale(1); }
-.difficulty__option:hover .difficulty__label { color: var(--ink); }
+.difficulty__option:hover .difficulty__hint { color: var(--ink); }
 
 .menu__modes { display: flex; gap: 22px; flex-wrap: wrap; }
-.menu__mode [lang='zh-Hant'] { font-style: normal; letter-spacing: 0.15em; margin-right: 0.2em; }
 .menu__mode.is-active { color: var(--ink); }
 .menu__mode.is-active::after { transform: scaleX(1); }
 
@@ -253,7 +268,7 @@ body {
 .menu__seed input[aria-invalid='true'] { border-bottom-color: var(--cinnabar); }
 .menu__error { color: var(--cinnabar); font-size: 0.9rem; margin: -8px 0 0; }
 .menu__local { font-size: 0.95rem; }
-.menu__local [lang='zh-Hant'] { font-style: normal; letter-spacing: 0.15em; margin-right: 0.2em; }
+.menu__language { font-size: 0.9rem; margin-top: 6px; }
 
 /* ——— In game: a hanging scroll with inscription, painting and colophon ——— */
 .game {
@@ -284,15 +299,9 @@ body {
   padding: 0;
   cursor: pointer;
 }
-.game__verse {
-  writing-mode: vertical-rl;
-  margin: 0.6rem 0 0;
-  font-family: var(--brush-font);
-  font-size: 1.05rem;
-  letter-spacing: 0.35em;
-  color: var(--ink-soft);
-}
-.game__seal { align-self: flex-start; margin-top: 11.5rem; margin-right: -2.6rem; }
+.game__couplet { margin-top: 0.4rem; font-size: 1.2rem; }
+.game__couplet-block { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.game__seal { margin-left: -1.2rem; }
 
 .board-wrap {
   position: relative;
@@ -318,7 +327,7 @@ body {
   min-height: 1.5em;
 }
 .status__check { color: var(--cinnabar); font-style: normal; }
-.status__check [lang='zh-Hant'] { letter-spacing: 0.12em; }
+
 .status__thinking { color: var(--ink-soft); }
 .status__thinking::after {
   content: '';
@@ -341,7 +350,7 @@ body {
   color: var(--ink-soft);
   text-transform: uppercase;
 }
-.game__meta [lang='zh-Hant'] { text-transform: none; letter-spacing: 0.2em; color: var(--ink-2); }
+
 .game__dot { margin: 0 0.5em; }
 .game__seed { user-select: all; font-variant-numeric: tabular-nums; }
 
@@ -395,13 +404,86 @@ body {
   animation: screen-in 700ms 800ms ease-out both;
 }
 
+/* ——— Couplet: 一墨染，万象生；一局落，乾坤开 ——— */
+.couplet {
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 0.35em;
+  margin: 0;
+  font-family: var(--title-font);
+  color: var(--ink-2);
+  line-height: 1.15;
+}
+.couplet__line { writing-mode: vertical-rl; letter-spacing: 0.22em; }
+.couplet__line:last-child { padding-top: 1.1em; } /* the second line starts a little lower, as brushed */
+
+/* ——— English version: the record is a two-column list, Red then Black ——— */
+.lang-en .record {
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(3.6em, max-content));
+  align-content: start;
+  column-gap: 1.6em;
+  row-gap: 0.1em;
+  max-height: none;
+  font-family: var(--ui-font);
+  font-size: 1rem;
+  letter-spacing: 0.06em;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+}
+.lang-en .record { flex: 0 0 auto; }
+.lang-en .record__move { margin: 0; }
+.lang-en .record__move::after { content: none; }
+.lang-en .record--empty { font-family: var(--ui-font); font-style: italic; letter-spacing: 0.04em; opacity: 0.6; }
+
+/* ——— Chinese version: set like a Chinese art book ——— */
+.lang-zh { font-family: var(--song-sc); }
+.lang-zh .quiet-button { font-style: normal; letter-spacing: 0.18em; font-size: 0.95rem; }
+.lang-zh .quiet-button.language-toggle { font-family: var(--ui-font); font-style: italic; letter-spacing: 0.04em; }
+.lang-zh .label { letter-spacing: 0.5em; font-size: 0.9rem; color: var(--ink-2); }
+.lang-zh .difficulty__title { letter-spacing: 0.3em; font-size: 1.55rem; min-width: 4em; }
+.lang-zh .difficulty__hint { font-style: normal; letter-spacing: 0.2em; font-size: 0.85rem; }
+.lang-zh .menu__subtitle { letter-spacing: 0.6em; text-transform: none; font-size: 0.9rem; }
+.lang-zh .menu__seed { letter-spacing: 0.3em; text-transform: none; font-size: 0.85rem; }
+.lang-zh .menu__seed input::placeholder { font-style: normal; letter-spacing: 0.3em; }
+.lang-zh .status { font-style: normal; letter-spacing: 0.25em; font-size: 1.05rem; }
+.lang-zh .game__meta { letter-spacing: 0.25em; text-transform: none; font-size: 0.85rem; }
+.lang-zh .game-over__text { font-style: normal; letter-spacing: 0.3em; }
+
+/* On wide screens the Chinese colophon is written vertically, right to left. */
+@media (min-width: 961px) {
+  .lang-zh .game__colophon {
+    writing-mode: vertical-rl;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: max-content;
+    height: auto;
+    align-self: center;
+    max-height: min(560px, 70vh);
+    gap: 18px;
+    max-width: none;
+    padding: 0;
+  }
+  .lang-zh .status { min-height: 0; min-width: 1.5em; }
+  .lang-zh .game__meta .game__seed { text-orientation: mixed; letter-spacing: 0.1em; }
+  .lang-zh .record { max-height: none; flex: 0 1 auto; margin: 0 6px; }
+  .lang-zh .controls { flex-direction: row; flex-wrap: nowrap; gap: 1.1em; margin-inline-start: auto; }
+  .lang-zh .controls .quiet-button::after { left: auto; right: 0.1em; bottom: 0; top: 0; width: 1px; height: 100%; transform: scaleY(0); transform-origin: top; }
+  .lang-zh .controls .quiet-button:hover:not(:disabled)::after,
+  .lang-zh .controls .quiet-button:focus-visible::after { transform: scaleY(1); }
+  .lang-zh .controls .language-toggle { writing-mode: vertical-rl; text-orientation: mixed; }
+}
+
 /* ——— Tablet and phone: the board first, everything else in a single quiet column ——— */
 @media (max-width: 960px) {
   .app { align-items: flex-start; }
   .game { grid-template-columns: 1fr; row-gap: 10px; justify-items: center; }
   .game__inscription { justify-self: center; flex-direction: row; align-items: center; gap: 12px; padding-top: 0; }
   .game__title { writing-mode: horizontal-tb; font-size: 2.3rem; }
-  .game__verse { display: none; }
+  .game__couplet { display: none; }
+  .game__couplet-block { flex-direction: row; }
   .game__seal { margin: 0; }
   .board-wrap { width: min(100%, calc((100dvh - 190px) * 0.908), 640px); min-width: min(100%, 320px); }
   .game__colophon {

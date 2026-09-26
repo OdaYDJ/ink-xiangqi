@@ -1,15 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AiClient } from '../ai/aiClient'
-import { DIFFICULTY_LABELS, DIFFICULTY_TITLES } from '../ai/difficulty'
 import {
   applyMove, createGame, legalTargets, undoMoves, type GameState,
 } from '../game/gameState'
-import { opponent, PIECE_NAMES, sideOf, typeOf, type Side } from '../game/piece'
+import { opponent, sideOf, type Side } from '../game/piece'
 import { findGeneral } from '../game/rules'
 import { parseFen } from '../game/board'
+import { describeMove as describeNotation, formatChinese, formatWxf } from '../game/notation'
+import { useLocale } from '../i18n/locale'
+import type { Outcome, Strings } from '../i18n/strings'
+import Couplet from './Couplet'
 import { createFormation, type Formation } from '../game/randomizer'
 import type { Move } from '../game/move'
-import { moveToString } from '../game/move'
 import { AI_MIN_DELAY_MS, CAPTURE_FADE_MS, MOVE_MS } from '../rendering/animations'
 import { playCaptureSound, playMoveSound } from '../rendering/sound'
 import Board, { type PieceView } from './Board'
@@ -38,15 +40,19 @@ function trackPieces(state: GameState): PieceView[] {
   return state.board.flatMap((code, square) => (code ? [{ id: ids[square], square, code }] : []))
 }
 
-function describeMove(state: GameState): string {
+/** Spoken summary of the last move for screen readers, in the reader's language. */
+function announceLastMove(state: GameState, t: Strings, zh: boolean): string {
   const m = state.history.at(-1)
   if (!m) return ''
-  const who = sideOf(m.piece) === 'red' ? 'Red' : 'Black'
-  const capture = m.captured ? `, takes ${PIECE_NAMES[typeOf(m.captured)]}` : ''
-  return `${who} ${PIECE_NAMES[typeOf(m.piece)]} ${moveToString(m)}${capture}.`
+  const board = state.board.slice()
+  board[m.from] = m.piece
+  board[m.to] = m.captured
+  const d = describeNotation(board, m)
+  return t.announce(sideOf(m.piece)!, zh ? formatChinese(d, 'simplified') : formatWxf(d))
 }
 
 export default function Game({ config, soundOn, onToggleSound, onNewFormation, onMenu }: GameProps) {
+  const { t, locale } = useLocale()
   const formation: Formation = useMemo(
     () => (config.fen ? { mode: 'classic', seed: null, board: parseFen(config.fen) } : createFormation(config.mode, config.seed)),
     [config],
@@ -156,11 +162,13 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
   return (
     <section className="game screen">
       <aside className="game__inscription">
-        <button type="button" className="game__title" onClick={onMenu} aria-label="墨弈 — back to menu" lang="zh-Hant">
+        <button type="button" className="game__title" onClick={onMenu} aria-label={`墨弈 · ${t.backToMenu}`} lang="zh-Hant">
           墨弈
         </button>
-        <p className="game__verse" lang="zh-Hant" aria-hidden="true">觀棋不語真君子</p>
-        <Seal text="棋" size={30} className="game__seal" />
+        <div className="game__couplet-block">
+          <Couplet className="game__couplet" />
+          <Seal text="棋" size={30} className="game__seal" />
+        </div>
       </aside>
 
       <div className="board-wrap">
@@ -176,26 +184,20 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
           interactive={humanTurn}
           onPointClick={handlePoint}
         />
-        {game.status !== 'playing' && <GameOver game={game} vsAi={vsAi} />}
+        {game.status !== 'playing' && <GameOver game={game} vsAi={vsAi} t={t} />}
       </div>
 
       <aside className="game__colophon">
         <p className="status" aria-live="polite">
-          <StatusLine game={game} thinking={thinking} vsAi={vsAi} error={aiError} />
-          <span className="visually-hidden">{describeMove(game)}</span>
+          <StatusLine game={game} thinking={thinking} vsAi={vsAi} error={aiError} t={t} />
+          <span className="visually-hidden">{announceLastMove(game, t, locale === 'zh')}</span>
         </p>
         <p className="game__meta">
-          {level ? (
-            <>
-              <span lang="zh-Hant">{DIFFICULTY_TITLES[level]}</span> {DIFFICULTY_LABELS[level]}
-            </>
-          ) : (
-            'Two players'
-          )}
+          {level ? t.difficulty[level] : t.meta.twoPlayers}
           <span className="game__dot" aria-hidden="true">·</span>
           {formation.seed ? (
-            <span className="game__seed" title="Formation seed — share it to replay this layout">{formation.seed}</span>
-          ) : config.fen ? 'Custom position' : 'Classic'}
+            <span className="game__seed" title={t.meta.seedTitle}>{formation.seed}</span>
+          ) : config.fen ? t.meta.custom : t.meta.classic}
         </p>
         <MoveRecord initialBoard={game.initialBoard} history={game.history} />
         <GameControls
@@ -212,36 +214,42 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
   )
 }
 
-function StatusLine({ game, thinking, vsAi, error }: { game: GameState; thinking: boolean; vsAi: boolean; error: string | null }) {
-  if (error) return <>The computer couldn’t find a move ({error}). Undo or restart to continue.</>
-  if (game.status !== 'playing') return <GameResultText game={game} vsAi={vsAi} />
-  if (thinking) return <span className="status__thinking">Thinking</span>
-  const name = (s: Side) => (s === 'red' ? 'Red' : 'Black')
+function outcomeOf(game: GameState, vsAi: boolean): Outcome {
+  if (!game.winner) return { kind: 'draw', reason: game.drawReason }
+  return {
+    kind: 'win',
+    how: game.status === 'checkmate' ? 'checkmate' : 'stalemate',
+    winner: game.winner,
+    you: vsAi ? (game.winner === HUMAN ? 'won' : 'lost') : null,
+  }
+}
+
+interface StatusProps {
+  game: GameState
+  thinking: boolean
+  vsAi: boolean
+  error: string | null
+  t: Strings
+}
+
+function StatusLine({ game, thinking, vsAi, error, t }: StatusProps) {
+  if (error) return <>{t.aiError(error)}</>
+  if (game.status !== 'playing') return <>{t.outcome(outcomeOf(game, vsAi))}</>
+  if (thinking) return <span className="status__thinking">{t.status.thinking}</span>
   return (
     <>
-      {game.inCheck && (
-        <span className="status__check">
-          <span lang="zh-Hant">將軍</span> Check ·{' '}
-        </span>
-      )}
-      {vsAi ? (game.turn === HUMAN ? 'Your move' : 'Their move') : `${name(game.turn)} to move`}
+      {game.inCheck && <span className="status__check">{t.status.check} · </span>}
+      {vsAi ? (game.turn === HUMAN ? t.status.yourMove : t.status.theirMove) : t.status.toMove(game.turn)}
     </>
   )
 }
 
-function GameResultText({ game, vsAi }: { game: GameState; vsAi: boolean }) {
-  if (!game.winner) return <>{game.drawReason === 'repetition' ? 'Drawn by repetition' : 'Drawn'}</>
-  const how = game.status === 'checkmate' ? 'Checkmate' : 'No moves left'
-  const who = vsAi ? (game.winner === HUMAN ? 'you win' : 'the computer wins') : `${game.winner === 'red' ? 'Red' : 'Black'} wins`
-  return <>{how} · {who}</>
-}
-
-function GameOver({ game, vsAi }: { game: GameState; vsAi: boolean }) {
+function GameOver({ game, vsAi, t }: { game: GameState; vsAi: boolean; t: Strings }) {
   const glyph = !game.winner ? '和' : vsAi && game.winner !== HUMAN ? '負' : '勝'
   return (
     <div className="game-over" role="status">
       <Seal text={glyph} size={112} className="game-over__seal" title={glyph} />
-      <span className="game-over__text"><GameResultText game={game} vsAi={vsAi} /></span>
+      <span className="game-over__text">{t.outcome(outcomeOf(game, vsAi))}</span>
     </div>
   )
 }

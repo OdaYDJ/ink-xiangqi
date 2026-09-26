@@ -1,8 +1,11 @@
 import { useState, type FormEvent } from 'react'
 import type { Difficulty } from '../ai/difficulty'
+import { useLocale } from '../i18n/locale'
 import { normalizeSeed, randomSeed, type GameMode } from '../game/randomizer'
 import BrushRule from './BrushRule'
+import Couplet from './Couplet'
 import DifficultySelector from './DifficultySelector'
+import LanguageToggle from './LanguageToggle'
 import Seal from './Seal'
 
 export type Opponent = Difficulty | 'human'
@@ -22,13 +25,10 @@ interface MainMenuProps {
 }
 
 const SEED_PATTERN = /^[A-Z0-9-]{1,24}$/
-
-const MODES: { mode: GameMode; title: string; label: string }[] = [
-  { mode: 'random', title: '奇局', label: 'Random' },
-  { mode: 'classic', title: '古局', label: 'Classic' },
-]
+const MODES: GameMode[] = ['random', 'classic']
 
 export default function MainMenu({ initialMode, initialSeed, onStart }: MainMenuProps) {
+  const { t } = useLocale()
   const [mode, setMode] = useState<GameMode>(initialMode)
   const [seed, setSeed] = useState(initialSeed ?? '')
   const cleanSeed = normalizeSeed(seed)
@@ -41,24 +41,26 @@ export default function MainMenu({ initialMode, initialSeed, onStart }: MainMenu
 
   return (
     <section className="menu screen">
-      <div className="menu__title-block">
-        <h1 className="menu__title" lang="zh-Hant">墨弈</h1>
-        <div className="menu__signature">
-          <p className="menu__subtitle">Ink Xiangqi</p>
-          <Seal text="墨弈" size={44} variant="raised" title="墨弈 seal" />
+      <div className="menu__frontispiece">
+        <div className="menu__title-block">
+          <h1 className="menu__title" lang="zh-Hant" aria-label={`墨弈 · ${t.subtitle}`}>墨弈</h1>
+          <Couplet className="menu__couplet" />
+          <div className="menu__signature">
+            <p className="menu__subtitle">{t.subtitle}</p>
+            <Seal text="墨弈" size={44} variant="raised" />
+          </div>
         </div>
+        {t.coupletTranslation && <p className="menu__translation">{t.coupletTranslation}</p>}
       </div>
 
       <div className="menu__choices">
-        <p className="label">
-          <span lang="zh-Hant">對弈</span> Play against
-        </p>
+        <p className="label">{t.playLabel}</p>
         <DifficultySelector onSelect={start} />
 
         <BrushRule seed="menu-rule" width={150} />
 
-        <div className="menu__modes" role="radiogroup" aria-label="Starting formation">
-          {MODES.map(({ mode: m, title, label }) => (
+        <div className="menu__modes" role="radiogroup" aria-label={t.formationLabel}>
+          {MODES.map((m) => (
             <button
               key={m}
               type="button"
@@ -67,18 +69,18 @@ export default function MainMenu({ initialMode, initialSeed, onStart }: MainMenu
               className={`quiet-button menu__mode${mode === m ? ' is-active' : ''}`}
               onClick={() => setMode(m)}
             >
-              <span lang="zh-Hant">{title}</span> {label}
+              {t.modes[m]}
             </button>
           ))}
         </div>
 
         {mode === 'random' && (
           <form className="menu__seed" onSubmit={(e: FormEvent) => e.preventDefault()}>
-            <label htmlFor="seed">Seed</label>
+            <label htmlFor="seed">{t.seed}</label>
             <input
               id="seed"
               value={seed}
-              placeholder="drawn at random"
+              placeholder={t.seedPlaceholder}
               spellCheck={false}
               autoComplete="off"
               maxLength={24}
@@ -88,11 +90,12 @@ export default function MainMenu({ initialMode, initialSeed, onStart }: MainMenu
             />
           </form>
         )}
-        {seedError && <p id="seed-error" className="menu__error">Seeds use letters, digits and “-”.</p>}
+        {seedError && <p id="seed-error" className="menu__error">{t.seedError}</p>}
 
         <button type="button" className="quiet-button menu__local" onClick={() => start('human')}>
-          <span lang="zh-Hant">雙人</span> Two players, one board
+          {t.twoPlayers}
         </button>
+        <LanguageToggle className="menu__language" />
       </div>
     </section>
   )

@@ -1,3 +1,6 @@
+import { useLocale } from '../i18n/locale'
+import LanguageToggle from './LanguageToggle'
+
 interface GameControlsProps {
   canUndo: boolean
   soundOn: boolean
@@ -12,24 +15,27 @@ interface GameControlsProps {
 export default function GameControls({
   canUndo, soundOn, onUndo, onRestart, onNewFormation, onToggleSound, onMenu,
 }: GameControlsProps) {
+  const { t } = useLocale()
+  const c = t.controls
   return (
-    <nav className="controls" aria-label="Game controls">
-      <button type="button" className="quiet-button" onClick={onUndo} disabled={!canUndo} title="Take back your last move">
-        Undo
+    <nav className="controls" aria-label={c.label}>
+      <button type="button" className="quiet-button" onClick={onUndo} disabled={!canUndo} title={c.undoTitle}>
+        {c.undo}
       </button>
-      <button type="button" className="quiet-button" onClick={onRestart} title="Replay this formation from the start">
-        Restart
+      <button type="button" className="quiet-button" onClick={onRestart} title={c.restartTitle}>
+        {c.restart}
       </button>
       {onNewFormation && (
-        <button type="button" className="quiet-button" onClick={onNewFormation} title="Deal a new random formation">
-          New formation
+        <button type="button" className="quiet-button" onClick={onNewFormation} title={c.newFormationTitle}>
+          {c.newFormation}
         </button>
       )}
       <button type="button" className="quiet-button" onClick={onToggleSound} aria-pressed={soundOn}>
-        {soundOn ? 'Sound on' : 'Sound off'}
+        {soundOn ? c.soundOn : c.soundOff}
       </button>
+      <LanguageToggle />
       <button type="button" className="quiet-button" onClick={onMenu}>
-        Menu
+        {c.menu}
       </button>
     </nav>
   )

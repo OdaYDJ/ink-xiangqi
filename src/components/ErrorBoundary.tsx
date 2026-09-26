@@ -1,4 +1,5 @@
 import { Component, type ReactNode } from 'react'
+import { STRINGS } from '../i18n/strings'
 
 interface State {
   error: Error | null
@@ -14,12 +15,13 @@ export default class ErrorBoundary extends Component<{ children: ReactNode }, St
 
   render() {
     if (!this.state.error) return this.props.children
+    const t = STRINGS[document.documentElement.lang.startsWith('zh') ? 'zh' : 'en']
     return (
       <section className="menu screen" role="alert">
-        <h1 className="menu__title">墨</h1>
-        <p className="menu__subtitle">The ink ran. Something went wrong.</p>
-        <button type="button" className="ink-button" onClick={() => window.location.reload()}>
-          Start again
+        <h1 className="menu__title" lang="zh-Hant">墨</h1>
+        <p className="menu__subtitle">{t.errorTitle}</p>
+        <button type="button" className="quiet-button" onClick={() => window.location.reload()}>
+          {t.errorAction}
         </button>
       </section>
     )

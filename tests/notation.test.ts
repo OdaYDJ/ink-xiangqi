@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CLASSIC_FEN, parseFen } from '../src/game/board'
 import { applyMove, createGame } from '../src/game/gameState'
 import { parseMove } from '../src/game/move'
-import { gameNotation } from '../src/game/notation'
+import { describeGame, formatChinese, formatWxf, gameNotation } from '../src/game/notation'
 import { setup } from './helpers'
 
 const notate = (moves: string[], board = parseFen(CLASSIC_FEN)) => {
@@ -23,5 +23,20 @@ describe('Chinese notation', () => {
     const board = setup({ d0: 'K', f9: 'k', a5: 'R', a2: 'R' })
     expect(notate(['a5b5'], board)).toEqual(['前俥平八'])
     expect(notate(['a2b2'], board)).toEqual(['後俥平八'])
+  })
+})
+
+describe('other notations', () => {
+  const describeAll = (moves: string[], board = parseFen(CLASSIC_FEN)) => {
+    const g = moves.reduce((s, m) => applyMove(s, parseMove(m)), createGame(board))
+    return describeGame(g.initialBoard, g.history)
+  }
+  it('writes simplified Chinese', () => {
+    expect(describeAll(['h2e2', 'h9g7', 'e2e6', 'b9c7']).map((d) => formatChinese(d, 'simplified'))).toEqual(['炮二平五', '马8进7', '炮五进四', '马2进3'])
+  })
+  it('writes WXF for English players', () => {
+    expect(describeAll(['h2e2', 'h9g7', 'e2e6', 'b9c7', 'e6e5']).map(formatWxf)).toEqual(['C2.5', 'H8+7', 'C5+4', 'H2+3', 'C5-1'])
+    const board = setup({ d0: 'K', f9: 'k', a5: 'R', a2: 'R' })
+    expect(describeAll(['a5b5'], board).map(formatWxf)).toEqual(['R+.8'])
   })
 })

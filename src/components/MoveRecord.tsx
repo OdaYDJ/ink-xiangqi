@@ -1,7 +1,8 @@
 import { useMemo } from 'react'
-import type { MoveRecord as Move } from '../game/move'
-import { gameNotation } from '../game/notation'
 import type { Board } from '../game/board'
+import type { MoveRecord as Move } from '../game/move'
+import { describeGame, formatChinese, formatWxf } from '../game/notation'
+import { useLocale } from '../i18n/locale'
 
 interface MoveRecordProps {
   initialBoard: Board
@@ -10,13 +11,21 @@ interface MoveRecordProps {
   limit?: number
 }
 
-/** The game record in Chinese notation, written like a colophon beside the painting. */
+/**
+ * The game record, written like a colophon beside the painting:
+ * simplified Chinese notation (炮二平五) or WXF for English (C2.5).
+ */
 export default function MoveRecord({ initialBoard, history, limit = 16 }: MoveRecordProps) {
-  const lines = useMemo(() => gameNotation(initialBoard, history), [initialBoard, history])
+  const { locale, t } = useLocale()
+  const lines = useMemo(() => {
+    const moves = describeGame(initialBoard, history)
+    return moves.map((d) => (locale === 'zh' ? formatChinese(d, 'simplified') : formatWxf(d)))
+  }, [initialBoard, history, locale])
   const start = Math.max(0, lines.length - limit)
-  if (lines.length === 0) return <p className="record record--empty">譜</p>
+
+  if (lines.length === 0) return <p className="record record--empty">{t.emptyRecord}</p>
   return (
-    <ol className="record" aria-label="Move record" start={start + 1}>
+    <ol className="record" aria-label={t.recordLabel} start={start + 1}>
       {lines.slice(start).map((text, i) => {
         const ply = start + i
         return (

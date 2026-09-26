@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import Game from './components/Game'
 import Landscape from './components/Landscape'
+import { useLocale } from './i18n/locale'
 import MainMenu, { type GameConfig } from './components/MainMenu'
 import { parseFen } from './game/board'
 import { createGame } from './game/gameState'
@@ -40,6 +41,7 @@ const urlGame = ((): GameConfig | null => {
 })()
 
 export default function App() {
+  const { locale } = useLocale()
   const [config, setConfig] = useState<GameConfig | null>(urlGame)
   const [soundOn, setSoundOn] = useState(load('ink.sound') !== 'off')
   const initialMode: GameMode = urlSeed ? 'random' : load('ink.mode') === 'classic' ? 'classic' : 'random'
@@ -55,7 +57,7 @@ export default function App() {
   }
 
   return (
-    <main className={`app ${config ? 'is-playing' : 'is-menu'}`}>
+    <main className={`app lang-${locale} ${config ? 'is-playing' : 'is-menu'}`}>
       <Landscape spreadKey={config ? `game-${config.seed}-${config.opponent}` : 'menu'} />
       {config ? (
         <Game
