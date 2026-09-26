@@ -61,6 +61,7 @@ export interface Strings {
   announce: (side: Side, notation: string) => string
   errorTitle: string
   errorAction: string
+  music: { label: string; play: string; pause: string; volume: string; levels: [string, string, string] }
 }
 
 const side = { red: 'Red', black: 'Black' }
@@ -123,6 +124,7 @@ export const STRINGS: Record<Locale, Strings> = {
     announce: (s, n) => `${side[s]} ${n}.`,
     errorTitle: 'The ink ran. Something went wrong.',
     errorAction: 'Start again',
+    music: { label: 'Background music', play: 'Play background music', pause: 'Pause background music', volume: 'Music volume', levels: ['Soft', 'Medium', 'Full'] },
   },
 
   zh: {
@@ -180,5 +182,6 @@ export const STRINGS: Record<Locale, Strings> = {
     announce: (s, n) => `${s === 'red' ? '紅方' : '黑方'} ${n}`,
     errorTitle: '墨跡暈開了，出了點問題。',
     errorAction: '重新開始',
+    music: { label: '背景音樂', play: '播放背景音樂', pause: '暫停背景音樂', volume: '音量', levels: ['輕', '中', '重'] },
   },
 }

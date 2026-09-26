@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Game from './components/Game'
 import Landscape from './components/Landscape'
+import MusicControl from './components/MusicControl'
+import { music } from './audio/musicController'
 import { useLocale } from './i18n/locale'
 import MainMenu, { type GameConfig } from './components/MainMenu'
 import { parseFen } from './game/board'
@@ -44,6 +46,9 @@ export default function App() {
   const { locale } = useLocale()
   const [config, setConfig] = useState<GameConfig | null>(urlGame)
   const [menuSeed, setMenuSeed] = useState(urlSeed ?? '')
+
+  // One music element for the whole app; it waits for the first interaction before making a sound.
+  useEffect(() => music.init(), [])
   const [soundOn, setSoundOn] = useState(load('ink.sound') !== 'off')
   const initialMode: GameMode = urlSeed ? 'random' : load('ink.mode') === 'classic' ? 'classic' : 'random'
 
@@ -71,6 +76,7 @@ export default function App() {
       ) : (
         <MainMenu initialMode={initialMode} seed={menuSeed} onSeedChange={setMenuSeed} onStart={start} />
       )}
+      <MusicControl />
     </main>
   )
 }

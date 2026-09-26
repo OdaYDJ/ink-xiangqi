@@ -33,6 +33,17 @@ Each side keeps the standard army (1 General, 2 Advisors, 2 Elephants, 2 Horses,
 
 Every candidate must pass `validateFormation` (`src/game/validator.ts`): correct inventory, every piece on an allowed point, no side in check, Generals not facing, and **no free material on move one** (neither side can capture an undefended piece worth more than a soldier, or win material outright). Rejected candidates are redrawn from the same seeded RNG stream, so a seed always produces the same board.
 
+## Background music
+
+A quiet pipa track loops in the background. It starts only after the player's first tap or key press, fades in at about 15% volume, and is controlled by the small ♫ mark in the bottom-right corner (hover or focus it for three volume levels). Mute and volume are remembered.
+
+The track itself is not in the repository. To add it:
+
+1. Download a track from Pixabay, for example [烟雨江南 · Mist Over Jiangnan](https://pixabay.com/music/rnb-%E7%83%9F%E9%9B%A8%E6%B1%9F%E5%8D%97-mist-over-jiangnan-428654/) (RainStreetCat) or [夜游秦淮](https://pixabay.com/music/ambient-%E5%A4%9C%E6%B8%B8%E7%A7%A6%E6%B7%AE-517931/) (XunLang_Studio). Check the track page and the [Pixabay Content License](https://pixabay.com/service/license-summary/) first.
+2. Save it as `public/audio/pipa-xiangqi.mp3`.
+
+Without the file the ♫ control simply stays hidden and the game is unaffected.
+
 ## Development
 
 ```bash
