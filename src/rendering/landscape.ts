@@ -118,13 +118,31 @@ export const BIRDS: InkShape[] = [
 
 /* ——— Bamboo, shared brushwork ——— */
 
+/** A cluster of leaves on one twig. `pivot` is where the twig joins the stalk: the leaves flutter around it. */
+export interface LeafCluster {
+  pivot: Pt
+  shapes: InkShape[]
+  /** Pale back leaves (淡墨) move a little less than dense front ones (濃墨). */
+  depth: 'back' | 'front'
+}
+
+/** A bamboo plant: stalks that sway together from `root`, and leaf clusters that flutter on their own. */
+export interface BambooPlant {
+  root: Pt
+  stalks: InkShape[]
+  clusters: LeafCluster[]
+}
+
+export const plantShapes = (p: BambooPlant): InkShape[] => [...p.stalks, ...p.clusters.flatMap((c) => c.shapes)]
+
 /**
  * Leaves in 个 / 介 clusters: a short twig, then blades hanging from its tip
  * at slightly different points, each drooping under its own weight.
  */
 function bambooCluster(
-  shapes: InkShape[], x: number, y: number, twigAngle: number, leafAngles: number[], length: number, opacity: number,
-) {
+  x: number, y: number, twigAngle: number, leafAngles: number[], length: number, opacity: number,
+): LeafCluster {
+  const shapes: InkShape[] = []
   const ta = (twigAngle * Math.PI) / 180
   const twigLen = 26 + rng() * 14
   const tip = { x: x + Math.cos(ta) * twigLen, y: y + Math.sin(ta) * twigLen }
@@ -137,6 +155,7 @@ function bambooCluster(
     const bend = { x: start.x + Math.cos(a) * len * 0.45, y: start.y + Math.sin(a) * len * 0.45 - len * 0.08 }
     shapes.push({ d: brushOutline(curve(start, bend, end, 14), leafWidth(len * 0.12)), opacity: opacity * (0.75 + rng() * 0.45) })
   })
+  return { pivot: { x, y }, shapes, depth: opacity <= 0.22 ? 'back' : 'front' }
 }
 
 /**
@@ -175,20 +194,23 @@ function bambooCulm(shapes: InkShape[], from: Pt, bendAt: Pt, to: Pt, segments: 
 export const BAMBOO_WIDTH = 400
 export const BAMBOO_HEIGHT = 700
 
-export const BAMBOO: InkShape[] = (() => {
-  const shapes: InkShape[] = []
-  const a = bambooCulm(shapes, { x: 96, y: 710 }, { x: 106, y: 430 }, { x: 124, y: 160 }, 5, 9, 0.42)
-  const b = bambooCulm(shapes, { x: 150, y: 710 }, { x: 138, y: 480 }, { x: 118, y: 290 }, 4, 7, 0.3)
+export const BAMBOO: BambooPlant = (() => {
+  const stalks: InkShape[] = []
+  const a = bambooCulm(stalks, { x: 96, y: 710 }, { x: 106, y: 430 }, { x: 124, y: 160 }, 5, 9, 0.42)
+  const b = bambooCulm(stalks, { x: 150, y: 710 }, { x: 138, y: 480 }, { x: 118, y: 290 }, 4, 7, 0.3)
   const tipA = a[a.length - 1], tipB = b[b.length - 1]
   // Pale leaves first (淡墨, further back), then the dense front leaves (濃墨).
-  bambooCluster(shapes, a[3].x, a[3].y - 30, -40, [10, 40, 75], 66, 0.2)
-  bambooCluster(shapes, b[2].x, b[2].y, 215, [150, 175, 125], 58, 0.18)
-  bambooCluster(shapes, tipA.x, tipA.y + 12, -30, [20, 55, 95], 78, 0.5)
-  bambooCluster(shapes, a[3].x + 2, a[3].y, 200, [110, 145, 170, 80], 72, 0.46)
-  bambooCluster(shapes, a[2].x + 6, a[2].y, -15, [30, 70], 64, 0.4)
-  bambooCluster(shapes, tipB.x, tipB.y + 10, 210, [120, 160, 95], 60, 0.32)
-  bambooCluster(shapes, b[1].x + 2, b[1].y, -20, [40, 75, 15], 56, 0.3)
-  return shapes
+  const clusters = [
+    bambooCluster(a[3].x, a[3].y - 30, -40, [10, 40, 75], 66, 0.2),
+    bambooCluster(b[2].x, b[2].y, 215, [150, 175, 125], 58, 0.18),
+    bambooCluster(tipA.x, tipA.y + 12, -30, [20, 55, 95], 78, 0.5),
+    bambooCluster(a[3].x + 2, a[3].y, 200, [110, 145, 170, 80], 72, 0.46),
+    bambooCluster(a[2].x + 6, a[2].y, -15, [30, 70], 64, 0.4),
+    bambooCluster(tipB.x, tipB.y + 10, 210, [120, 160, 95], 60, 0.32),
+    bambooCluster(b[1].x + 2, b[1].y, -20, [40, 75, 15], 56, 0.3),
+  ]
+  // Both stalks grow from just below the bottom edge.
+  return { root: { x: 122, y: 710 }, stalks, clusters }
 })()
 
 /* ——— Hanging bamboo spray (in its own 520×380 frame, anchored top-right) ———
@@ -197,23 +219,26 @@ export const BAMBOO: InkShape[] = (() => {
 
 export const SPRAY_WIDTH = 520
 
-export const BAMBOO_SPRAY: InkShape[] = (() => {
-  const shapes: InkShape[] = []
+export const BAMBOO_SPRAY: BambooPlant = (() => {
+  const stalks: InkShape[] = []
   // The branch bows under the weight of its leaves.
-  const main = bambooCulm(shapes, { x: 570, y: -34 }, { x: 440, y: 78 }, { x: 236, y: 132 }, 4, 7, 0.44)
-  const side = bambooCulm(shapes, main[1], { x: 360, y: 58 }, { x: 262, y: 44 }, 2, 3.4, 0.34)
+  const main = bambooCulm(stalks, { x: 570, y: -34 }, { x: 440, y: 78 }, { x: 236, y: 132 }, 4, 7, 0.44)
+  const side = bambooCulm(stalks, main[1], { x: 360, y: 58 }, { x: 262, y: 44 }, 2, 3.4, 0.34)
   const tip = main[main.length - 1]
 
-  // 淡墨: pale leaves behind, giving depth.
-  bambooCluster(shapes, main[1].x, main[1].y, 80, [55, 85, 115], 72, 0.2)
-  bambooCluster(shapes, side[0].x, side[0].y, 150, [125, 160], 60, 0.18)
-  bambooCluster(shapes, tip.x + 20, tip.y - 6, 150, [100, 130], 64, 0.2)
-  // 濃墨: dense front leaves, hanging in 个 / 介 groups.
-  bambooCluster(shapes, tip.x, tip.y, 172, [112, 138, 162, 92], 92, 0.56)
-  bambooCluster(shapes, main[2].x, main[2].y, 112, [78, 104, 128], 80, 0.5)
-  bambooCluster(shapes, main[0].x, main[0].y, 96, [72, 98], 66, 0.36)
-  bambooCluster(shapes, side[1].x, side[1].y, 196, [138, 164, 118], 66, 0.38)
-  return shapes
+  const clusters = [
+    // 淡墨: pale leaves behind, giving depth.
+    bambooCluster(main[1].x, main[1].y, 80, [55, 85, 115], 72, 0.2),
+    bambooCluster(side[0].x, side[0].y, 150, [125, 160], 60, 0.18),
+    bambooCluster(tip.x + 20, tip.y - 6, 150, [100, 130], 64, 0.2),
+    // 濃墨: dense front leaves, hanging in 个 / 介 groups.
+    bambooCluster(tip.x, tip.y, 172, [112, 138, 162, 92], 92, 0.56),
+    bambooCluster(main[2].x, main[2].y, 112, [78, 104, 128], 80, 0.5),
+    bambooCluster(main[0].x, main[0].y, 96, [72, 98], 66, 0.36),
+    bambooCluster(side[1].x, side[1].y, 196, [138, 164, 118], 66, 0.38),
+  ]
+  // The branch enters from beyond the top-right corner and swings from there.
+  return { root: { x: SPRAY_WIDTH, y: 0 }, stalks, clusters }
 })()
 
 /** Bounding box of painted shapes, read from their path coordinates. */
@@ -235,7 +260,7 @@ function boundsOf(shapes: InkShape[]) {
  * enter from beyond the corner.
  */
 export const SPRAY_VIEWBOX = (() => {
-  const b = boundsOf(BAMBOO_SPRAY)
+  const b = boundsOf(plantShapes(BAMBOO_SPRAY))
   const x = Math.floor(b.minX - 6)
   const height = Math.ceil(b.maxY + 6)
   return { x, y: 0, width: SPRAY_WIDTH - x, height }

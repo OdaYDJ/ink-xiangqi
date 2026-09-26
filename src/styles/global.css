@@ -106,6 +106,31 @@ body {
   transition: width 360ms ease, height 360ms ease, opacity 360ms ease;
 }
 .landscape__spray.is-crowded { opacity: 0.3; }
+.landscape__bamboo, .landscape__spray { overflow: visible; }
+
+/* ——— Bamboo in the wind ———
+   Stalks sway around the plant's root; leaf clusters flutter around their twigs.
+   Amplitudes come from --amp; each group gets its own period and phase. */
+.bamboo-sway,
+.bamboo-flutter {
+  transform-box: view-box;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  will-change: transform;
+}
+.bamboo-sway { animation-name: bamboo-sway; }
+.bamboo-flutter { animation-name: bamboo-flutter; }
+@keyframes bamboo-sway {
+  0%, 100% { transform: rotate(calc(var(--amp) * -0.35)); }
+  45% { transform: rotate(var(--amp)); }
+  70% { transform: rotate(calc(var(--amp) * 0.55)); }
+}
+@keyframes bamboo-flutter {
+  0%, 100% { transform: rotate(calc(var(--amp) * -0.6)); }
+  30% { transform: rotate(var(--amp)); }
+  55% { transform: rotate(calc(var(--amp) * 0.2)); }
+  78% { transform: rotate(calc(var(--amp) * 0.75)); }
+}
 .ink-fill { fill: var(--ink-wash); }
 .landscape__birds { animation: drift 40s ease-in-out infinite alternate; }
 @keyframes drift {
@@ -614,5 +639,6 @@ body {
 
 @media (prefers-reduced-motion: reduce) {
   .menu__seed-input.is-drawn, .menu__seed-draw.is-drawn svg,
-  .screen, .landscape, .game-over, .game-over__seal, .game-over__text, .landscape__birds { animation: none; }
+  .screen, .landscape, .game-over, .game-over__seal, .game-over__text, .landscape__birds,
+  .bamboo-sway, .bamboo-flutter { animation: none; }
 }

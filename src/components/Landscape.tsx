@@ -1,9 +1,43 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type CSSProperties } from 'react'
 import { fitCorner, type CornerFit } from '../rendering/cornerFit'
 import {
   BAMBOO, BAMBOO_HEIGHT, BAMBOO_SPRAY, BAMBOO_WIDTH, BIRDS, LANDSCAPE_HEIGHT, LANDSCAPE_WIDTH, MOSS_DOTS, RIDGES,
-  SPRAY_VIEWBOX, TREES, WATER, type InkShape,
+  SPRAY_VIEWBOX, TREES, WATER, type BambooPlant, type InkShape,
 } from '../rendering/landscape'
+
+/** Flutter periods (seconds) for successive leaf clusters: close but never equal, so they drift in and out of phase. */
+const FLUTTER_PERIODS = [4.3, 5.2, 3.8, 4.9, 5.7, 4.5, 3.6]
+
+/**
+ * A bamboo plant in the wind. The stalks sway together around the plant's
+ * root; every leaf cluster also flutters around its own twig, each on its own
+ * period and phase, so the motion never looks mechanical.
+ */
+function Bamboo({ plant, sway, swayPeriod, flutter }: { plant: BambooPlant; sway: number; swayPeriod: number; flutter: number }) {
+  const origin = (x: number, y: number): CSSProperties => ({ transformOrigin: `${x}px ${y}px` })
+  return (
+    <g
+      className="bamboo-sway"
+      style={{ ...origin(plant.root.x, plant.root.y), '--amp': `${sway}deg`, animationDuration: `${swayPeriod}s` } as CSSProperties}
+    >
+      {paint(plant.stalks)}
+      {plant.clusters.map((c, i) => (
+        <g
+          key={i}
+          className="bamboo-flutter"
+          style={{
+            ...origin(c.pivot.x, c.pivot.y),
+            '--amp': `${c.depth === 'back' ? flutter * 0.6 : flutter}deg`,
+            animationDuration: `${FLUTTER_PERIODS[i % FLUTTER_PERIODS.length]}s`,
+            animationDelay: `${-i * 1.7}s`,
+          } as CSSProperties}
+        >
+          {paint(c.shapes)}
+        </g>
+      ))}
+    </g>
+  )
+}
 
 /** The blocks of each screen the corner bamboo must leave readable. */
 const CONTENT_BLOCKS = '.menu__frontispiece, .menu__choices, .game__inscription, .board-wrap, .game__colophon > *'
@@ -137,7 +171,8 @@ export default function Landscape({ spreadKey }: { spreadKey: string }) {
       </svg>
 
       <svg className="landscape__bamboo" viewBox={`0 0 ${BAMBOO_WIDTH} ${BAMBOO_HEIGHT}`} preserveAspectRatio="xMinYMax meet">
-        {paint(BAMBOO)}
+        {/* Rooted in the ground: a slow, small sway. */}
+        <Bamboo plant={BAMBOO} sway={0.7} swayPeriod={9} flutter={2.6} />
       </svg>
       <svg
         className={`landscape__spray${spray?.crowded ? ' is-crowded' : ''}`}
@@ -145,7 +180,8 @@ export default function Landscape({ spreadKey }: { spreadKey: string }) {
         preserveAspectRatio="xMaxYMin meet"
         style={spray ? { width: spray.width, height: spray.height } : { visibility: 'hidden' }}
       >
-        {paint(BAMBOO_SPRAY)}
+        {/* Hanging from the corner: a longer lever, so it swings a little more. */}
+        <Bamboo plant={BAMBOO_SPRAY} sway={1.1} swayPeriod={7.4} flutter={3} />
       </svg>
     </div>
   )
