@@ -4,6 +4,7 @@ import { PIECE_VALUE } from './evaluate'
 export type OrderingLevel = 'none' | 'captures' | 'full'
 
 const MAX_PLY = 64
+const MOVE_SPACE = 1 << 14
 
 /** Killer moves (quiet moves that caused a cutoff at the same ply) and history heuristic. */
 export class MoveOrderer {
@@ -28,8 +29,10 @@ export class MoveOrderer {
    */
   order(board: ArrayLike<number>, moves: number[], level: OrderingLevel, ply: number, ttMove = 0): number[] {
     if (level === 'none') return moves
-    const scores = new Map<number, number>()
-    for (const m of moves) {
+    // Pack score and move into one float (moves fit in 14 bits) and sort numerically — no allocation per move.
+    const packed = new Float64Array(moves.length)
+    for (let i = 0; i < moves.length; i++) {
+      const m = moves[i]
       const victim = board[moveTo(m)]
       let s = 0
       if (m === ttMove) s = 1 << 30
@@ -41,8 +44,10 @@ export class MoveOrderer {
         else if (ply < MAX_PLY && m === this.killers[ply * 2 + 1]) s = (1 << 25) - 1
         else s = this.history[moveFrom(m) * 90 + moveTo(m)]
       }
-      scores.set(m, s)
+      packed[i] = s * MOVE_SPACE + m
     }
-    return moves.sort((a, b) => scores.get(b)! - scores.get(a)!)
+    packed.sort()
+    for (let i = 0; i < moves.length; i++) moves[i] = packed[moves.length - 1 - i] % MOVE_SPACE
+    return moves
   }
 }

@@ -8,7 +8,7 @@ import {
   classicFormation, createFormation, createRng, generateFormation, normalizeSeed, randomSeed,
 } from '../src/game/randomizer'
 import { isInCheck } from '../src/game/rules'
-import { SOLDIER_COLS, validateFormation } from '../src/game/validator'
+import { findFreeMaterial, SOLDIER_COLS, validateFormation } from '../src/game/validator'
 
 const RUNS = 3000
 const seeds = Array.from({ length: RUNS }, (_, i) => `INK-${i.toString(16).toUpperCase().padStart(6, '0')}`)
@@ -77,6 +77,10 @@ describe(`random formations (${RUNS} seeds)`, () => {
     }
   })
 
+  it('never hand either side free material on move one', () => {
+    for (const f of formations) expect(findFreeMaterial(f.board)).toBeNull()
+  })
+
   it('are deterministic per seed', () => {
     for (const seed of seeds.slice(0, 200)) {
       expect(generateFormation(seed).board).toEqual(generateFormation(seed).board)
@@ -105,6 +109,19 @@ describe('validator', () => {
     moved[g - 9] = GENERAL // General stepped forward off the back rank
     moved[g] = 0
     expect(validateFormation(moved).errors.join()).toMatch(/General/)
+  })
+})
+
+describe('fairness check', () => {
+  it('flags facing chariots on an open file', () => {
+    const board = classicFormation().board.slice()
+    // Clear the a-file soldiers so the corner chariots face each other.
+    board[3 * 9] = 0
+    board[6 * 9] = 0
+    expect(findFreeMaterial(board)).toBe('red')
+  })
+  it('accepts the classic position', () => {
+    expect(findFreeMaterial(classicFormation().board)).toBeNull()
   })
 })
 

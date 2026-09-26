@@ -173,9 +173,14 @@ export class Searcher {
         continue
       }
       legal++
-      const score = this.opts.alphaBeta
-        ? -this.negamax(depth - 1, -beta, -alpha, ply + 1)
-        : -this.negamax(depth - 1, -INF, INF, ply + 1)
+      let score: number
+      if (!this.opts.alphaBeta) score = -this.negamax(depth - 1, -INF, INF, ply + 1)
+      else if (legal === 1) score = -this.negamax(depth - 1, -beta, -alpha, ply + 1)
+      else {
+        // Principal variation search: prove later moves are worse with a null window, re-search if not.
+        score = -this.negamax(depth - 1, -alpha - 1, -alpha, ply + 1)
+        if (score > alpha && score < beta && !this.aborted) score = -this.negamax(depth - 1, -beta, -alpha, ply + 1)
+      }
       this.unmake(m, captured)
       if (this.aborted) return 0
 
