@@ -177,7 +177,7 @@ body {
   writing-mode: vertical-rl;
   font-family: var(--title-font);
   font-weight: 400;
-  font-size: clamp(6rem, 11vw, 9.5rem);
+  font-size: clamp(6.75rem, 12.4vw, 10.75rem);
   line-height: 0.92;
   margin: 0;
   color: var(--ink);
@@ -375,7 +375,7 @@ body {
 .game__title {
   writing-mode: vertical-rl;
   font-family: var(--title-font);
-  font-size: clamp(3rem, 4.6vw, 4.25rem);
+  font-size: clamp(3.375rem, 5.2vw, 4.75rem);
   line-height: 0.95;
   letter-spacing: 0;
   color: var(--ink);
@@ -571,7 +571,7 @@ body {
   .app { align-items: flex-start; }
   .game { grid-template-columns: 1fr; row-gap: 10px; justify-items: center; }
   .game__inscription { justify-self: center; flex-direction: row; align-items: center; gap: 12px; padding-top: 0; }
-  .game__title { writing-mode: horizontal-tb; font-size: 2.25rem; }
+  .game__title { writing-mode: horizontal-tb; font-size: 2.5rem; }
   .game__couplet { display: none; }
   .game__couplet-block { flex-direction: row; }
   .game__seal { margin: 0; }
@@ -598,7 +598,7 @@ body {
 
 @media (max-width: 720px) {
   .menu { flex-direction: column; gap: 28px; }
-  .menu__title { font-size: 5.5rem; }
+  .menu__title { font-size: 6.2rem; }
   .menu__choices { align-items: center; padding-left: 0; }
   .menu__section { align-items: center; }
   .menu__choices::before { display: none; }

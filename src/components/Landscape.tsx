@@ -28,7 +28,12 @@ function useCornerSpray(): CornerFit | null {
           aspect: SPRAY_ASPECT,
           avoid,
           gap: Math.max(16, Math.min(40, window.innerWidth * 0.025)),
-          minWidth: Math.min(150, window.innerWidth * 0.34),
+          // A light accent: about a quarter of the width at most, never dominating the corner.
+          maxWidth: 440,
+          widthShare: 0.27,
+          heightShare: 0.42,
+          scale: 0.9,
+          minWidth: Math.min(130, window.innerWidth * 0.3),
         })
         setFit((prev) =>
           prev && Math.abs(prev.width - next.width) < 1 && prev.crowded === next.crowded ? prev : next,

@@ -22,6 +22,11 @@ export interface CornerFitInput {
   /** Smallest useful width; below this the decoration would read as a smudge. */
   minWidth?: number
   maxWidth?: number
+  /** Ideal size as a share of the viewport's width and height. */
+  widthShare?: number
+  heightShare?: number
+  /** Final scale applied after fitting (below 1 leaves extra breathing room). */
+  scale?: number
 }
 
 export interface CornerFit {
@@ -33,9 +38,10 @@ export interface CornerFit {
 
 export function fitCorner({
   viewportWidth: vw, viewportHeight: vh, aspect, avoid, gap = 24, minWidth = 120, maxWidth = 480,
+  widthShare = 0.3, heightShare = 0.46, scale = 1,
 }: CornerFitInput): CornerFit {
   // Ideal size follows the smaller viewport dimension, so wide-short and tall-narrow screens both look balanced.
-  const ideal = Math.min(maxWidth, vw * 0.3, vh * 0.46 * aspect)
+  const ideal = Math.min(maxWidth, vw * widthShare, vh * heightShare * aspect)
 
   // Each rectangle allows the decoration to sit either entirely to its right or entirely above it.
   let limit = Infinity
@@ -46,7 +52,7 @@ export function fitCorner({
     limit = Math.min(limit, Math.max(besideWidth, aboveWidth))
   }
 
-  const target = Math.min(ideal, limit)
+  const target = Math.min(ideal, limit) * scale
   const width = Math.max(minWidth, Math.min(target, maxWidth))
   return { width, height: width / aspect, crowded: target < minWidth }
 }

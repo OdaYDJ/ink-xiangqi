@@ -37,4 +37,10 @@ describe('fitCorner', () => {
     expect(f.width).toBe(120)
     expect(f.crowded).toBe(true)
   })
+
+  it('applies a final scale for a lighter accent', () => {
+    const full = fitCorner({ viewportWidth: 1440, viewportHeight: 900, aspect, avoid: [] })
+    const lighter = fitCorner({ viewportWidth: 1440, viewportHeight: 900, aspect, avoid: [], scale: 0.9 })
+    expect(lighter.width).toBeCloseTo(full.width * 0.9)
+  })
 })
