@@ -1,12 +1,24 @@
+/* ——— Palette: pigments on Xuan paper ——— */
 :root {
-  --paper: #f4f0e6;
-  --paper-light: #faf8f1;
-  --ink: #202020;
-  --ink-soft: #77736b;
-  --cinnabar: #a33a32;
+  --paper: #f3eee3;
+  --paper-deep: #e8dfcd;
+  --paper-light: #f8f5ee;
+  --ink: #25272b;
+  --ink-2: #4b4e53;
+  --ink-soft: #7c786f;
+  --ink-wash: #3a4048;
+  --charcoal: #34383e;
+  --charcoal-edge: #1f2226;
+  --piece-paper: #f2eadb;
+  --piece-paper-edge: #c9b9a0;
+  --piece-ink-text: #ede6d6;
+  --cinnabar: #a34a3c;
+  --seal: #ad4637;
+
   --title-font: 'Ma Shan Zheng', 'LXGW WenKai TC', 'Kaiti TC', 'STKaiti', 'KaiTi', serif;
   --brush-font: 'LXGW WenKai TC', 'Kaiti TC', 'STKaiti', 'KaiTi', 'BiauKai', serif;
-  --ui-font: 'Iowan Old Style', 'Palatino', 'Palatino Linotype', 'Songti SC', Georgia, serif;
+  --song-font: 'Noto Serif TC', 'Songti TC', 'STSong', 'PMingLiU', serif;
+  --ui-font: 'Cormorant Garamond', 'Iowan Old Style', 'Palatino', Georgia, serif;
   color-scheme: light;
 }
 
@@ -16,71 +28,33 @@ html, body, #root { min-height: 100%; }
 body {
   margin: 0;
   background-color: var(--paper);
-  /* Fine paper grain. */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.11 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  /* Xuan paper: a whisper of grain over a faintly uneven tone. */
+  background-image:
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='260' height='260'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='0.9 0.55' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.17 0 0 0 0 0.12 0 0 0 0.045 0'/></filter><rect width='100%' height='100%' filter='url(%23g)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.004' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.47 0 0 0 0 0.33 0 0 0 0.09 -0.02'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
   color: var(--ink);
   font-family: var(--ui-font);
+  font-size: 17px;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
+[lang='zh-Hant'] { font-family: var(--song-font); }
+
 .app {
+  position: relative;
   min-height: 100vh;
   min-height: 100dvh;
   display: flex;
   justify-content: center;
-  padding: max(12px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
-}
-
-.screen {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
   align-items: center;
-  animation: screen-in 480ms ease-out both;
+  padding: max(16px, env(safe-area-inset-top)) 20px max(16px, env(safe-area-inset-bottom));
 }
+.app > .screen { position: relative; z-index: 1; margin-block: auto; }
+
+.screen { animation: screen-in 700ms ease-out both; }
 @keyframes screen-in {
-  from { opacity: 0; transform: translateY(6px); filter: blur(2px); }
-}
-
-/* ——— Buttons: text-only, like brushed labels ——— */
-.ink-button {
-  font: inherit;
-  color: var(--ink-soft);
-  background: none;
-  border: 0;
-  padding: 0.5em 0.7em;
-  cursor: pointer;
-  letter-spacing: 0.06em;
-  position: relative;
-  transition: color 160ms ease;
-  -webkit-tap-highlight-color: transparent;
-}
-.ink-button::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  bottom: 0.25em;
-  width: 0;
-  height: 1px;
-  background: currentColor;
-  transition: width 220ms ease, left 220ms ease;
-}
-.ink-button:hover:not(:disabled),
-.ink-button:focus-visible { color: var(--ink); }
-.ink-button:hover:not(:disabled)::after,
-.ink-button:focus-visible::after { width: 60%; left: 20%; }
-.ink-button:focus-visible { outline: 1px dotted var(--ink-soft); outline-offset: 2px; }
-.ink-button:disabled { opacity: 0.35; cursor: default; }
-
-.brush-rule {
-  width: min(220px, 60vw);
-  height: 2px;
-  border: 0;
-  margin: 1.6rem 0;
-  background: linear-gradient(90deg, transparent, var(--ink) 18%, var(--ink) 70%, transparent);
-  opacity: 0.55;
-  border-radius: 50%;
+  from { opacity: 0; filter: blur(3px); }
 }
 
 .visually-hidden {
@@ -91,125 +65,311 @@ body {
   white-space: nowrap;
 }
 
-/* ——— Main menu ——— */
-.menu { justify-content: center; min-height: 88vh; text-align: center; }
-.menu__title {
-  font-family: var(--title-font);
-  font-weight: 400;
-  font-size: clamp(4.5rem, 18vw, 7rem);
-  line-height: 1;
-  margin: 0;
+/* ——— The painting behind everything ——— */
+.landscape {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  animation: wash-in 2.8s ease-out both;
 }
-.menu__subtitle, .menu__label {
-  color: var(--ink-soft);
-  letter-spacing: 0.35em;
-  text-transform: uppercase;
-  font-size: 0.72rem;
-  margin: 0.9rem 0 0;
+@keyframes wash-in {
+  from { opacity: 0; filter: blur(8px); }
+  40% { opacity: 0.6; }
 }
-.menu__label { color: var(--ink); margin: 0 0 0.6rem; }
-.difficulty { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.1rem; }
-.difficulty__option { font-size: 1.2rem; color: var(--ink); }
-.difficulty__option:hover::after { background: var(--cinnabar); }
+.landscape__range { position: absolute; inset: 0; width: 100%; height: 100%; }
+.landscape__bamboo {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: min(78vh, 700px);
+  width: auto;
+  opacity: 0.8;
+}
+.landscape__plum {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: min(25vw, 400px);
+  height: auto;
+  opacity: 0.8;
+}
+.ink-fill { fill: var(--ink-wash); }
+.ink-cinnabar { fill: var(--seal); }
+.landscape__birds { animation: drift 40s ease-in-out infinite alternate; }
+@keyframes drift {
+  to { transform: translate(-30px, 6px); }
+}
 
-.menu__mode { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: center; }
-.menu__mode-option { font-size: 0.95rem; }
-.menu__mode-option.is-active { color: var(--ink); }
-.menu__mode-option.is-active::before {
+/* ——— Quiet controls ——— */
+.quiet-button {
+  font: inherit;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink-soft);
+  background: none;
+  border: 0;
+  padding: 0.25em 0;
+  cursor: pointer;
+  position: relative;
+  text-align: inherit;
+  transition: color 200ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.quiet-button::after {
   content: '';
   position: absolute;
-  left: -0.1em;
-  top: 50%;
-  width: 5px;
-  height: 5px;
-  margin-top: -2.5px;
-  border-radius: 50%;
-  background: var(--cinnabar);
+  left: 0;
+  bottom: 0.2em;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 260ms ease;
 }
+.quiet-button:hover:not(:disabled),
+.quiet-button:focus-visible { color: var(--ink); }
+.quiet-button:hover:not(:disabled)::after,
+.quiet-button:focus-visible::after { transform: scaleX(1); }
+.quiet-button:disabled { opacity: 0.35; cursor: default; }
+:focus-visible { outline: 1px dotted var(--ink-soft); outline-offset: 3px; }
+
+.label {
+  margin: 0;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.label [lang='zh-Hant'] { letter-spacing: 0.3em; color: var(--ink-2); margin-right: 0.4em; }
+
+.brush-rule { display: block; }
+.brush-rule path { fill: var(--ink); fill-opacity: 0.55; }
+
+/* ——— Seal ——— */
+.seal { display: block; overflow: visible; }
+.seal__ground { fill: var(--seal); }
+.seal__border { stroke: var(--seal); }
+.seal__glyph { font-family: var(--song-font); font-weight: 900; }
+.seal--carved .seal__glyph { fill: var(--paper-light); }
+.seal--raised .seal__glyph { fill: var(--seal); }
+
+/* ——— Main menu: a title page ——— */
+.menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(40px, 9vw, 140px);
+}
+.menu__title-block { display: flex; align-items: flex-end; gap: 18px; }
+.menu__title {
+  writing-mode: vertical-rl;
+  font-family: var(--title-font);
+  font-weight: 400;
+  font-size: clamp(5.5rem, 12vw, 9rem);
+  line-height: 1;
+  margin: 0;
+  letter-spacing: 0.05em;
+  color: var(--ink);
+}
+.menu__signature { display: flex; flex-direction: column; align-items: center; gap: 14px; padding-bottom: 0.6rem; }
+.menu__subtitle {
+  writing-mode: vertical-rl;
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.menu__choices { display: flex; flex-direction: column; align-items: flex-start; gap: 18px; }
+
+.difficulty { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.difficulty__option {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font: inherit;
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  cursor: pointer;
+  color: var(--ink);
+  position: relative;
+}
+.difficulty__title {
+  font-size: 1.55rem;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+  transition: color 200ms ease;
+}
+.difficulty__label { font-style: italic; color: var(--ink-soft); font-size: 1.05rem; transition: color 200ms ease; }
+.difficulty__option::before {
+  content: '';
+  position: absolute;
+  left: -18px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 1px;
+  background: var(--seal);
+  opacity: 0;
+  transform: rotate(8deg) scale(0.6);
+  transition: opacity 200ms ease, transform 200ms ease;
+}
+.difficulty__option:hover::before,
+.difficulty__option:focus-visible::before { opacity: 0.9; transform: rotate(8deg) scale(1); }
+.difficulty__option:hover .difficulty__label { color: var(--ink); }
+
+.menu__modes { display: flex; gap: 22px; flex-wrap: wrap; }
+.menu__mode [lang='zh-Hant'] { font-style: normal; letter-spacing: 0.15em; margin-right: 0.2em; }
+.menu__mode.is-active { color: var(--ink); }
+.menu__mode.is-active::after { transform: scaleX(1); }
 
 .menu__seed {
   display: flex;
   align-items: baseline;
-  gap: 0.6rem;
-  margin-top: 0.7rem;
-  color: var(--ink-soft);
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
+  gap: 12px;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
+  color: var(--ink-soft);
 }
 .menu__seed input {
   font: inherit;
-  letter-spacing: 0.15em;
-  width: 9.5em;
-  text-align: center;
+  font-size: 0.95rem;
+  letter-spacing: 0.14em;
+  width: 11em;
   color: var(--ink);
   background: transparent;
   border: 0;
-  border-bottom: 1px solid rgba(32, 32, 32, 0.25);
-  padding: 0.25em 0;
+  border-bottom: 1px solid rgba(37, 39, 43, 0.22);
+  padding: 0.2em 0;
   border-radius: 0;
 }
 .menu__seed input:focus { outline: none; border-bottom-color: var(--ink); }
-.menu__seed input::placeholder { color: var(--ink-soft); opacity: 0.6; }
+.menu__seed input::placeholder { color: var(--ink-soft); opacity: 0.55; font-style: italic; text-transform: none; letter-spacing: 0.04em; }
 .menu__seed input[aria-invalid='true'] { border-bottom-color: var(--cinnabar); }
-.menu__error { color: var(--cinnabar); font-size: 0.8rem; margin: 0.4rem 0 0; }
-.menu__local { margin-top: 1.4rem; font-size: 0.8rem; opacity: 0.8; }
+.menu__error { color: var(--cinnabar); font-size: 0.9rem; margin: -8px 0 0; }
+.menu__local { font-size: 0.95rem; }
+.menu__local [lang='zh-Hant'] { font-style: normal; letter-spacing: 0.15em; margin-right: 0.2em; }
 
-/* ——— In game ——— */
-.game { gap: 0.2rem; }
-.game__header { height: 3rem; display: flex; align-items: center; }
+/* ——— In game: a hanging scroll with inscription, painting and colophon ——— */
+.game {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: stretch;
+  column-gap: clamp(20px, 3.5vw, 56px);
+}
+
+.game__inscription {
+  justify-self: end;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-start;
+  gap: 14px;
+  padding-top: 3%;
+}
 .game__title {
+  writing-mode: vertical-rl;
   font-family: var(--title-font);
-  font-size: 2rem;
+  font-size: clamp(2.6rem, 4.2vw, 3.6rem);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  color: var(--ink);
   background: none;
   border: 0;
-  color: var(--ink);
+  padding: 0;
   cursor: pointer;
-  padding: 0 0.3em;
 }
+.game__verse {
+  writing-mode: vertical-rl;
+  margin: 0.6rem 0 0;
+  font-family: var(--brush-font);
+  font-size: 1.05rem;
+  letter-spacing: 0.35em;
+  color: var(--ink-soft);
+}
+.game__seal { align-self: flex-start; margin-top: 11.5rem; margin-right: -2.6rem; }
 
 .board-wrap {
   position: relative;
-  /* The board dominates: as large as the viewport allows, keeping room for controls. */
-  width: min(100%, 620px, calc((100dvh - 210px) * 0.908));
-  min-width: min(100%, 300px);
+  align-self: center;
+  width: min(calc(100vw - 40px), calc((100dvh - 48px) * 0.908), 720px);
+}
+
+.game__colophon {
+  justify-self: start;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  padding-block: 4% 3.5%;
+  max-width: 17rem;
 }
 
 .status {
-  min-height: 1.6em;
-  margin: 0.2rem 0 0;
-  font-size: 0.95rem;
+  margin: 0;
+  font-size: 1.1rem;
+  font-style: italic;
   color: var(--ink);
-  letter-spacing: 0.04em;
+  min-height: 1.5em;
 }
-.status__check { color: var(--cinnabar); }
+.status__check { color: var(--cinnabar); font-style: normal; }
+.status__check [lang='zh-Hant'] { letter-spacing: 0.12em; }
 .status__thinking { color: var(--ink-soft); }
 .status__thinking::after {
   content: '';
   display: inline-block;
   width: 1.2em;
   text-align: left;
-  animation: thinking 1.2s steps(4) infinite;
+  animation: thinking 1.4s steps(4) infinite;
 }
 @keyframes thinking {
   0% { content: ''; }
-  25% { content: '·'; }
-  50% { content: '··'; }
-  75% { content: '···'; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
 }
 
 .game__meta {
   margin: 0;
-  font-size: 0.78rem;
-  color: var(--ink-soft);
+  font-size: 0.8rem;
   letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
 }
-.game__dot { margin: 0 0.6em; }
-.game__seed { user-select: all; }
+.game__meta [lang='zh-Hant'] { text-transform: none; letter-spacing: 0.2em; color: var(--ink-2); }
+.game__dot { margin: 0 0.5em; }
+.game__seed { user-select: all; font-variant-numeric: tabular-nums; }
 
-.controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.1rem 0.4rem; margin-top: 0.4rem; }
-.controls .ink-button { font-size: 0.9rem; }
+/* Move record in Chinese notation, written in vertical columns. */
+.record {
+  flex: 1;
+  margin: 8px 0;
+  padding: 0;
+  list-style: none;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  font-family: var(--song-font);
+  font-size: 0.92rem;
+  line-height: 2;
+  letter-spacing: 0.12em;
+  max-height: 15em;
+  color: var(--ink-soft);
+}
+.record__move { display: inline-block; white-space: nowrap; margin-inline-end: 0.9em; margin-block-end: 0.5em; }
+.record__move::after { content: '　'; }
+.record__move.is-red { color: rgba(163, 74, 60, 0.7); }
+.record__move.is-latest { color: var(--ink); }
+.record__move.is-red.is-latest { color: var(--cinnabar); }
+.record--empty { font-family: var(--song-font); color: var(--ink-soft); opacity: 0.35; letter-spacing: 0.2em; }
 
+.controls { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+
+/* Game over: a seal pressed onto the painting. */
 .game-over {
   position: absolute;
   inset: 0;
@@ -217,21 +377,70 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  background: radial-gradient(closest-side, rgba(250, 248, 241, 0.92), rgba(250, 248, 241, 0.55) 70%, transparent);
-  animation: screen-in 700ms ease-out both;
+  gap: 18px;
+  background: radial-gradient(closest-side, rgba(243, 238, 227, 0.88), rgba(243, 238, 227, 0.5) 65%, transparent);
+  animation: screen-in 900ms ease-out both;
   pointer-events: none;
 }
-.game-over__glyph {
-  font-family: var(--brush-font);
-  font-weight: 700;
-  font-size: clamp(4rem, 16vw, 7rem);
-  line-height: 1;
-  color: var(--cinnabar);
+.game-over__seal { animation: stamp 760ms 250ms cubic-bezier(0.2, 0.9, 0.3, 1.15) both; }
+@keyframes stamp {
+  0% { opacity: 0; transform: scale(1.7) rotate(-12deg); }
+  55% { opacity: 1; transform: scale(0.94) rotate(-3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-4deg); }
 }
-.game-over__glyph.is-loss { color: var(--ink); }
-.game-over__text { letter-spacing: 0.2em; font-size: 0.85rem; color: var(--ink); text-transform: uppercase; }
+.game-over__text {
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--ink);
+  animation: screen-in 700ms 800ms ease-out both;
+}
+
+/* ——— Tablet and phone: the board first, everything else in a single quiet column ——— */
+@media (max-width: 960px) {
+  .app { align-items: flex-start; }
+  .game { grid-template-columns: 1fr; row-gap: 10px; justify-items: center; }
+  .game__inscription { justify-self: center; flex-direction: row; align-items: center; gap: 12px; padding-top: 0; }
+  .game__title { writing-mode: horizontal-tb; font-size: 2.3rem; }
+  .game__verse { display: none; }
+  .game__seal { margin: 0; }
+  .board-wrap { width: min(100%, calc((100dvh - 190px) * 0.908), 640px); min-width: min(100%, 320px); }
+  .game__colophon {
+    justify-self: center;
+    align-items: center;
+    text-align: center;
+    max-width: none;
+    padding: 0;
+    gap: 8px;
+  }
+  .record {
+    writing-mode: horizontal-tb;
+    max-height: none;
+    margin: 0;
+    line-height: 1.5;
+    min-height: 1.5em;
+  }
+  .record__move:not(:nth-last-child(-n + 2)) { display: none; }
+  .controls { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
+  .landscape__bamboo { height: min(46vh, 380px); opacity: 0.45; }
+  .landscape__plum { width: min(40vw, 260px); opacity: 0.55; }
+}
+
+@media (max-width: 720px) {
+  .menu { flex-direction: column; gap: 28px; }
+  .menu__title { font-size: 5rem; }
+  .menu__choices { align-items: center; }
+  .difficulty__option { justify-content: center; }
+  .menu__modes { justify-content: center; }
+}
+
+@media (max-width: 560px) {
+  body { font-size: 16px; }
+  .app { padding-inline: 12px; }
+  .landscape__bamboo { display: none; }
+  .landscape__plum { width: 36vw; opacity: 0.35; }
+  .game__meta { font-size: 0.72rem; }
+}
 
 @media (prefers-reduced-motion: reduce) {
-  .screen, .game-over { animation: none; }
+  .screen, .landscape, .game-over, .game-over__seal, .game-over__text, .landscape__birds { animation: none; }
 }

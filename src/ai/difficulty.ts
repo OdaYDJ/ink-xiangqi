@@ -11,6 +11,13 @@ export const DIFFICULTY_LABELS: Record<Difficulty, string> = {
   hard: 'Hard',
 }
 
+/** Traditional titles for each level: beginner, player, national master. */
+export const DIFFICULTY_TITLES: Record<Difficulty, string> = {
+  easy: '初學',
+  medium: '棋手',
+  hard: '國手',
+}
+
 /**
  * Easy:   plain minimax, depth 2, material + position, noisy root choice.
  * Medium: alpha-beta to depth 4 with capture ordering, quiescence and the full evaluation.

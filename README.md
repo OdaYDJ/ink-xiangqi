@@ -15,7 +15,9 @@ Play: https://odaydj.github.io/ink-xiangqi/ (once GitHub Pages is enabled)
   - **Medium** — alpha-beta, quiescence, mobility / General-safety evaluation (~500 ms)
   - **Hard** — iterative deepening, PVS, transposition table, killer/history ordering (~2 s)
 - Pass & play for two people on one device.
-- SVG board with brush-stroke texture, ink-ripple selection, dissolving captures, a cinnabar pulse on check, optional quiet sounds, responsive down to phone width.
+- An ink-painting interface: every board line is a tapered brush stroke on exact geometry, a dry-brush frame, a misty river, carved paper and charcoal pieces, and a procedurally painted landscape (mountains in mist, water, bamboo, plum, birds) behind the game.
+- A hanging-scroll layout: vertical title and inscription with a carved seal on the left, the game record in Chinese notation (炮二平五, 馬8進7…) and quiet controls on the right; on phones the board comes first.
+- Ink-inspired motion: the board spreads into the paper on start, a soft halo marks the selected piece, a ripple marks the landing point, a small splash marks captures, and a seal is stamped when the game ends. Optional quiet sounds; reduced-motion respected.
 
 ## Random formations
 

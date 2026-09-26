@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AiClient } from '../ai/aiClient'
-import { DIFFICULTY_LABELS } from '../ai/difficulty'
+import { DIFFICULTY_LABELS, DIFFICULTY_TITLES } from '../ai/difficulty'
 import {
   applyMove, createGame, legalTargets, undoMoves, type GameState,
 } from '../game/gameState'
@@ -14,6 +14,8 @@ import { AI_MIN_DELAY_MS, CAPTURE_FADE_MS, MOVE_MS } from '../rendering/animatio
 import { playCaptureSound, playMoveSound } from '../rendering/sound'
 import Board, { type PieceView } from './Board'
 import GameControls from './GameControls'
+import MoveRecord from './MoveRecord'
+import Seal from './Seal'
 import type { GameConfig } from './MainMenu'
 
 interface GameProps {
@@ -149,12 +151,17 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
   const last = game.history.at(-1) ?? null
   const checkSquare = game.inCheck && game.status !== 'draw' ? findGeneral(game.board, game.turn) : null
   const canUndo = !thinking && (vsAi ? game.history.some((m) => sideOf(m.piece) === HUMAN) : game.history.length > 0)
+  const level = config.opponent === 'human' ? null : config.opponent
 
   return (
     <section className="game screen">
-      <header className="game__header">
-        <button type="button" className="game__title" onClick={onMenu} aria-label="Back to menu">墨弈</button>
-      </header>
+      <aside className="game__inscription">
+        <button type="button" className="game__title" onClick={onMenu} aria-label="墨弈 — back to menu" lang="zh-Hant">
+          墨弈
+        </button>
+        <p className="game__verse" lang="zh-Hant" aria-hidden="true">觀棋不語真君子</p>
+        <Seal text="棋" size={30} className="game__seal" />
+      </aside>
 
       <div className="board-wrap">
         <Board
@@ -163,6 +170,8 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
           selected={selected}
           targets={targets}
           lastMove={last}
+          moveKey={game.history.length}
+          lastWasCapture={!!last?.captured}
           checkSquare={checkSquare}
           interactive={humanTurn}
           onPointClick={handlePoint}
@@ -170,56 +179,69 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
         {game.status !== 'playing' && <GameOver game={game} vsAi={vsAi} />}
       </div>
 
-      <p className="status" aria-live="polite">
-        <StatusLine game={game} thinking={thinking} vsAi={vsAi} error={aiError} />
-        <span className="visually-hidden">{describeMove(game)}</span>
-      </p>
-
-      <p className="game__meta">
-        {vsAi ? `AI · ${DIFFICULTY_LABELS[config.opponent as keyof typeof DIFFICULTY_LABELS]}` : 'Pass & play'}
-        <span className="game__dot">·</span>
-        {formation.seed ? <span className="game__seed" title="Formation seed">{formation.seed}</span> : config.fen ? 'Custom position' : 'Classic'}
-      </p>
-
-      <GameControls
-        canUndo={canUndo}
-        soundOn={soundOn}
-        onUndo={undo}
-        onRestart={restart}
-        onNewFormation={config.mode === 'random' ? onNewFormation : null}
-        onToggleSound={onToggleSound}
-        onMenu={onMenu}
-      />
+      <aside className="game__colophon">
+        <p className="status" aria-live="polite">
+          <StatusLine game={game} thinking={thinking} vsAi={vsAi} error={aiError} />
+          <span className="visually-hidden">{describeMove(game)}</span>
+        </p>
+        <p className="game__meta">
+          {level ? (
+            <>
+              <span lang="zh-Hant">{DIFFICULTY_TITLES[level]}</span> {DIFFICULTY_LABELS[level]}
+            </>
+          ) : (
+            'Two players'
+          )}
+          <span className="game__dot" aria-hidden="true">·</span>
+          {formation.seed ? (
+            <span className="game__seed" title="Formation seed — share it to replay this layout">{formation.seed}</span>
+          ) : config.fen ? 'Custom position' : 'Classic'}
+        </p>
+        <MoveRecord initialBoard={game.initialBoard} history={game.history} />
+        <GameControls
+          canUndo={canUndo}
+          soundOn={soundOn}
+          onUndo={undo}
+          onRestart={restart}
+          onNewFormation={config.mode === 'random' && !config.fen ? onNewFormation : null}
+          onToggleSound={onToggleSound}
+          onMenu={onMenu}
+        />
+      </aside>
     </section>
   )
 }
 
 function StatusLine({ game, thinking, vsAi, error }: { game: GameState; thinking: boolean; vsAi: boolean; error: string | null }) {
-  if (error) return <>The AI stumbled ({error}). Try Undo or Restart.</>
-  if (game.status !== 'playing') return null
-  const name = (s: Side) => (vsAi ? (s === HUMAN ? 'Your' : 'AI') : s === 'red' ? 'Red' : 'Black')
+  if (error) return <>The computer couldn’t find a move ({error}). Undo or restart to continue.</>
+  if (game.status !== 'playing') return <GameResultText game={game} vsAi={vsAi} />
   if (thinking) return <span className="status__thinking">Thinking</span>
+  const name = (s: Side) => (s === 'red' ? 'Red' : 'Black')
   return (
     <>
-      {game.inCheck && <span className="status__check">將軍 · Check · </span>}
-      {vsAi && game.turn === HUMAN ? 'Your move' : `${name(game.turn)} to move`}
+      {game.inCheck && (
+        <span className="status__check">
+          <span lang="zh-Hant">將軍</span> Check ·{' '}
+        </span>
+      )}
+      {vsAi ? (game.turn === HUMAN ? 'Your move' : 'Their move') : `${name(game.turn)} to move`}
     </>
   )
 }
 
+function GameResultText({ game, vsAi }: { game: GameState; vsAi: boolean }) {
+  if (!game.winner) return <>{game.drawReason === 'repetition' ? 'Drawn by repetition' : 'Drawn'}</>
+  const how = game.status === 'checkmate' ? 'Checkmate' : 'No moves left'
+  const who = vsAi ? (game.winner === HUMAN ? 'you win' : 'the computer wins') : `${game.winner === 'red' ? 'Red' : 'Black'} wins`
+  return <>{how} · {who}</>
+}
+
 function GameOver({ game, vsAi }: { game: GameState; vsAi: boolean }) {
-  let glyph = '和'
-  let text = game.drawReason === 'repetition' ? 'Draw by repetition' : 'Draw'
-  if (game.winner) {
-    const humanWon = game.winner === HUMAN
-    glyph = vsAi ? (humanWon ? '勝' : '負') : '勝'
-    const how = game.status === 'checkmate' ? 'Checkmate' : 'No moves left'
-    text = vsAi ? `${how} · ${humanWon ? 'You win' : 'The AI wins'}` : `${how} · ${game.winner === 'red' ? 'Red' : 'Black'} wins`
-  }
+  const glyph = !game.winner ? '和' : vsAi && game.winner !== HUMAN ? '負' : '勝'
   return (
     <div className="game-over" role="status">
-      <span className={`game-over__glyph${game.winner && game.winner !== HUMAN && vsAi ? ' is-loss' : ''}`}>{glyph}</span>
-      <span className="game-over__text">{text}</span>
+      <Seal text={glyph} size={112} className="game-over__seal" title={glyph} />
+      <span className="game-over__text"><GameResultText game={game} vsAi={vsAi} /></span>
     </div>
   )
 }

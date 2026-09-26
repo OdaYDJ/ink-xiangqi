@@ -1,66 +1,64 @@
-.piece {
-  transition: transform 220ms cubic-bezier(0.25, 0.7, 0.25, 1);
-}
-.piece__body {
-  transition: transform 180ms ease-out;
-}
-.piece.is-selected .piece__body { transform: scale(1.07); }
+.piece { transition: transform 240ms cubic-bezier(0.3, 0.7, 0.3, 1); }
+.piece__body,
+.piece__shadow { transition: transform 200ms ease-out, opacity 200ms ease-out; }
 
-.piece__bleed { fill: var(--ink); opacity: 0.07; }
-.piece__disc { fill: var(--paper-light); stroke-width: 1.4; }
-.piece__ring { fill: none; stroke-width: 0.7; opacity: 0.45; }
+.piece__shadow { fill: var(--ink); opacity: 0.2; }
+.piece__disc { stroke-width: 1.1; }
+.piece__grain { opacity: 0.5; mix-blend-mode: multiply; }
+.piece__groove, .piece__groove-light { fill: none; stroke-width: 1; }
 .piece__char {
   font-family: var(--brush-font);
-  font-size: 33px;
   font-weight: 700;
+  font-size: 32px;
   pointer-events: none;
 }
 
-.piece--red .piece__disc,
-.piece--red .piece__ring { stroke: var(--cinnabar); }
+/* Red: warm paper stone, faded seal-red lettering. */
+.piece--red .piece__disc { fill: var(--piece-paper); stroke: var(--piece-paper-edge); }
+.piece--red .piece__groove { stroke: var(--cinnabar); opacity: 0.55; }
+.piece--red .piece__groove-light { stroke: #fffaf0; opacity: 0.7; }
 .piece--red .piece__char { fill: var(--cinnabar); }
 
-.piece--black .piece__disc,
-.piece--black .piece__ring { stroke: var(--ink); }
-.piece--black .piece__char { fill: var(--ink); }
+/* Black: charcoal ink stone with a blue-grey cast, paper-coloured lettering. */
+.piece--black .piece__disc { fill: var(--charcoal); stroke: var(--charcoal-edge); }
+.piece--black .piece__grain { opacity: 0.35; mix-blend-mode: screen; }
+.piece--black .piece__groove { stroke: var(--charcoal-edge); opacity: 0.9; }
+.piece--black .piece__groove-light { stroke: #7d8590; opacity: 0.35; }
+.piece--black .piece__char { fill: var(--piece-ink-text); }
 
-/* Selection: a soft ink ripple spreading from the piece. */
-.piece__ripple {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 1.2;
-  opacity: 0;
-  animation: ink-ripple 1.6s ease-out infinite;
-}
-.piece--red .piece__ripple { stroke: var(--cinnabar); }
-@keyframes ink-ripple {
-  0% { transform: scale(1); opacity: 0.45; }
-  100% { transform: scale(1.55); opacity: 0; }
+/* Selection: the piece lifts a little and a soft ink halo spreads beneath it. */
+.piece.is-selected .piece__body { transform: translateY(-2px) scale(1.04); }
+.piece.is-selected .piece__shadow { transform: translate(1px, 3px) scale(1.08); opacity: 0.28; }
+.piece__halo { animation: halo-breathe 2.8s ease-in-out infinite; transform-origin: 0 0; }
+@keyframes halo-breathe {
+  0%, 100% { opacity: 0.8; transform: scale(0.96); }
+  50% { opacity: 1; transform: scale(1.04); }
 }
 
-/* Captured pieces dissolve like ink into wet paper. */
-.piece.is-captured .piece__body {
-  animation: ink-dissolve 420ms ease-in forwards;
+/* Captured pieces sink into the paper. */
+.piece.is-captured .piece__body,
+.piece.is-captured .piece__shadow {
+  animation: ink-dissolve 460ms ease-in forwards;
 }
 @keyframes ink-dissolve {
-  0% { opacity: 1; filter: blur(0); transform: scale(1); }
-  100% { opacity: 0; filter: blur(3px); transform: scale(1.12); }
+  0% { opacity: 1; filter: blur(0); }
+  100% { opacity: 0; filter: blur(4px); transform: scale(1.08); }
 }
 
-/* Check: a restrained cinnabar pulse around the General. */
+/* Check: a slow, faded cinnabar ring around the General. */
 .piece__check {
   fill: none;
   stroke: var(--cinnabar);
-  stroke-width: 1.6;
-  animation: check-pulse 1.4s ease-in-out infinite;
+  stroke-width: 2;
+  animation: check-pulse 1.8s ease-in-out infinite;
 }
 @keyframes check-pulse {
   0%, 100% { opacity: 0.25; transform: scale(1); }
-  50% { opacity: 0.85; transform: scale(1.08); }
+  50% { opacity: 0.8; transform: scale(1.06); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .piece, .piece__body { transition: none; }
-  .piece__ripple, .piece__check, .target--move, .target--capture { animation: none; }
+  .piece, .piece__body, .piece__shadow { transition: none; }
+  .piece__halo, .piece__check { animation: none; }
   .piece__check { opacity: 0.7; }
 }

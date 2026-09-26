@@ -10,35 +10,77 @@
 }
 .board.is-interactive { cursor: pointer; }
 
-.board__wash { fill: var(--paper-light); opacity: 0.75; }
+.board__wash { fill: var(--paper-deep); opacity: 0.55; }
 
-.board__ink path { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
+.board__ink path { fill: var(--ink); }
+.board__water path { fill: var(--ink-wash); }
+
+/* Ink soaks into the paper when a game opens: the drawing spreads from the centre. */
+.board__ink {
+  animation: ink-spread 1.6s cubic-bezier(0.3, 0.6, 0.2, 1) both;
+}
+@keyframes ink-spread {
+  from { clip-path: circle(0% at 50% 50%); opacity: 0.2; }
+  to { clip-path: circle(75% at 50% 50%); opacity: 1; }
+}
+.board__pieces { animation: pieces-settle 900ms 500ms ease-out both; }
+@keyframes pieces-settle {
+  from { opacity: 0; }
+}
 
 .board__river text {
   font-family: var(--brush-font);
-  font-size: 34px;
-  fill: var(--ink-soft);
-  opacity: 0.8;
-  letter-spacing: 0.4em;
+  font-size: 31px;
+  fill: var(--ink);
+  fill-opacity: 0.5;
+  letter-spacing: 0.55em;
 }
 
-.last-move__from { fill: var(--ink); opacity: 0.12; }
-.last-move__to { fill: none; stroke: var(--ink); stroke-width: 1; opacity: 0.18; stroke-dasharray: 2 5; }
+.last-move__from { fill: var(--ink); opacity: 0.16; }
 
+/* Landing: one soft ring of ink widening into the paper. */
+.ink-ripple {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.2;
+  opacity: 0;
+  animation: ink-ripple-once 900ms 140ms ease-out;
+}
+@keyframes ink-ripple-once {
+  0% { opacity: 0.3; transform: scale(0.9); }
+  100% { opacity: 0; transform: scale(1.45); }
+}
+.ink-drop {
+  transform-box: fill-box;
+  transform-origin: center;
+  fill: var(--ink);
+  opacity: 0;
+  animation: ink-drop 1.1s 160ms ease-out;
+}
+@keyframes ink-drop {
+  0% { opacity: 0.55; transform: scale(0.35); }
+  30% { opacity: 0.45; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.1); }
+}
+
+.target { transform-box: fill-box; transform-origin: center; }
 .target--move {
   fill: var(--ink);
-  opacity: 0.45;
-  animation: ink-drop 260ms ease-out both;
+  opacity: 0.42;
+  animation: target-in 260ms ease-out both;
 }
 .target--capture {
   fill: none;
   stroke: var(--cinnabar);
-  stroke-width: 1.4;
-  opacity: 0.8;
-  animation: ink-drop 260ms ease-out both;
+  stroke-width: 1.8;
+  opacity: 0.75;
+  animation: target-in 260ms ease-out both;
 }
-
-@keyframes ink-drop {
+@keyframes target-in {
   from { opacity: 0; transform: scale(0.4); }
 }
-.target { transform-box: fill-box; transform-origin: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .board__ink, .board__pieces, .target--move, .target--capture { animation: none; }
+  .ink-ripple, .ink-drop { display: none; }
+}

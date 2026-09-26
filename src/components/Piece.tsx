@@ -10,18 +10,29 @@ interface PieceProps {
   inCheck?: boolean
 }
 
+const R = PIECE_RADIUS
+
+/**
+ * A carved piece: a softly shadowed disc (warm paper for Red, charcoal ink
+ * for Black) with grain, an engraved ring and a calligraphic character.
+ * Filters and patterns are defined once in <Board>.
+ */
 export default function Piece({ code, square, selected, captured, inCheck }: PieceProps) {
   const { char, side } = pieceLook(code)
   const { x, y } = pointOf(square)
   const classes = ['piece', `piece--${side}`, selected && 'is-selected', captured && 'is-captured', inCheck && 'is-checked']
   return (
     <g className={classes.filter(Boolean).join(' ')} style={{ transform: `translate(${x}px, ${y}px)` }}>
+      {inCheck && <circle className="piece__check" r={R + 7} filter="url(#brush-edge)" />}
+      {selected && <circle className="piece__halo" r={R + 15} fill="url(#ink-halo)" />}
+      <ellipse className="piece__shadow" cx={1.5} cy={3.2} rx={R} ry={R * 0.96} filter="url(#piece-shadow)" />
       <g className="piece__body">
-        {inCheck && <circle className="piece__check" r={PIECE_RADIUS + 5} />}
-        {selected && <circle className="piece__ripple" r={PIECE_RADIUS} />}
-        <circle className="piece__bleed" r={PIECE_RADIUS + 0.8} cx={0.8} cy={1.2} />
-        <circle className="piece__disc" r={PIECE_RADIUS} />
-        <circle className="piece__ring" r={PIECE_RADIUS - 4.5} />
+        <g filter="url(#piece-edge)">
+          <circle className="piece__disc" r={R} />
+          <circle className="piece__grain" r={R} fill="url(#piece-grain)" />
+        </g>
+        <circle className="piece__groove-light" r={R - 5} cy={0.9} />
+        <circle className="piece__groove" r={R - 5} />
         <text className="piece__char" dominantBaseline="central" textAnchor="middle" y={1}>
           {char}
         </text>

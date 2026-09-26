@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import Game from './components/Game'
+import Landscape from './components/Landscape'
 import MainMenu, { type GameConfig } from './components/MainMenu'
 import { parseFen } from './game/board'
 import { createGame } from './game/gameState'
@@ -54,7 +55,8 @@ export default function App() {
   }
 
   return (
-    <main className="app">
+    <main className={`app ${config ? 'is-playing' : 'is-menu'}`}>
+      <Landscape spreadKey={config ? `game-${config.seed}-${config.opponent}` : 'menu'} />
       {config ? (
         <Game
           config={config}
