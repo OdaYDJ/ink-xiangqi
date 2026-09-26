@@ -13,13 +13,13 @@ interface MoveRecordProps {
 
 /**
  * The game record, written like a colophon beside the painting:
- * simplified Chinese notation (炮二平五) or WXF for English (C2.5).
+ * traditional Chinese notation (炮二平五) or WXF for English (C2.5).
  */
 export default function MoveRecord({ initialBoard, history, limit = 16 }: MoveRecordProps) {
   const { locale, t } = useLocale()
   const lines = useMemo(() => {
     const moves = describeGame(initialBoard, history)
-    return moves.map((d) => (locale === 'zh' ? formatChinese(d, 'simplified') : formatWxf(d)))
+    return moves.map((d) => (locale === 'zh' ? formatChinese(d, 'traditional') : formatWxf(d)))
   }, [initialBoard, history, locale])
   const start = Math.max(0, lines.length - limit)
 

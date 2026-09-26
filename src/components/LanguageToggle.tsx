@@ -8,7 +8,7 @@ export default function LanguageToggle({ className = '' }: { className?: string 
       type="button"
       className={`quiet-button language-toggle ${className}`}
       onClick={toggleLocale}
-      lang={locale === 'en' ? 'zh-Hans' : 'en'}
+      lang={locale === 'en' ? 'zh-Hant' : 'en'}
       aria-label={t.switchLanguageLabel}
     >
       {t.switchLanguage}

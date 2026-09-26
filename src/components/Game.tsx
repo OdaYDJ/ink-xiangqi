@@ -48,7 +48,7 @@ function announceLastMove(state: GameState, t: Strings, zh: boolean): string {
   board[m.from] = m.piece
   board[m.to] = m.captured
   const d = describeNotation(board, m)
-  return t.announce(sideOf(m.piece)!, zh ? formatChinese(d, 'simplified') : formatWxf(d))
+  return t.announce(sideOf(m.piece)!, zh ? formatChinese(d, 'traditional') : formatWxf(d))
 }
 
 export default function Game({ config, soundOn, onToggleSound, onNewFormation, onMenu }: GameProps) {

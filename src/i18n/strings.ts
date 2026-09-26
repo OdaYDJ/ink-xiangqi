@@ -5,9 +5,9 @@ import type { Side } from '../game/piece'
 export type Locale = 'en' | 'zh'
 
 /** The game's motto, shown as a couplet in both languages. */
-export const COUPLET = ['一墨染，万象生；', '一局落，乾坤开。']
+export const COUPLET = ['一墨染，萬象生；', '一局落，乾坤開。']
 /** Couplet columns as brushed on the page: punctuation gives way to space, as in calligraphy. */
-export const COUPLET_COLUMNS = ['一墨染　万象生', '一局落　乾坤开']
+export const COUPLET_COLUMNS = ['一墨染　萬象生', '一局落　乾坤開']
 
 export type Outcome =
   | { kind: 'win'; how: 'checkmate' | 'stalemate'; winner: Side; you: 'won' | 'lost' | null }
@@ -68,7 +68,7 @@ export const STRINGS: Record<Locale, Strings> = {
     coupletTranslation: 'One stroke of ink, and all things appear; one game begins, and heaven and earth open.',
     playLabel: 'Play against',
     difficulty: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
-    difficultyHint: { easy: 'plays loosely', medium: 'reads exchanges', hard: 'thinks deeply' },
+    difficultyHint: { easy: 'plays at ease', medium: 'plans every move', hard: 'sees the whole board' },
     modes: { random: 'Random formation', classic: 'Classic' },
     formationLabel: 'Starting formation',
     seed: 'Seed',
@@ -116,53 +116,53 @@ export const STRINGS: Record<Locale, Strings> = {
   },
 
   zh: {
-    htmlLang: 'zh-Hans',
+    htmlLang: 'zh-Hant',
     subtitle: '水墨象棋',
     coupletTranslation: null,
-    playLabel: '对弈',
-    difficulty: { easy: '初学', medium: '棋手', hard: '国手' },
-    difficultyHint: { easy: '落子随意', medium: '善算兑子', hard: '深思远虑' },
+    playLabel: '對弈',
+    difficulty: { easy: '初學', medium: '棋手', hard: '國手' },
+    difficultyHint: { easy: '落子從容', medium: '運籌帷幄', hard: '洞見乾坤' },
     modes: { random: '奇局', classic: '古局' },
-    formationLabel: '开局',
-    seed: '局号',
-    seedPlaceholder: '随机',
-    seedError: '局号只能包含字母、数字和“-”。',
-    twoPlayers: '双人对弈',
+    formationLabel: '開局',
+    seed: '局號',
+    seedPlaceholder: '隨機',
+    seedError: '局號只能包含字母、數字和「-」。',
+    twoPlayers: '雙人對弈',
     switchLanguage: 'English',
-    switchLanguageLabel: '切换为英文',
+    switchLanguageLabel: '切換為英文',
     controls: {
       undo: '悔棋',
-      restart: '重来',
-      newFormation: '换局',
-      soundOn: '有声',
-      soundOff: '静音',
+      restart: '重來',
+      newFormation: '換局',
+      soundOn: '有聲',
+      soundOff: '靜音',
       menu: '返回',
       undoTitle: '收回上一步',
-      restartTitle: '从头再下这一局',
-      newFormationTitle: '换一个随机布局',
-      label: '对局操作',
+      restartTitle: '從頭再下這一局',
+      newFormationTitle: '換一個隨機佈局',
+      label: '對局操作',
     },
     status: {
-      yourMove: '请落子',
-      theirMove: '对方落子',
-      thinking: '对方思考',
-      toMove: (s) => (s === 'red' ? '红方落子' : '黑方落子'),
-      check: '将军',
+      yourMove: '請落子',
+      theirMove: '對方落子',
+      thinking: '對方思考',
+      toMove: (s) => (s === 'red' ? '紅方落子' : '黑方落子'),
+      check: '將軍',
     },
     outcome: (o) => {
-      if (o.kind === 'draw') return o.reason === 'repetition' ? '重复局面 · 和棋' : o.reason === 'no-progress' ? '六十回合未吃子 · 和棋' : '和棋'
-      const how = o.how === 'checkmate' ? '绝杀' : '困毙'
-      const who = o.you === 'won' ? '你胜' : o.you === 'lost' ? '电脑胜' : o.winner === 'red' ? '红方胜' : '黑方胜'
+      if (o.kind === 'draw') return o.reason === 'repetition' ? '重複局面 · 和棋' : o.reason === 'no-progress' ? '六十回合未吃子 · 和棋' : '和棋'
+      const how = o.how === 'checkmate' ? '絕殺' : '困斃'
+      const who = o.you === 'won' ? '你勝' : o.you === 'lost' ? '電腦勝' : o.winner === 'red' ? '紅方勝' : '黑方勝'
       return `${how} · ${who}`
     },
-    meta: { twoPlayers: '双人', classic: '古局', custom: '自定局面', seedTitle: '局号，分享后可重现此局' },
-    aiError: (d) => `电脑没能走出一步（${d}）。请悔棋或重来。`,
-    backToMenu: '返回首页',
+    meta: { twoPlayers: '雙人', classic: '古局', custom: '自訂局面', seedTitle: '局號，分享後可重現此局' },
+    aiError: (d) => `電腦沒能走出一步（${d}）。請悔棋或重來。`,
+    backToMenu: '返回首頁',
     boardLabel: '象棋棋盘',
-    recordLabel: '棋谱',
-    emptyRecord: '谱',
-    announce: (s, n) => `${s === 'red' ? '红方' : '黑方'} ${n}`,
-    errorTitle: '墨迹晕开了，出了点问题。',
-    errorAction: '重新开始',
+    recordLabel: '棋譜',
+    emptyRecord: '譜',
+    announce: (s, n) => `${s === 'red' ? '紅方' : '黑方'} ${n}`,
+    errorTitle: '墨跡暈開了，出了點問題。',
+    errorAction: '重新開始',
   },
 }

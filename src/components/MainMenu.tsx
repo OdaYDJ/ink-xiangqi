@@ -43,12 +43,12 @@ export default function MainMenu({ initialMode, initialSeed, onStart }: MainMenu
     <section className="menu screen">
       <div className="menu__frontispiece">
         <div className="menu__title-block">
-          <h1 className="menu__title" lang="zh-Hant" aria-label={`墨弈 · ${t.subtitle}`}>墨弈</h1>
-          <Couplet className="menu__couplet" />
           <div className="menu__signature">
             <p className="menu__subtitle">{t.subtitle}</p>
             <Seal text="墨弈" size={44} variant="raised" />
           </div>
+          <h1 className="menu__title" lang="zh-Hant" aria-label={`墨弈 · ${t.subtitle}`}>墨弈</h1>
+          <Couplet className="menu__couplet" />
         </div>
         {t.coupletTranslation && <p className="menu__translation">{t.coupletTranslation}</p>}
       </div>
