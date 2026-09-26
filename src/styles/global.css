@@ -341,9 +341,9 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  /* Measured in the input's own type size: the longest drawn name plus the shuffle mark. */
+  /* Measured in the input's own type size: the longest ink name plus the shuffle mark, with a little room. */
   font-size: var(--t-body);
-  width: 12.8em;
+  width: 10em;
   border-bottom: 1px solid rgba(37, 39, 43, 0.22);
   transition: border-color 200ms ease;
 }
@@ -560,8 +560,8 @@ body {
 .lang-zh .difficulty__hint { font-style: normal; letter-spacing: 0.32em; margin-inline-end: -0.32em; font-size: var(--t-small); color: var(--ink-soft); }
 .lang-zh .menu__subtitle { letter-spacing: 0.6em; text-transform: none; font-size: var(--t-small); }
 .lang-zh .menu__seed { letter-spacing: 0.3em; text-transform: none; font-size: var(--t-small); }
-.lang-zh .menu__seed-field { width: 9.8em; }
-.lang-zh .menu__seed input { letter-spacing: 0.12em; }
+.lang-zh .menu__seed-field { width: 6.6em; }
+.lang-zh .menu__seed input { letter-spacing: 0.3em; }
 .lang-zh .menu__seed input::placeholder { font-style: normal; letter-spacing: 0.3em; }
 .lang-zh .status { font-style: normal; letter-spacing: 0.25em; font-size: var(--t-lead); }
 .lang-zh .game__meta { letter-spacing: 0.25em; text-transform: none; font-size: var(--t-small); }
