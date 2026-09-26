@@ -61,38 +61,6 @@ The game expects the track at `public/audio/pipa-xiangqi.mp3`. If the file is ab
 
 Used under the [Pixabay Content License](https://pixabay.com/service/license-summary/), which allows use in this game without attribution (credit is given here with thanks). The track is **not** covered by this project's copyright notice below and remains the work of its author. The license does not permit taking the audio file out of the game and distributing it on its own; if you want the track, download it from its Pixabay page.
 
-## Development
-
-```bash
-npm install
-npm run dev       # http://localhost:5173/ink-xiangqi/
-npm test          # engine, randomizer and AI tests
-npm run build     # production build in dist/
-npm run preview   # serve dist/ locally
-```
-
-Debug helper: `?fen=<Xiangqi FEN>` opens a pass-and-play game from any position, e.g.
-`?fen=4k4/R8/8R/9/9/9/9/9/9/3K5`.
-
-## Structure
-
-```
-src/game/        rules engine: board, pieces, move generation, game state, randomizer, validator, ink colours
-src/ai/          evaluation, minimax/alpha-beta search, move ordering, TT, difficulty, worker
-src/audio/       background music controller
-src/i18n/        Traditional Chinese and English text
-src/rendering/   board geometry, brushwork, landscape, animation timings, synthesized sounds
-src/components/  React UI (menu, game, board, pieces, controls)
-public/audio/    background music (see "Music credit and license")
-tests/           Vitest suites
-```
-
-The engine and AI never depend on React; game state is plain JSON.
-
-## Deployment
-
-Pushing to `main` runs `.github/workflows/deploy.yml`, which tests, builds and publishes `dist/` to GitHub Pages. In the repository settings choose **Settings → Pages → Build and deployment → Source → GitHub Actions**. The Vite `base` (`/ink-xiangqi/`) must match the repository name.
-
 ## Credits
 
 Fonts are loaded from [Google Fonts](https://fonts.google.com/) and are used under the [SIL Open Font License 1.1](https://openfontlicense.org/):
