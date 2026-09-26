@@ -1,0 +1,27 @@
+:root {
+  --paper: #f4f0e6;
+  --paper-light: #faf8f1;
+  --ink: #202020;
+  --ink-soft: #77736b;
+  --cinnabar: #a33a32;
+  --brush-font: 'Ma Shan Zheng', 'Kaiti SC', 'STKaiti', 'KaiTi', 'BiauKai', serif;
+  --ui-font: 'Iowan Old Style', 'Palatino', 'Songti SC', Georgia, serif;
+}
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--ui-font);
+  -webkit-font-smoothing: antialiased;
+}
+.app {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.title { font-family: var(--brush-font); font-weight: 400; font-size: 4rem; margin: 0; }
+.subtitle { color: var(--ink-soft); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.75rem; }
