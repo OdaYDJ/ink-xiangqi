@@ -219,13 +219,6 @@ body {
   text-align: left;
   transition: color 200ms ease;
 }
-.difficulty__divider {
-  align-self: center;
-  width: 1px;
-  height: 1.1em;
-  background: var(--ink);
-  opacity: 0.28;
-}
 .difficulty__hint { font-style: italic; color: var(--ink-soft); font-size: 0.98rem; transition: color 200ms ease; }
 .difficulty__option::before {
   content: '';
