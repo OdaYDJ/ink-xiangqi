@@ -25,6 +25,10 @@ export interface Strings {
   seed: string
   seedPlaceholder: string
   seedError: string
+  /** Tooltip / accessible name for the clickable seed label. */
+  seedDraw: string
+  /** Ink-style names the seed label draws from when clicked. */
+  inkNames: string[]
   twoPlayers: string
   switchLanguage: string
   switchLanguageLabel: string
@@ -65,15 +69,22 @@ export const STRINGS: Record<Locale, Strings> = {
   en: {
     htmlLang: 'en',
     subtitle: 'Ink Xiangqi',
-    coupletTranslation: '“With a stroke of ink, a thousand forms arise; with a single move, the universe unfolds.”',
+    coupletTranslation: 'With a stroke of ink, a thousand forms arise. With a single move, the universe unfolds.',
     playLabel: 'Play against',
     difficulty: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
     difficultyHint: { easy: 'plays at ease', medium: 'plans every move', hard: 'sees the whole board' },
-    modes: { random: 'Random formation', classic: 'Classic' },
+    modes: { random: 'Random', classic: 'Classic' },
     formationLabel: 'Starting formation',
     seed: 'Seed',
     seedPlaceholder: 'drawn at random',
-    seedError: 'Seeds use letters, digits and “-”.',
+    seedError: 'Seeds use letters, digits, spaces and “-”.',
+    seedDraw: 'Draw an ink-style name',
+    inkNames: [
+      'Cold River Angler', 'Misty Southern Rain', 'Empty Hills After Rain', 'Pines Under the Moon',
+      'Rain on the Bamboo', 'Lone Boat on Snow', 'Autumn Water Long Sky', 'Geese on Level Sand',
+      'Fishermen at Dusk', 'Spring over Stones', 'Wind in the Pines', 'Distant Blue Hills',
+      'Ink on a Thousand Peaks', 'Clouds Too Deep to Find', 'Travellers in the Hills', 'Plum Shadows',
+    ],
     twoPlayers: 'Two players, one board',
     switchLanguage: '中文',
     switchLanguageLabel: 'Switch to Chinese',
@@ -124,9 +135,15 @@ export const STRINGS: Record<Locale, Strings> = {
     difficultyHint: { easy: '落子從容', medium: '運籌帷幄', hard: '洞見乾坤' },
     modes: { random: '奇局', classic: '古局' },
     formationLabel: '開局',
-    seed: '局號',
+    seed: '墨局',
     seedPlaceholder: '隨機',
-    seedError: '局號只能包含字母、數字和「-」。',
+    seedError: '墨局名稱請用文字、數字、空格或「-」。',
+    seedDraw: '點擊換一個墨韻局名',
+    inkNames: [
+      '寒江獨釣', '煙雨江南', '空山新雨', '明月松間', '竹林聽雨', '孤舟蓑笠', '秋水長天', '平沙落雁',
+      '漁舟唱晚', '清泉石上', '松風煮茗', '遠山含黛', '墨染千山', '雲深不知處', '溪山行旅', '疏影橫斜',
+      '野渡無人', '落霞孤鶩', '雪夜訪戴', '千里江山',
+    ],
     twoPlayers: '雙人對弈',
     switchLanguage: 'English',
     switchLanguageLabel: '切換為英文',
@@ -155,7 +172,7 @@ export const STRINGS: Record<Locale, Strings> = {
       const who = o.you === 'won' ? '你勝' : o.you === 'lost' ? '電腦勝' : o.winner === 'red' ? '紅方勝' : '黑方勝'
       return `${how} · ${who}`
     },
-    meta: { twoPlayers: '雙人', classic: '古局', custom: '自訂局面', seedTitle: '局號，分享後可重現此局' },
+    meta: { twoPlayers: '雙人', classic: '古局', custom: '自訂局面', seedTitle: '墨局，分享後可重現此局' },
     aiError: (d) => `電腦沒能走出一步（${d}）。請悔棋或重來。`,
     backToMenu: '返回首頁',
     boardLabel: '象棋棋盘',

@@ -20,19 +20,29 @@ export interface GameConfig {
 
 interface MainMenuProps {
   initialMode: GameMode
-  initialSeed: string | null
+  /** The 墨局 field. Kept by the app so it survives trips to the game and back. */
+  seed: string
+  onSeedChange: (seed: string) => void
   onStart: (config: GameConfig) => void
 }
 
-const SEED_PATTERN = /^[A-Z0-9-]{1,24}$/
+/** Seeds are INK-XXXXXX codes or free-form names: any letters (including Chinese), digits, spaces, “-” or “·”. */
+const SEED_PATTERN = /^[\p{L}\p{N}\- ·]{1,32}$/u
 const MODES: GameMode[] = ['random', 'classic']
 
-export default function MainMenu({ initialMode, initialSeed, onStart }: MainMenuProps) {
+export default function MainMenu({ initialMode, seed, onSeedChange: setSeed, onStart }: MainMenuProps) {
   const { t } = useLocale()
   const [mode, setMode] = useState<GameMode>(initialMode)
-  const [seed, setSeed] = useState(initialSeed ?? '')
+  const [draws, setDraws] = useState(0)
   const cleanSeed = normalizeSeed(seed)
   const seedError = cleanSeed !== '' && !SEED_PATTERN.test(cleanSeed)
+
+  // Clicking 墨局 draws a different ink-style name; the field is otherwise left exactly as the player set it.
+  const drawInkName = () => {
+    const choices = t.inkNames.filter((n) => n !== seed)
+    setSeed(choices[Math.floor(Math.random() * choices.length)])
+    setDraws((n) => n + 1)
+  }
 
   const start = (opponent: Opponent) => {
     if (seedError) return
@@ -76,14 +86,19 @@ export default function MainMenu({ initialMode, initialSeed, onStart }: MainMenu
 
         {mode === 'random' && (
           <form className="menu__seed" onSubmit={(e: FormEvent) => e.preventDefault()}>
-            <label htmlFor="seed">{t.seed}</label>
+            <button type="button" className="menu__seed-draw" onClick={drawInkName} title={t.seedDraw} aria-label={`${t.seed} · ${t.seedDraw}`}>
+              {t.seed}
+            </button>
             <input
               id="seed"
+              key={draws}
+              className={`menu__seed-input${draws > 0 ? ' is-drawn' : ''}`}
               value={seed}
               placeholder={t.seedPlaceholder}
+              aria-label={t.seed}
               spellCheck={false}
               autoComplete="off"
-              maxLength={24}
+              maxLength={32}
               aria-invalid={seedError}
               aria-describedby={seedError ? 'seed-error' : undefined}
               onChange={(e) => setSeed(e.target.value)}

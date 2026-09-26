@@ -9,7 +9,7 @@ Play: https://odaydj.github.io/ink-xiangqi/ (once GitHub Pages is enabled)
 ## Features
 
 - Full Xiangqi rules engine (flying General, horse-leg and elephant-eye blocking, palace and river limits, cannon screens, checkmate, stalemate-as-loss, repetition and no-progress draws), verified with perft.
-- **Random** and **Classic** formations. Random formations are reproducible from a seed such as `INK-7F3A92`; share one with `?seed=INK-7F3A92`.
+- **Random** and **Classic** formations. Random formations are reproducible from a seed: either a code such as `INK-7F3A92` or a name. In the menu, click 墨局 to draw an ink-style name (寒江獨釣, 煙雨江南…) or type your own; the same name always deals the same board. Share one with `?seed=INK-7F3A92`.
 - Human vs computer at three levels, running in a Web Worker:
   - **Easy** — minimax depth 2, material + position, deliberate randomness
   - **Medium** — alpha-beta, quiescence, mobility / General-safety evaluation (~500 ms)

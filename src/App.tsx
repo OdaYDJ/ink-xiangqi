@@ -43,6 +43,7 @@ const urlGame = ((): GameConfig | null => {
 export default function App() {
   const { locale } = useLocale()
   const [config, setConfig] = useState<GameConfig | null>(urlGame)
+  const [menuSeed, setMenuSeed] = useState(urlSeed ?? '')
   const [soundOn, setSoundOn] = useState(load('ink.sound') !== 'off')
   const initialMode: GameMode = urlSeed ? 'random' : load('ink.mode') === 'classic' ? 'classic' : 'random'
 
@@ -68,7 +69,7 @@ export default function App() {
           onMenu={() => setConfig(null)}
         />
       ) : (
-        <MainMenu initialMode={initialMode} initialSeed={urlSeed} onStart={start} />
+        <MainMenu initialMode={initialMode} seed={menuSeed} onSeedChange={setMenuSeed} onStart={start} />
       )}
     </main>
   )

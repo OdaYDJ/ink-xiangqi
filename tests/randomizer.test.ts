@@ -139,3 +139,14 @@ describe('seeds', () => {
     }
   })
 })
+
+describe('named formations (墨局)', () => {
+  it('any ink-style name is a valid, reproducible seed', () => {
+    for (const name of ['寒江獨釣', '雲深不知處', 'Cold River Angler', 'cold river angler ']) {
+      const f = generateFormation(name)
+      expect(validateFormation(f.board).valid).toBe(true)
+      expect(f.board).toEqual(generateFormation(name).board)
+    }
+    expect(generateFormation('寒江獨釣').board).not.toEqual(generateFormation('煙雨江南').board)
+  })
+})

@@ -285,7 +285,7 @@ body {
   font: inherit;
   font-size: 0.95rem;
   letter-spacing: 0.14em;
-  width: 11em;
+  width: 13em;
   color: var(--ink);
   background: transparent;
   border: 0;
@@ -294,6 +294,40 @@ body {
   border-radius: 0;
 }
 .menu__seed input:focus { outline: none; border-bottom-color: var(--ink); }
+/* 墨局: the label itself is the control. Click it to draw an ink-style name. */
+.menu__seed-draw {
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0.2em 0;
+  cursor: pointer;
+  position: relative;
+  transition: color 200ms ease;
+}
+.menu__seed-draw::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -0.1em;
+  width: 3px;
+  height: 3px;
+  margin-left: -1.5px;
+  border-radius: 50%;
+  background: var(--ink-soft);
+  opacity: 0.5;
+  transition: opacity 200ms ease, background 200ms ease;
+}
+.menu__seed-draw:hover, .menu__seed-draw:focus-visible { color: var(--ink); }
+.menu__seed-draw:hover::after, .menu__seed-draw:focus-visible::after { background: var(--seal); opacity: 0.9; }
+.menu__seed-draw:active { transform: translateY(1px); }
+/* A drawn name soaks into the paper. */
+.menu__seed-input.is-drawn { animation: ink-name-in 520ms ease-out both; }
+@keyframes ink-name-in {
+  from { opacity: 0; filter: blur(3px); letter-spacing: 0.3em; }
+}
 .menu__seed input::placeholder { color: var(--ink-soft); opacity: 0.55; font-style: italic; text-transform: none; letter-spacing: 0.04em; }
 .menu__seed input[aria-invalid='true'] { border-bottom-color: var(--cinnabar); }
 .menu__error { color: var(--cinnabar); font-size: 0.9rem; margin: -8px 0 0; }
@@ -557,5 +591,6 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .menu__seed-input.is-drawn,
   .screen, .landscape, .game-over, .game-over__seal, .game-over__text, .landscape__birds { animation: none; }
 }
