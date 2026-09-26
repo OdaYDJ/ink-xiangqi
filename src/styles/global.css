@@ -221,36 +221,44 @@ body {
   width: 1px;
   background: linear-gradient(to bottom, transparent, rgba(37, 39, 43, 0.22) 20%, rgba(37, 39, 43, 0.22) 80%, transparent);
 }
-.difficulty { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+/* Each level is a two-line group: the name, then its phrase. One rhythm throughout:
+   a tight 0.35em between name and phrase, a wider 1.5em between groups. */
+.difficulty { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.5em; }
 .difficulty__option {
   display: flex;
-  align-items: baseline;
-  gap: 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35em;
   font: inherit;
   background: none;
   border: 0;
-  padding: 4px 0;
+  padding: 0;
   cursor: pointer;
   color: var(--ink);
   position: relative;
+  text-align: left;
 }
 .difficulty__title {
   font-size: 1.5rem;
+  line-height: 1.15;
   letter-spacing: 0.04em;
   font-weight: 500;
-  min-width: 3.6em;
-  text-align: left;
   transition: color 200ms ease;
 }
-.difficulty__hint { font-style: italic; color: var(--ink-soft); font-size: 0.98rem; transition: color 200ms ease; }
+.difficulty__hint {
+  font-style: italic;
+  font-size: 0.98rem;
+  line-height: 1.3;
+  color: var(--ink-soft);
+  transition: color 200ms ease;
+}
 .difficulty__option::before {
   content: '';
   position: absolute;
   left: -18px;
-  top: 50%;
+  top: 0.62em;
   width: 6px;
   height: 6px;
-  margin-top: -3px;
   border-radius: 1px;
   background: var(--seal);
   opacity: 0;
@@ -467,8 +475,9 @@ body {
 .lang-zh .quiet-button { font-style: normal; letter-spacing: 0.18em; font-size: 0.95rem; }
 .lang-zh .quiet-button.language-toggle { font-family: var(--ui-font); font-style: italic; letter-spacing: 0.04em; }
 .lang-zh .label { letter-spacing: 0.5em; font-size: 0.9rem; color: var(--ink-2); }
-.lang-zh .difficulty__title { letter-spacing: 0.3em; font-size: 1.55rem; min-width: 4em; }
-.lang-zh .difficulty__hint { font-style: normal; letter-spacing: 0.3em; font-size: 0.95rem; color: var(--ink-2); }
+/* Letter-spaced Chinese: trim the trailing space so lines stay aligned and centred. */
+.lang-zh .difficulty__title { letter-spacing: 0.32em; margin-inline-end: -0.32em; font-size: 1.55rem; }
+.lang-zh .difficulty__hint { font-style: normal; letter-spacing: 0.32em; margin-inline-end: -0.32em; font-size: 0.92rem; color: var(--ink-soft); }
 .lang-zh .menu__subtitle { letter-spacing: 0.6em; text-transform: none; font-size: 0.9rem; }
 .lang-zh .menu__seed { letter-spacing: 0.3em; text-transform: none; font-size: 0.85rem; }
 .lang-zh .menu__seed input::placeholder { font-style: normal; letter-spacing: 0.3em; }
@@ -536,7 +545,7 @@ body {
   .menu__title { font-size: 5.4rem; }
   .menu__choices { align-items: center; padding-left: 0; }
   .menu__choices::before { display: none; }
-  .difficulty__option { justify-content: center; }
+  .difficulty__option { align-items: center; text-align: center; }
   .menu__modes { justify-content: center; }
 }
 
