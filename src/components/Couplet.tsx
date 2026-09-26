@@ -1,6 +1,6 @@
 import { COUPLET, COUPLET_COLUMNS } from '../i18n/strings'
 
-/** 一墨染，万象生；一局落，乾坤开 — brushed in running script as two vertical columns, read right to left. */
+/** 一墨染，万象生；一局落，乾坤开 — brushed in regular script (楷書) as two vertical columns, read right to left. */
 export default function Couplet({ className = '' }: { className?: string }) {
   return (
     <p className={`couplet ${className}`} lang="zh-Hans" aria-label={COUPLET.join('')}>
