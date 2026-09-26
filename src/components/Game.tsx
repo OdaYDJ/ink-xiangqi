@@ -189,17 +189,19 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
       </div>
 
       <aside className="game__colophon">
-        <p className="status" aria-live="polite">
-          <StatusLine game={game} thinking={thinking} vsAi={vsAi} error={aiError} t={t} />
-          <span className="visually-hidden">{announceLastMove(game, t, locale === 'zh')}</span>
-        </p>
-        <p className="game__meta">
-          {level ? t.difficulty[level] : t.meta.twoPlayers}
-          <span className="game__dot" aria-hidden="true">·</span>
-          {formation.seed ? (
-            <span className="game__seed" title={t.meta.seedTitle}>{seedLabel(formation.seed, locale)}</span>
-          ) : config.fen ? t.meta.custom : t.meta.classic}
-        </p>
+        <div className="game__info">
+          <p className="status" aria-live="polite">
+            <StatusLine game={game} thinking={thinking} vsAi={vsAi} error={aiError} t={t} />
+            <span className="visually-hidden">{announceLastMove(game, t, locale === 'zh')}</span>
+          </p>
+          <p className="game__meta">
+            {level ? t.difficulty[level] : t.meta.twoPlayers}
+            <span className="game__dot" aria-hidden="true">·</span>
+            {formation.seed ? (
+              <span className="game__seed" title={t.meta.seedTitle}>{seedLabel(formation.seed, locale)}</span>
+            ) : config.fen ? t.meta.custom : t.meta.classic}
+          </p>
+        </div>
         <MoveRecord initialBoard={game.initialBoard} history={game.history} />
         <GameControls
           canUndo={canUndo}

@@ -1,5 +1,6 @@
 import { useLocale } from '../i18n/locale'
 import LanguageToggle from './LanguageToggle'
+import MusicControl from './MusicControl'
 
 interface GameControlsProps {
   canUndo: boolean
@@ -11,7 +12,11 @@ interface GameControlsProps {
   onMenu: () => void
 }
 
-/** Quiet text controls, set like the small print of a colophon. */
+/**
+ * Quiet text controls, set like the small print of a colophon. Two groups:
+ * the moves of the game, then settings. On phones and tablets they sit in two
+ * rows under the board, with the music mark joining the settings row.
+ */
 export default function GameControls({
   canUndo, soundOn, onUndo, onRestart, onNewFormation, onToggleSound, onMenu,
 }: GameControlsProps) {
@@ -19,24 +24,29 @@ export default function GameControls({
   const c = t.controls
   return (
     <nav className="controls" aria-label={c.label}>
-      <button type="button" className="quiet-button" onClick={onUndo} disabled={!canUndo} title={c.undoTitle}>
-        {c.undo}
-      </button>
-      <button type="button" className="quiet-button" onClick={onRestart} title={c.restartTitle}>
-        {c.restart}
-      </button>
-      {onNewFormation && (
-        <button type="button" className="quiet-button" onClick={onNewFormation} title={c.newFormationTitle}>
-          {c.newFormation}
+      <div className="controls__group controls__group--game">
+        <button type="button" className="quiet-button" onClick={onUndo} disabled={!canUndo} title={c.undoTitle}>
+          {c.undo}
         </button>
-      )}
-      <button type="button" className="quiet-button" onClick={onToggleSound} aria-pressed={soundOn}>
-        {soundOn ? c.soundOn : c.soundOff}
-      </button>
-      <LanguageToggle />
-      <button type="button" className="quiet-button" onClick={onMenu}>
-        {c.menu}
-      </button>
+        <button type="button" className="quiet-button" onClick={onRestart} title={c.restartTitle}>
+          {c.restart}
+        </button>
+        {onNewFormation && (
+          <button type="button" className="quiet-button" onClick={onNewFormation} title={c.newFormationTitle}>
+            {c.newFormation}
+          </button>
+        )}
+      </div>
+      <div className="controls__group controls__group--settings">
+        <button type="button" className="quiet-button" onClick={onToggleSound} aria-pressed={soundOn}>
+          {soundOn ? c.soundOn : c.soundOff}
+        </button>
+        <LanguageToggle />
+        <button type="button" className="quiet-button" onClick={onMenu}>
+          {c.menu}
+        </button>
+        <MusicControl placement="inline" />
+      </div>
     </nav>
   )
 }

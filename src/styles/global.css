@@ -59,7 +59,13 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: max(16px, env(safe-area-inset-top)) 20px max(16px, env(safe-area-inset-bottom));
+  --pad: 16px;
+  padding: max(var(--pad), env(safe-area-inset-top)) max(20px, env(safe-area-inset-right)) max(var(--pad), env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+}
+/* Phones: slimmer page margins; in a game the board gets nearly the full width. */
+@media (max-width: 560px), (max-height: 500px) {
+  .app { --pad: 8px; padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right)); }
+  .app.is-playing { padding-inline: max(4px, env(safe-area-inset-left)) max(4px, env(safe-area-inset-right)); }
 }
 .app > .screen { position: relative; z-index: 1; margin-block: auto; }
 
@@ -380,54 +386,69 @@ body {
 .menu__local { font-size: var(--t-body); }
 .menu__language { font-size: var(--t-body); }
 
-/* ——— In game: a hanging scroll with inscription, painting and colophon ——— */
+/* ——— In game ———
+   Three layouts, chosen by the shape of the screen:
+     stacked (default)  portrait phones and tablets: title, status, board, record, controls in one column;
+     side               landscape screens: the board sized by the height, a quiet panel beside it;
+     scroll             large landscape screens: inscription, painting and colophon, like a hanging scroll.
+   In every layout the board's width is one expression bounded by both width and height,
+   so it never leaves the screen. 0.908 = the board's width ÷ height (632 × 696). */
 .game {
+  /* Stacked layout: every row but the board has a fixed height, so the board
+     gets exactly what is left: header 44 + status 45 + record 22 + controls 80,
+     four gaps, and the page's own top and bottom padding. */
+  --gap: clamp(4px, 1.2vh, 12px);
+  --chrome: calc(191px + 4 * var(--gap) + 2 * var(--pad));
   width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: stretch;
-  column-gap: clamp(20px, 3.5vw, 56px);
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: 'header' 'info' 'board' 'record' 'controls';
+  justify-items: center;
+  align-content: center;
+  row-gap: var(--gap);
 }
 
 .game__inscription {
-  justify-self: end;
+  grid-area: header;
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 16px;
-  padding-top: 3%;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
 }
 .game__title {
-  writing-mode: vertical-rl;
   font-family: var(--title-font);
-  font-size: clamp(3.375rem, 5.2vw, 4.75rem);
-  line-height: 0.95;
-  letter-spacing: 0;
+  font-size: clamp(2.1rem, 7.5vw, 2.6rem);
+  line-height: 1;
   color: var(--ink);
   background: none;
   border: 0;
   padding: 0;
   cursor: pointer;
 }
-.game__couplet { margin-top: 0.8rem; font-size: 1.25rem; opacity: 0.88; }
-.game__couplet-block { display: flex; flex-direction: column; align-items: center; gap: 16px; }
-.game__seal { margin-left: 1.2rem; }
+/* (Scoped, so it outranks the couplet's own display rule.) */
+.game__inscription .game__couplet { display: none; margin-top: 0.8rem; font-size: 1.25rem; opacity: 0.88; }
+.game__couplet-block { display: flex; align-items: center; gap: 16px; }
 
 .board-wrap {
+  grid-area: board;
   position: relative;
-  align-self: center;
-  width: min(calc(100vw - 40px), calc((100dvh - 48px) * 0.908), 720px);
+  width: min(100%, 720px, calc((100vh - var(--chrome)) * 0.908));
+  width: min(100%, 720px, calc((100dvh - var(--chrome)) * 0.908));
 }
 
-.game__colophon {
-  justify-self: start;
+/* The colophon's parts join the grid directly in the stacked and side layouts. */
+.game__colophon { display: contents; }
+.game__info {
+  grid-area: info;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  gap: 14px;
-  padding-block: 4% 3.5%;
-  max-width: 17rem;
+  align-items: center;
+  justify-content: center;
+  height: 45px;
+  text-align: center;
 }
+.game__info .status { min-height: 0; line-height: 1.4; white-space: nowrap; }
+.game__info .game__meta { line-height: 1.4; white-space: nowrap; }
 
 .status {
   margin: 0;
@@ -464,21 +485,22 @@ body {
 .game__dot { margin: 0 0.5em; }
 .game__seed { user-select: all; font-variant-numeric: tabular-nums; }
 
-/* Move record in Chinese notation, written in vertical columns. */
+/* Move record. Stacked: the last two moves on one line. Side: a few more. Scroll: the full colophon. */
 .record {
-  flex: 1;
-  margin: 8px 0;
+  grid-area: record;
+  margin: 0;
   padding: 0;
   list-style: none;
-  writing-mode: vertical-rl;
-  text-orientation: upright;
   font-family: var(--song-font);
   font-size: var(--t-small);
-  line-height: 2;
+  line-height: 22px;
   letter-spacing: 0.12em;
-  max-height: 15em;
+  height: 22px;
+  overflow: hidden;
+  white-space: nowrap;
   color: var(--ink-soft);
 }
+.record__move:not(:nth-last-child(-n + 2)) { display: none; }
 .record__move { display: inline-block; white-space: nowrap; margin-inline-end: 0.9em; margin-block-end: 0.5em; }
 .record__move::after { content: '　'; }
 .record__move.is-red { color: rgba(163, 74, 60, 0.7); }
@@ -486,7 +508,20 @@ body {
 .record__move.is-red.is-latest { color: var(--cinnabar); }
 .record--empty { font-family: var(--song-font); color: var(--ink-soft); opacity: 0.35; letter-spacing: 0.2em; }
 
-.controls { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+/* Controls: the game's moves on one row, settings (and the music mark) on the next. */
+.controls {
+  grid-area: controls;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+.controls__group { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; min-height: 40px; gap: 0 clamp(10px, 4vw, 22px); }
+.controls__group--settings .quiet-button { font-size: var(--t-small); }
+/* Comfortable touch targets wherever the pointer is a finger. */
+@media (pointer: coarse) {
+  .controls .quiet-button, .menu .quiet-button { min-height: 40px; padding-inline: 4px; }
+}
 
 /* Game over: a seal pressed onto the painting. */
 .game-over {
@@ -567,39 +602,30 @@ body {
 .lang-zh .game__meta { letter-spacing: 0.25em; text-transform: none; font-size: var(--t-small); }
 .lang-zh .game-over__text { font-style: normal; letter-spacing: 0.3em; }
 
-/* On wide screens the Chinese colophon is written vertically, right to left. */
-@media (min-width: 961px) {
-  .lang-zh .game__colophon {
-    writing-mode: vertical-rl;
-    flex-direction: column;
-    justify-content: flex-start;
-    width: max-content;
-    height: auto;
-    align-self: center;
-    max-height: min(560px, 70vh);
-    gap: 18px;
-    max-width: none;
-    padding: 0;
-  }
-  .lang-zh .status { min-height: 0; min-width: 1.5em; }
-  .lang-zh .game__meta .game__seed { text-orientation: mixed; letter-spacing: 0.1em; }
-  .lang-zh .record { max-height: none; flex: 0 1 auto; margin: 0 6px; }
-  .lang-zh .controls { flex-direction: row; flex-wrap: nowrap; gap: 1.1em; margin-inline-start: auto; }
-  .lang-zh .controls .quiet-button::after { left: auto; right: 0.1em; bottom: 0; top: 0; width: 1px; height: 100%; transform: scaleY(0); transform-origin: top; }
-  .lang-zh .controls .quiet-button:hover:not(:disabled)::after,
-  .lang-zh .controls .quiet-button:focus-visible::after { transform: scaleY(1); }
-  .lang-zh .controls .language-toggle { writing-mode: vertical-rl; text-orientation: mixed; }
-}
-
 /* ——— Background music: a small seal-like mark in the corner ——— */
 .music {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.music--corner {
   position: fixed;
   right: max(18px, env(safe-area-inset-right));
   bottom: max(18px, env(safe-area-inset-bottom));
   z-index: 5;
-  display: flex;
-  align-items: center;
-  gap: 12px;
+}
+/* In a game on phones and tablets the mark sits with the settings instead of floating over them. */
+.is-playing .music--corner { display: none; }
+.music--inline { position: relative; margin-inline-start: 4px; }
+.music--inline .music__button { width: 32px; height: 32px; }
+.music--inline .music__panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 6px);
+  padding: 4px 10px;
+  border-radius: 14px;
+  background: rgba(248, 245, 238, 0.92);
+  transform: translateY(4px);
 }
 .music__button {
   display: grid;
@@ -661,50 +687,143 @@ body {
 .music__level:hover::before, .music__level:focus-visible::before { opacity: 0.5; }
 .music__level.is-active::before { opacity: 0.8; }
 
-/* ——— Tablet and phone: the board first, everything else in a single quiet column ——— */
-@media (max-width: 960px) {
-  .app { align-items: flex-start; }
-  .game { grid-template-columns: 1fr; row-gap: 10px; justify-items: center; }
-  .game__inscription { justify-self: center; flex-direction: row; align-items: center; gap: 12px; padding-top: 0; }
-  .game__title { writing-mode: horizontal-tb; font-size: 2.5rem; }
-  .game__couplet { display: none; }
-  .game__couplet-block { flex-direction: row; }
-  .game__seal { margin: 0; }
-  .board-wrap { width: min(100%, calc((100dvh - 190px) * 0.908), 640px); min-width: min(100%, 320px); }
-  .game__colophon {
-    justify-self: center;
-    align-items: center;
-    text-align: center;
-    max-width: none;
-    padding: 0;
-    gap: 8px;
+/* ——— Side layout: landscape phones, landscape tablets, small laptops ———
+   The height decides the board; a quiet panel takes the remaining width. */
+@media (orientation: landscape) and (min-width: 560px) and (max-width: 1179.98px), (orientation: landscape) and (min-width: 1180px) and (max-height: 599.98px) {
+  .game {
+    width: auto;
+    max-width: 100%;
+    grid-template-columns: auto minmax(0, 300px);
+    grid-template-rows: auto auto auto 1fr auto;
+    grid-template-areas: 'board header' 'board info' 'board record' 'board .' 'board controls';
+    column-gap: clamp(20px, 3.5vw, 48px);
+    row-gap: 10px;
+    justify-items: start;
+    align-items: start;
   }
-  .record {
-    writing-mode: horizontal-tb;
-    max-height: none;
-    margin: 0;
-    line-height: 1.5;
-    min-height: 1.5em;
+  .board-wrap {
+    align-self: center;
+    width: min(720px, calc((100vh - 2 * var(--pad) - 4px) * 0.908), calc(100vw - 48px - 200px - 3.5vw));
+    width: min(720px, calc((100dvh - 2 * var(--pad) - 4px) * 0.908), calc(100vw - 48px - 200px - 3.5vw));
   }
-  .record__move:not(:nth-last-child(-n + 2)) { display: none; }
-  .controls { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
-  .landscape__bamboo { height: min(46vh, 380px); opacity: 0.45; }
+  .game__info, .controls, .controls__group { justify-content: flex-start; align-items: flex-start; text-align: start; }
+  .game__info { height: auto; gap: 4px; }
+  .record { height: auto; overflow: visible; white-space: normal; }
+  .record { align-self: start; }
+  .record__move:not(:nth-last-child(-n + 2)) { display: inline-block; }
+  .record__move:not(:nth-last-child(-n + 8)) { display: none; }
+  .controls { align-self: end; }
+  .controls__group { column-gap: 16px; }
 }
 
-@media (max-width: 720px) {
-  .menu { flex-direction: column; gap: 28px; }
-  .menu__title { font-size: 6.2rem; }
-  .menu__choices { align-items: center; padding-left: 0; }
-  .menu__section { align-items: center; }
+/* ——— Scroll layout: large landscape screens ———
+   Inscription, painting and colophon side by side, with room around them. */
+@media (orientation: landscape) and (min-width: 1180px) and (min-height: 600px) {
+  .game {
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-areas: 'header board side';
+    align-items: stretch;
+    column-gap: clamp(20px, 3.5vw, 56px);
+  }
+  .game__inscription {
+    justify-self: end;
+    align-items: flex-start;
+    gap: 16px;
+    height: auto;
+    padding-top: 3%;
+  }
+  .game__title { writing-mode: vertical-rl; font-size: clamp(3.375rem, 5.2vw, 4.75rem); line-height: 0.95; }
+  .game__inscription .game__couplet { display: flex; }
+  .game__couplet-block { flex-direction: column; }
+  .game__seal { margin-left: 1.2rem; }
+  .board-wrap {
+    align-self: center;
+    width: min(720px, calc((100vh - 48px) * 0.908), calc(100vw - 480px));
+    width: min(720px, calc((100dvh - 48px) * 0.908), calc(100vw - 480px));
+  }
+  .game__colophon {
+    grid-area: side;
+    justify-self: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 14px;
+    padding-block: 4% 3.5%;
+    max-width: 17rem;
+  }
+  .game__info { display: block; height: auto; text-align: start; }
+  .game__info .status, .game__info .game__meta { white-space: normal; }
+  .record { height: auto; overflow: visible; white-space: normal; line-height: 1.5; }
+  .game__info > * + * { margin-top: 14px; }
+  .record__move:not(:nth-last-child(-n + 2)) { display: inline-block; }
+  .controls, .controls__group { align-items: flex-start; }
+  .controls__group { display: contents; }
+  .controls__group--settings .quiet-button { font-size: var(--t-body); }
+  .controls { gap: 2px; }
+  .music--inline { display: none; }
+  .is-playing .music--corner { display: flex; }
+
+  /* Chinese record: vertical columns. */
+  .lang-zh .record {
+    flex: 1;
+    margin: 8px 0;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    line-height: 2;
+    max-height: 15em;
+  }
+  /* The Chinese colophon is written vertically, right to left. */
+  .lang-zh .game__colophon {
+    writing-mode: vertical-rl;
+    justify-content: flex-start;
+    width: max-content;
+    height: auto;
+    align-self: center;
+    max-height: min(560px, 70vh);
+    gap: 18px;
+    max-width: none;
+    padding: 0;
+  }
+  .lang-zh .game__info > * + * { margin-top: 0; margin-right: 14px; }
+  .lang-zh .status { min-height: 0; min-width: 1.5em; }
+  .lang-zh .game__meta .game__seed { text-orientation: mixed; letter-spacing: 0.1em; }
+  .lang-zh .record { max-height: none; flex: 0 1 auto; margin: 0 6px; }
+  .lang-zh .controls { flex-direction: row; flex-wrap: nowrap; gap: 1.1em; margin-inline-start: auto; }
+  .lang-zh .controls .quiet-button::after { left: auto; right: 0.1em; bottom: 0; top: 0; width: 1px; height: 100%; transform: scaleY(0); transform-origin: top; }
+  .lang-zh .controls .quiet-button:hover:not(:disabled)::after,
+  .lang-zh .controls .quiet-button:focus-visible::after { transform: scaleY(1); }
+  .lang-zh .controls .language-toggle { writing-mode: vertical-rl; text-orientation: mixed; }
+}
+
+/* ——— Menu on narrow portrait screens: one centred column ——— */
+@media (orientation: portrait) and (max-width: 720px) {
+  .menu { flex-direction: column; gap: clamp(18px, 3.4vh, 28px); }
+  .menu__title { font-size: min(6.2rem, 12.5vh); }
+  .menu__choices { align-items: center; padding-left: 0; gap: clamp(20px, 3.6vh, 40px); }
+  .menu__section { align-items: center; gap: clamp(10px, 1.8vh, 18px); }
   .menu__choices::before { display: none; }
+  .difficulty { gap: clamp(0.7em, 1.8vh, 1.5em); }
   .difficulty__option { align-items: center; text-align: center; }
   .menu__modes { justify-content: center; }
 }
 
+/* ——— Menu on short landscape screens (phones on their side): compact, side by side ——— */
+@media (orientation: landscape) and (max-height: 540px) {
+  .app { align-items: center; }
+  .menu { gap: clamp(28px, 6vw, 64px); }
+  .menu__title { font-size: min(5.6rem, 24vh); }
+  .menu__couplet { font-size: 1.05rem; margin-top: 0.6rem; }
+  .menu__translation { display: none; }
+  .menu__choices { gap: 14px; padding-left: clamp(20px, 4vw, 40px); }
+  .menu__section { gap: 8px; }
+  .difficulty { gap: 0.4em; }
+  .difficulty__option { flex-direction: row; align-items: baseline; gap: 0.8em; }
+  .difficulty__title { font-size: 1.2rem; }
+  .lang-zh .difficulty__title { font-size: 1.2rem; }
+}
+
 @media (max-width: 560px) {
-  .app { padding-inline: 12px; }
   .landscape__bamboo { display: none; }
-  .game__meta { font-size: var(--t-caption); }
 }
 
 @media (prefers-reduced-motion: reduce) {

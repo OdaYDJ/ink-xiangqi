@@ -3,11 +3,12 @@ import { music, VOLUME_LEVELS } from '../audio/musicController'
 import { useLocale } from '../i18n/locale'
 
 /**
- * A small seal-like mark in the corner. Tap to play or pause the music;
+ * A small seal-like mark: fixed in the corner on wide screens, or inline with
+ * the game's settings on phones and tablets (CSS shows one or the other). Tap to play or pause the music;
  * hover (or keyboard focus) reveals its name and three ink dots for volume.
  * Hidden entirely when the track is not available.
  */
-export default function MusicControl() {
+export default function MusicControl({ placement = 'corner' }: { placement?: 'corner' | 'inline' }) {
   const { t } = useLocale()
   const state = useSyncExternalStore(music.subscribe, music.getState)
   if (state.status === 'unavailable') return null
@@ -16,7 +17,7 @@ export default function MusicControl() {
   const level = VOLUME_LEVELS.reduce((best, v, i) => (Math.abs(v - state.volume) < Math.abs(VOLUME_LEVELS[best] - state.volume) ? i : best), 0)
 
   return (
-    <div className="music" data-music-control>
+    <div className={`music music--${placement}`} data-music-control>
       <div className="music__panel">
         <span className="music__label">{t.music.label}</span>
         <span className="music__levels" role="radiogroup" aria-label={t.music.volume}>
@@ -37,7 +38,11 @@ export default function MusicControl() {
       <button
         type="button"
         className={`music__button${playing ? ' is-playing' : ''}`}
-        onClick={music.toggle}
+        onClick={(e) => {
+          // Keep focus on the mark after a tap, so touch screens reveal the volume dots too (no hover there).
+          e.currentTarget.focus()
+          music.toggle()
+        }}
         aria-pressed={playing}
         aria-label={playing ? t.music.pause : t.music.play}
         title={t.music.label}
