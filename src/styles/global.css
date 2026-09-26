@@ -4,14 +4,17 @@
   --ink: #202020;
   --ink-soft: #77736b;
   --cinnabar: #a33a32;
-  --brush-font: 'Ma Shan Zheng', 'Kaiti SC', 'STKaiti', 'KaiTi', 'BiauKai', serif;
+  --title-font: 'Ma Shan Zheng', 'LXGW WenKai TC', 'Kaiti TC', 'STKaiti', 'KaiTi', serif;
+  --brush-font: 'LXGW WenKai TC', 'Kaiti TC', 'STKaiti', 'KaiTi', 'BiauKai', serif;
   --ui-font: 'Iowan Old Style', 'Palatino', 'Songti SC', Georgia, serif;
 }
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; }
 body {
   margin: 0;
-  background: var(--paper);
+  background-color: var(--paper);
+  /* Fine paper grain. */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.13 0 0 0 0 0.11 0 0 0 0 0.08 0 0 0 0.06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
   color: var(--ink);
   font-family: var(--ui-font);
   -webkit-font-smoothing: antialiased;
@@ -23,5 +26,5 @@ body {
   align-items: center;
   justify-content: center;
 }
-.title { font-family: var(--brush-font); font-weight: 400; font-size: 4rem; margin: 0; }
+.title { font-family: var(--title-font); font-weight: 400; font-size: 4rem; margin: 0; }
 .subtitle { color: var(--ink-soft); letter-spacing: 0.3em; text-transform: uppercase; font-size: 0.75rem; }

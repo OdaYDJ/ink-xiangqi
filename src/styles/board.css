@@ -1,0 +1,44 @@
+.board {
+  display: block;
+  width: 100%;
+  height: auto;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overflow: visible;
+}
+.board.is-interactive { cursor: pointer; }
+
+.board__wash { fill: var(--paper-light); opacity: 0.75; }
+
+.board__ink path { fill: none; stroke: var(--ink); stroke-linecap: round; stroke-linejoin: round; }
+
+.board__river text {
+  font-family: var(--brush-font);
+  font-size: 34px;
+  fill: var(--ink-soft);
+  opacity: 0.8;
+  letter-spacing: 0.4em;
+}
+
+.last-move__from { fill: var(--ink); opacity: 0.12; }
+.last-move__to { fill: none; stroke: var(--ink); stroke-width: 1; opacity: 0.18; stroke-dasharray: 2 5; }
+
+.target--move {
+  fill: var(--ink);
+  opacity: 0.45;
+  animation: ink-drop 260ms ease-out both;
+}
+.target--capture {
+  fill: none;
+  stroke: var(--cinnabar);
+  stroke-width: 1.4;
+  opacity: 0.8;
+  animation: ink-drop 260ms ease-out both;
+}
+
+@keyframes ink-drop {
+  from { opacity: 0; transform: scale(0.4); }
+}
+.target { transform-box: fill-box; transform-origin: center; }

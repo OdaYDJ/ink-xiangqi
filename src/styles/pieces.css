@@ -1,0 +1,66 @@
+.piece {
+  transition: transform 220ms cubic-bezier(0.25, 0.7, 0.25, 1);
+}
+.piece__body {
+  transition: transform 180ms ease-out;
+}
+.piece.is-selected .piece__body { transform: scale(1.07); }
+
+.piece__bleed { fill: var(--ink); opacity: 0.07; }
+.piece__disc { fill: var(--paper-light); stroke-width: 1.4; }
+.piece__ring { fill: none; stroke-width: 0.7; opacity: 0.45; }
+.piece__char {
+  font-family: var(--brush-font);
+  font-size: 33px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.piece--red .piece__disc,
+.piece--red .piece__ring { stroke: var(--cinnabar); }
+.piece--red .piece__char { fill: var(--cinnabar); }
+
+.piece--black .piece__disc,
+.piece--black .piece__ring { stroke: var(--ink); }
+.piece--black .piece__char { fill: var(--ink); }
+
+/* Selection: a soft ink ripple spreading from the piece. */
+.piece__ripple {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.2;
+  opacity: 0;
+  animation: ink-ripple 1.6s ease-out infinite;
+}
+.piece--red .piece__ripple { stroke: var(--cinnabar); }
+@keyframes ink-ripple {
+  0% { transform: scale(1); opacity: 0.45; }
+  100% { transform: scale(1.55); opacity: 0; }
+}
+
+/* Captured pieces dissolve like ink into wet paper. */
+.piece.is-captured .piece__body {
+  animation: ink-dissolve 420ms ease-in forwards;
+}
+@keyframes ink-dissolve {
+  0% { opacity: 1; filter: blur(0); transform: scale(1); }
+  100% { opacity: 0; filter: blur(3px); transform: scale(1.12); }
+}
+
+/* Check: a restrained cinnabar pulse around the General. */
+.piece__check {
+  fill: none;
+  stroke: var(--cinnabar);
+  stroke-width: 1.6;
+  animation: check-pulse 1.4s ease-in-out infinite;
+}
+@keyframes check-pulse {
+  0%, 100% { opacity: 0.25; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .piece, .piece__body { transition: none; }
+  .piece__ripple, .piece__check, .target--move, .target--capture { animation: none; }
+  .piece__check { opacity: 0.7; }
+}
