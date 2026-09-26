@@ -5,9 +5,9 @@ import type { Side } from '../game/piece'
 export type Locale = 'en' | 'zh'
 
 /** The game's motto, shown as a couplet in both languages. */
-export const COUPLET = ['一墨染，萬象生；', '一局落，乾坤開。']
+export const COUPLET = ['一墨染，万象生；', '一局落，乾坤开。']
 /** Couplet columns as brushed on the page: punctuation gives way to space, as in calligraphy. */
-export const COUPLET_COLUMNS = ['一墨染　萬象生', '一局落　乾坤開']
+export const COUPLET_COLUMNS = ['一墨染　万象生', '一局落　乾坤开']
 
 export type Outcome =
   | { kind: 'win'; how: 'checkmate' | 'stalemate'; winner: Side; you: 'won' | 'lost' | null }
