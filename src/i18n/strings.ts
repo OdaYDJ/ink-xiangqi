@@ -74,9 +74,9 @@ export const STRINGS: Record<Locale, Strings> = {
     difficultyHint: { easy: 'plays at ease', medium: 'plans every move', hard: 'sees the whole board' },
     modes: { random: 'Random', classic: 'Classic' },
     formationLabel: 'Starting formation',
-    seed: 'Ink',
+    seed: 'Ink seed',
     seedPlaceholder: 'drawn at random',
-    seedError: 'Ink names use letters, digits, spaces and “-”.',
+    seedError: 'Ink seeds use letters, digits, spaces and “-”.',
     seedDraw: 'Draw another ink',
     twoPlayers: 'Two players, one board',
     switchLanguage: '中文',
@@ -108,7 +108,7 @@ export const STRINGS: Record<Locale, Strings> = {
       const who = o.you === 'won' ? 'you win' : o.you === 'lost' ? 'the computer wins' : `${side[o.winner]} wins`
       return `${how} · ${who}`
     },
-    meta: { twoPlayers: 'Two players', classic: 'Classic', custom: 'Custom position', seedTitle: 'The ink of this formation. Share it to replay the layout.' },
+    meta: { twoPlayers: 'Two players', classic: 'Classic', custom: 'Custom position', seedTitle: 'The ink seed of this formation. Share it to replay the layout.' },
     aiError: (d) => `The computer couldn’t find a move (${d}). Undo or restart to continue.`,
     backToMenu: 'Back to menu',
     boardLabel: 'Xiangqi board',
