@@ -1,16 +1,16 @@
 import {
-  BAMBOO, BAMBOO_HEIGHT, BAMBOO_WIDTH, BIRDS, LANDSCAPE_HEIGHT, LANDSCAPE_WIDTH, MOSS_DOTS, PLUM, PLUM_HEIGHT,
-  PLUM_WIDTH, RIDGES, TREES, WATER, type InkShape,
+  BAMBOO, BAMBOO_HEIGHT, BAMBOO_SPRAY, BAMBOO_WIDTH, BIRDS, LANDSCAPE_HEIGHT, LANDSCAPE_WIDTH, MOSS_DOTS, RIDGES,
+  SPRAY_HEIGHT, SPRAY_WIDTH, TREES, WATER, type InkShape,
 } from '../rendering/landscape'
 
 const paint = (shapes: InkShape[]) =>
   shapes.map((s, i) => (
-    <path key={i} d={s.d} className={s.tone === 'cinnabar' ? 'ink-cinnabar' : 'ink-fill'} fillOpacity={s.opacity} />
+    <path key={i} d={s.d} className="ink-fill" fillOpacity={s.opacity} />
   ))
 
 /**
  * The painting behind the game: mountains dissolving into mist, water,
- * birds, and — on wider screens — bamboo and a plum branch at the edges.
+ * birds, and — on wider screens — a bamboo stand and a hanging bamboo spray at the edges.
  * `spreadKey` replays the "ink spreading into paper" entrance when it changes.
  */
 export default function Landscape({ spreadKey }: { spreadKey: string }) {
@@ -74,8 +74,8 @@ export default function Landscape({ spreadKey }: { spreadKey: string }) {
       <svg className="landscape__bamboo" viewBox={`0 0 ${BAMBOO_WIDTH} ${BAMBOO_HEIGHT}`} preserveAspectRatio="xMinYMax meet">
         {paint(BAMBOO)}
       </svg>
-      <svg className="landscape__plum" viewBox={`0 0 ${PLUM_WIDTH} ${PLUM_HEIGHT}`} preserveAspectRatio="xMaxYMin meet">
-        {paint(PLUM)}
+      <svg className="landscape__spray" viewBox={`0 0 ${SPRAY_WIDTH} ${SPRAY_HEIGHT}`} preserveAspectRatio="xMaxYMin meet">
+        {paint(BAMBOO_SPRAY)}
       </svg>
     </div>
   )

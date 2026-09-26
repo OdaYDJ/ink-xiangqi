@@ -16,7 +16,7 @@ Play: https://odaydj.github.io/ink-xiangqi/ (once GitHub Pages is enabled)
   - **Hard** — iterative deepening, PVS, transposition table, killer/history ordering (~2 s)
 - Pass & play for two people on one device.
 - **Two language versions**, switchable at any time (中文 / English on the menu and in the game; remembered, defaults to the browser language, or `?lang=zh` / `?lang=en`). The Chinese version is set in Traditional Chinese with a vertically written colophon and notation like 炮二平五; the English version uses WXF notation (C2.5). The motto 一墨染，万象生；一局落，乾坤开。 appears as a running-script couplet to the right of the title in both.
-- An ink-painting interface: every board line is a tapered brush stroke on exact geometry, a dry-brush frame, a misty river, carved paper and charcoal pieces, and a procedurally painted landscape (mountains in mist, water, bamboo, plum, birds) behind the game.
+- An ink-painting interface: every board line is a tapered brush stroke on exact geometry, a dry-brush frame, a misty river, carved paper and charcoal pieces, and a procedurally painted landscape (mountains in mist, water, birds, a bamboo stand and a hanging bamboo spray) behind the game.
 - A hanging-scroll layout: vertical title and inscription with a carved seal on the left, the game record in Chinese notation (炮二平五, 馬8進7…) and quiet controls on the right; on phones the board comes first.
 - Ink-inspired motion: the board spreads into the paper on start, a soft halo marks the selected piece, a ripple marks the landing point, a small splash marks captures, and a seal is stamped when the game ends. Optional quiet sounds; reduced-motion respected.
 

@@ -89,16 +89,15 @@ body {
   width: auto;
   opacity: 0.8;
 }
-.landscape__plum {
+.landscape__spray {
   position: absolute;
   right: 0;
   top: 0;
-  width: min(25vw, 400px);
+  width: min(29vw, 460px);
   height: auto;
   opacity: 0.8;
 }
 .ink-fill { fill: var(--ink-wash); }
-.ink-cinnabar { fill: var(--seal); }
 .landscape__birds { animation: drift 40s ease-in-out infinite alternate; }
 @keyframes drift {
   to { transform: translate(-30px, 6px); }
@@ -537,7 +536,7 @@ body {
   .record__move:not(:nth-last-child(-n + 2)) { display: none; }
   .controls { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 4px 18px; }
   .landscape__bamboo { height: min(46vh, 380px); opacity: 0.45; }
-  .landscape__plum { width: min(40vw, 260px); opacity: 0.55; }
+  .landscape__spray { width: min(40vw, 260px); opacity: 0.55; }
 }
 
 @media (max-width: 720px) {
@@ -553,7 +552,7 @@ body {
   body { font-size: 16px; }
   .app { padding-inline: 12px; }
   .landscape__bamboo { display: none; }
-  .landscape__plum { width: 36vw; opacity: 0.35; }
+  .landscape__spray { width: 36vw; opacity: 0.35; }
   .game__meta { font-size: 0.72rem; }
 }
 

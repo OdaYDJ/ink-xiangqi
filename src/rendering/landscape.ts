@@ -4,13 +4,11 @@ import { brushOutline, curve, leafWidth, smoothNoise, taper, type Pt } from './b
 /**
  * A faint monochrome landscape painted procedurally (seeded, so it never
  * changes between visits): mountains fading into mist, water, a few trees
- * and birds, plus a bamboo stand and a plum branch for the corners.
+ * and birds, plus a bamboo stand and a hanging bamboo spray for the corners.
  */
 export interface InkShape {
   d: string
   opacity: number
-  /** 'ink' or 'cinnabar' (plum blossoms only). */
-  tone?: 'ink' | 'cinnabar'
 }
 
 const rng = createRng('ink-landscape-1')
@@ -118,100 +116,106 @@ export const BIRDS: InkShape[] = [
   return { d: brushOutline(pts, (t) => 1.6 * s * (0.4 + Math.sin(Math.PI * t) * 0.6)), opacity: 0.38 }
 })
 
-/* ——— Bamboo (drawn in its own 400×700 frame, anchored bottom-left) ——— */
+/* ——— Bamboo, shared brushwork ——— */
+
+/**
+ * Leaves in 个 / 介 clusters: a short twig, then blades hanging from its tip
+ * at slightly different points, each drooping under its own weight.
+ */
+function bambooCluster(
+  shapes: InkShape[], x: number, y: number, twigAngle: number, leafAngles: number[], length: number, opacity: number,
+) {
+  const ta = (twigAngle * Math.PI) / 180
+  const twigLen = 26 + rng() * 14
+  const tip = { x: x + Math.cos(ta) * twigLen, y: y + Math.sin(ta) * twigLen }
+  shapes.push({ d: brushOutline(curve({ x, y }, { x: (x + tip.x) / 2, y: (y + tip.y) / 2 - 3 }, tip, 8), taper(2.2, 0.4)), opacity: opacity * 0.8 })
+  leafAngles.forEach((deg, i) => {
+    const a = ((deg + (rng() - 0.5) * 10) * Math.PI) / 180
+    const len = length * (0.7 + rng() * 0.5)
+    const start = { x: tip.x - Math.cos(ta) * i * 5, y: tip.y - Math.sin(ta) * i * 5 }
+    const end = { x: start.x + Math.cos(a) * len, y: start.y + Math.sin(a) * len + len * 0.18 }
+    const bend = { x: start.x + Math.cos(a) * len * 0.45, y: start.y + Math.sin(a) * len * 0.45 - len * 0.08 }
+    shapes.push({ d: brushOutline(curve(start, bend, end, 14), leafWidth(len * 0.12)), opacity: opacity * (0.75 + rng() * 0.45) })
+  })
+}
+
+/**
+ * A bamboo culm along a gentle curve, painted as separate segments with a
+ * small gap and a darker node mark at each joint. Returns the joint points.
+ */
+function bambooCulm(shapes: InkShape[], from: Pt, bendAt: Pt, to: Pt, segments: number, width: number, opacity: number): Pt[] {
+  const path = curve(from, bendAt, to, segments * 12)
+  const joints: Pt[] = []
+  for (let i = 0; i < segments; i++) {
+    const a = path[i * 12], b = path[(i + 1) * 12]
+    const len = Math.hypot(b.x - a.x, b.y - a.y)
+    const ux = (b.x - a.x) / len, uy = (b.y - a.y) / len
+    const w = width * (1 - (i / segments) * 0.45)
+    // Stop a few pixels short of the joint: the white gap is how bamboo reads.
+    const end = { x: b.x - ux * 4, y: b.y - uy * 4 }
+    const pts = path.slice(i * 12, (i + 1) * 12).concat([end])
+    shapes.push({ d: brushOutline(pts, (t) => w * (1.08 - 0.12 * Math.sin(Math.PI * t))), opacity })
+    if (i < segments - 1) {
+      const nx = -uy, ny = ux
+      shapes.push({
+        d: brushOutline(
+          curve({ x: b.x - nx * w * 0.8, y: b.y - ny * w * 0.8 }, { x: b.x - ux * 2, y: b.y - uy * 2 }, { x: b.x + nx * w * 0.8, y: b.y + ny * w * 0.8 }, 6),
+          leafWidth(2.4),
+        ),
+        opacity: opacity + 0.15,
+      })
+    }
+    joints.push(b)
+  }
+  return joints
+}
+
+/* ——— Bamboo stand (in its own 400×700 frame, anchored bottom-left) ——— */
 
 export const BAMBOO_WIDTH = 400
 export const BAMBOO_HEIGHT = 700
 
 export const BAMBOO: InkShape[] = (() => {
   const shapes: InkShape[] = []
-  // Stems: segments separated by small gaps, with a darker node mark.
-  const stem = (x0: number, lean: number, height: number, w: number, opacity: number) => {
-    const segments = 5
-    let y = BAMBOO_HEIGHT + 10
-    const seg = height / segments
-    for (let i = 0; i < segments; i++) {
-      const x = x0 + lean * (BAMBOO_HEIGHT - y)
-      const y2 = y - seg * (0.92 - i * 0.03)
-      const x2 = x0 + lean * (BAMBOO_HEIGHT - y2)
-      const segW = w * (1 - i * 0.12)
-      shapes.push({
-        d: brushOutline(curve({ x, y }, { x: (x + x2) / 2 + 1.5, y: (y + y2) / 2 }, { x: x2, y: y2 + 5 }, 8), (t) => segW * (1.08 - 0.12 * Math.sin(Math.PI * t))),
-        opacity,
-      })
-      // Node: a short, slightly curved dark mark across the joint.
-      shapes.push({
-        d: brushOutline(curve({ x: x2 - segW * 0.8, y: y2 + 3 }, { x: x2, y: y2 + 0.5 }, { x: x2 + segW * 0.8, y: y2 + 3 }, 6), leafWidth(2.4)),
-        opacity: opacity + 0.15,
-      })
-      y = y2
-    }
-    return { x: x0 + lean * (BAMBOO_HEIGHT - y), y }
-  }
-  // Leaves in 个 / 介 clusters: a short twig from the stem, then three or four
-  // blades hanging from its tip at slightly different points, each drooping.
-  const cluster = (x: number, y: number, twigAngle: number, leafAngles: number[], length: number, opacity: number) => {
-    const ta = (twigAngle * Math.PI) / 180
-    const twigLen = 26 + rng() * 14
-    const tip = { x: x + Math.cos(ta) * twigLen, y: y + Math.sin(ta) * twigLen }
-    shapes.push({ d: brushOutline(curve({ x, y }, { x: (x + tip.x) / 2, y: (y + tip.y) / 2 - 3 }, tip, 8), taper(2.2, 0.4)), opacity: opacity * 0.8 })
-    leafAngles.forEach((deg, i) => {
-      const a = ((deg + (rng() - 0.5) * 10) * Math.PI) / 180
-      const len = length * (0.7 + rng() * 0.5)
-      const start = { x: tip.x - Math.cos(ta) * i * 5, y: tip.y - Math.sin(ta) * i * 5 }
-      const end = { x: start.x + Math.cos(a) * len, y: start.y + Math.sin(a) * len + len * 0.18 }
-      const bend = { x: start.x + Math.cos(a) * len * 0.45, y: start.y + Math.sin(a) * len * 0.45 - len * 0.08 }
-      shapes.push({ d: brushOutline(curve(start, bend, end, 14), leafWidth(len * 0.12)), opacity: opacity * (0.75 + rng() * 0.45) })
-    })
-  }
-  const tipA = stem(96, 0.05, 560, 9, 0.42)
-  const tipB = stem(150, -0.07, 430, 7, 0.3)
-  cluster(tipA.x, tipA.y + 12, -30, [20, 55, 95], 78, 0.5)
-  cluster(tipA.x + 2, tipA.y + 120, 200, [110, 145, 170, 80], 72, 0.46)
-  cluster(tipA.x + 6, tipA.y + 250, -15, [30, 70], 64, 0.4)
-  cluster(tipB.x, tipB.y + 10, 210, [120, 160, 95], 60, 0.32)
-  cluster(tipB.x + 2, tipB.y + 110, -20, [40, 75, 15], 56, 0.3)
+  const a = bambooCulm(shapes, { x: 96, y: 710 }, { x: 106, y: 430 }, { x: 124, y: 160 }, 5, 9, 0.42)
+  const b = bambooCulm(shapes, { x: 150, y: 710 }, { x: 138, y: 480 }, { x: 118, y: 290 }, 4, 7, 0.3)
+  const tipA = a[a.length - 1], tipB = b[b.length - 1]
+  // Pale leaves first (淡墨, further back), then the dense front leaves (濃墨).
+  bambooCluster(shapes, a[3].x, a[3].y - 30, -40, [10, 40, 75], 66, 0.2)
+  bambooCluster(shapes, b[2].x, b[2].y, 215, [150, 175, 125], 58, 0.18)
+  bambooCluster(shapes, tipA.x, tipA.y + 12, -30, [20, 55, 95], 78, 0.5)
+  bambooCluster(shapes, a[3].x + 2, a[3].y, 200, [110, 145, 170, 80], 72, 0.46)
+  bambooCluster(shapes, a[2].x + 6, a[2].y, -15, [30, 70], 64, 0.4)
+  bambooCluster(shapes, tipB.x, tipB.y + 10, 210, [120, 160, 95], 60, 0.32)
+  bambooCluster(shapes, b[1].x + 2, b[1].y, -20, [40, 75, 15], 56, 0.3)
   return shapes
 })()
 
-/* ——— Plum branch (in its own 520×360 frame, anchored top-right) ——— */
+/* ——— Hanging bamboo spray (in its own 520×380 frame, anchored top-right) ———
+   A branch leans in from beyond the top-right corner and its leaves hang down
+   into the empty paper, answering the stand in the lower-left. */
 
-export const PLUM_WIDTH = 520
-export const PLUM_HEIGHT = 360
+export const SPRAY_WIDTH = 520
+export const SPRAY_HEIGHT = 380
 
-export const PLUM: InkShape[] = (() => {
+export const BAMBOO_SPRAY: InkShape[] = (() => {
   const shapes: InkShape[] = []
-  // Plum branches are angular: straight-ish segments with sharp turns.
-  const branch = (pts: Pt[], w: number, opacity: number) => shapes.push({ d: brushOutline(pts, taper(w, 0.2)), opacity })
-  branch([{ x: 540, y: 40 }, { x: 430, y: 70 }, { x: 350, y: 60 }, { x: 250, y: 118 }, { x: 170, y: 126 }], 11, 0.55)
-  branch([{ x: 350, y: 62 }, { x: 318, y: 130 }, { x: 330, y: 200 }], 5, 0.5)
-  branch([{ x: 250, y: 118 }, { x: 214, y: 176 }, { x: 180, y: 190 }], 4, 0.45)
-  branch([{ x: 430, y: 70 }, { x: 410, y: 20 }], 4, 0.45)
-  branch([{ x: 170, y: 126 }, { x: 120, y: 110 }], 2.5, 0.45)
+  // The branch bows under the weight of its leaves.
+  const main = bambooCulm(shapes, { x: 570, y: -34 }, { x: 440, y: 78 }, { x: 236, y: 132 }, 4, 7, 0.44)
+  const side = bambooCulm(shapes, main[1], { x: 360, y: 58 }, { x: 262, y: 44 }, 2, 3.4, 0.34)
+  const tip = main[main.length - 1]
 
-  // Blossoms: five faded-cinnabar petals, ink stamens. Buds: a single dot.
-  const blossom = (x: number, y: number, r: number, rot: number) => {
-    for (let i = 0; i < 5; i++) {
-      const a = rot + (i * 2 * Math.PI) / 5
-      const cx = x + Math.cos(a) * r * 0.62, cy = y + Math.sin(a) * r * 0.62
-      shapes.push({ d: circlePath(cx, cy, r * 0.52), opacity: 0.32, tone: 'cinnabar' })
-    }
-    for (let i = 0; i < 5; i++) {
-      const a = rot + 0.3 + (i * 2 * Math.PI) / 5
-      shapes.push({ d: circlePath(x + Math.cos(a) * r * 0.45, y + Math.sin(a) * r * 0.45, 0.9), opacity: 0.6 })
-    }
-  }
-  blossom(318, 132, 12, 0.2)
-  blossom(214, 172, 10, 1.1)
-  blossom(252, 104, 11, 0.6)
-  blossom(128, 112, 8, 0.4)
-  blossom(410, 26, 9, 0.9)
-  for (const [x, y] of [[330, 196], [182, 190], [362, 58], [168, 134]]) {
-    shapes.push({ d: circlePath(x, y, 3.2), opacity: 0.45, tone: 'cinnabar' })
-  }
+  // 淡墨: pale leaves behind, giving depth.
+  bambooCluster(shapes, main[1].x, main[1].y, 80, [55, 85, 115], 72, 0.2)
+  bambooCluster(shapes, side[0].x, side[0].y, 150, [125, 160], 60, 0.18)
+  bambooCluster(shapes, tip.x + 20, tip.y - 6, 150, [100, 130], 64, 0.2)
+  // 濃墨: dense front leaves, hanging in 个 / 介 groups.
+  bambooCluster(shapes, tip.x, tip.y, 172, [112, 138, 162, 92], 92, 0.56)
+  bambooCluster(shapes, main[2].x, main[2].y, 112, [78, 104, 128], 80, 0.5)
+  bambooCluster(shapes, main[0].x, main[0].y, 96, [72, 98], 66, 0.36)
+  bambooCluster(shapes, side[1].x, side[1].y, 196, [138, 164, 118], 66, 0.38)
   return shapes
 })()
-
 
 function circlePath(cx: number, cy: number, r: number): string {
   return `M${(cx - r).toFixed(1)} ${cy.toFixed(1)}a${r.toFixed(1)} ${r.toFixed(1)} 0 1 0 ${(2 * r).toFixed(1)} 0a${r.toFixed(1)} ${r.toFixed(1)} 0 1 0 ${(-2 * r).toFixed(1)} 0Z`

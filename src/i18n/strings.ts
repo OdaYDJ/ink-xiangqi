@@ -65,7 +65,7 @@ export const STRINGS: Record<Locale, Strings> = {
   en: {
     htmlLang: 'en',
     subtitle: 'Ink Xiangqi',
-    coupletTranslation: 'One stroke of ink, and all things appear; one game begins, and heaven and earth open.',
+    coupletTranslation: '“With a stroke of ink, a thousand forms arise; with a single move, the universe unfolds.”',
     playLabel: 'Play against',
     difficulty: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
     difficultyHint: { easy: 'plays at ease', medium: 'plans every move', hard: 'sees the whole board' },
