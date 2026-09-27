@@ -3,7 +3,6 @@ import type { Difficulty } from '../ai/difficulty'
 import { useLocale } from '../i18n/locale'
 import { randomInk, seedLabel, toSeed } from '../game/inkColors'
 import { normalizeSeed, type GameMode } from '../game/randomizer'
-import Couplet from './Couplet'
 import DifficultySelector from './DifficultySelector'
 import LanguageToggle from './LanguageToggle'
 import Seal from './Seal'
@@ -53,13 +52,11 @@ export default function MainMenu({ initialMode, seed, onSeedChange: setSeed, onS
       <div className="menu__frontispiece">
         <div className="menu__title-block">
           <h1 className="menu__title" lang="zh-Hant" aria-label={`墨弈 · ${t.subtitle}`}>墨弈</h1>
-          <Couplet className="menu__couplet" />
           <div className="menu__signature">
-            <p className="menu__subtitle">{t.subtitle}</p>
-            <Seal text="墨弈" size={40} variant="raised" />
+            <p className="menu__subtitle" lang="en" aria-hidden="true">{t.subtitle}</p>
+            <Seal text="中国象棋" size={72} variant="carved" script="outline" layout="column" title="中国象棋" />
           </div>
         </div>
-        {t.coupletTranslation && <p className="menu__translation">{t.coupletTranslation}</p>}
       </div>
 
       <div className="menu__choices">

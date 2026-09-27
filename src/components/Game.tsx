@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { AiClient } from '../ai/aiClient'
 import {
   applyMove, createGame, legalTargets, undoMoves, type GameState,
@@ -10,11 +10,11 @@ import { seedLabel } from '../game/inkColors'
 import { describeMove as describeNotation, formatChinese, formatWxf } from '../game/notation'
 import { useLocale } from '../i18n/locale'
 import type { Outcome, Strings } from '../i18n/strings'
-import Couplet from './Couplet'
 import { createFormation, type Formation } from '../game/randomizer'
 import type { Move } from '../game/move'
 import { AI_MIN_DELAY_MS, CAPTURE_FADE_MS, MOVE_MS } from '../rendering/animations'
-import { playCaptureSound, playMoveSound } from '../rendering/sound'
+import { finaleInk } from '../rendering/inkFx'
+import { playCaptureSound, playMoveSound } from '../audio/sfx'
 import Board, { type PieceView } from './Board'
 import GameControls from './GameControls'
 import MoveRecord from './MoveRecord'
@@ -166,9 +166,14 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
         <button type="button" className="game__title" onClick={onMenu} aria-label={`墨弈 · ${t.backToMenu}`} lang="zh-Hant">
           墨弈
         </button>
-        <div className="game__couplet-block">
-          <Couplet className="game__couplet" />
-          <Seal text="棋" size={30} className="game__seal" />
+        {/* The verse and its seal: one vertical line beside the title on wide screens; on narrow ones,
+            a two-line couplet left of the title, with the seal after it. */}
+        <div className="game__verse-block">
+          <p className="game__verse" lang="zh-Hant">
+            <span className="game__verse-line">一墨入山水，</span>
+            <span className="game__verse-line">一局落乾坤。</span>
+          </p>
+          <Seal text="棋" size={30} script="outline" className="game__seal" />
         </div>
       </aside>
 
@@ -247,11 +252,36 @@ function StatusLine({ game, thinking, vsAi, error, t }: StatusProps) {
   )
 }
 
+/**
+ * 7. The close of a game, like finishing a painting: ink spreads slowly from the centre, a wash of paper
+ * rises over it so the verdict can be read, a few motes drift off — then the seal is pressed and the words appear.
+ */
 function GameOver({ game, vsAi, t }: { game: GameState; vsAi: boolean; t: Strings }) {
   const glyph = !game.winner ? '和' : vsAi && game.winner !== HUMAN ? '負' : '勝'
+  const ink = useMemo(() => finaleInk(`finale-${game.history.length}-${glyph}`), [game.history.length, glyph])
   return (
     <div className="game-over" role="status">
-      <Seal text={glyph} size={112} className="game-over__seal" title={glyph} />
+      <svg className="game-over__ink" viewBox="-100 -100 200 200" aria-hidden="true">
+        <defs>
+          <filter id="finale-bleed" x="-30%" y="-30%" width="160%" height="160%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" seed="17" result="n" />
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="12" result="d" />
+            <feGaussianBlur in="d" stdDeviation="3.5" />
+          </filter>
+        </defs>
+        <path className="game-over__bloom" d={ink.bloom} filter="url(#finale-bleed)" />
+        <path className="game-over__veil" d={ink.veil} filter="url(#finale-bleed)" />
+        {ink.motes.map((m, i) => (
+          <g key={i} transform={`translate(${m.x.toFixed(1)} ${m.y.toFixed(1)})`}>
+            <path
+              className="game-over__mote"
+              d={m.d}
+              style={{ '--dx': `${m.dx.toFixed(1)}px`, '--dy': `${m.dy.toFixed(1)}px`, animationDelay: `${m.delay}ms` } as CSSProperties}
+            />
+          </g>
+        ))}
+      </svg>
+      <Seal text={glyph} size={112} script="outline" className="game-over__seal" title={glyph} />
       <span className="game-over__text">{t.outcome(outcomeOf(game, vsAi))}</span>
     </div>
   )

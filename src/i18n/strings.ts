@@ -4,19 +4,14 @@ import type { Side } from '../game/piece'
 
 export type Locale = 'en' | 'zh'
 
-/** The game's motto, shown as a couplet in both languages. */
-export const COUPLET = ['一墨染，万象生；', '一局落，乾坤开。']
-/** Couplet columns as brushed on the page: punctuation gives way to space, as in calligraphy. */
-export const COUPLET_COLUMNS = ['一墨染　万象生', '一局落　乾坤开']
-
 export type Outcome =
   | { kind: 'win'; how: 'checkmate' | 'stalemate'; winner: Side; you: 'won' | 'lost' | null }
   | { kind: 'draw'; reason: 'repetition' | 'no-progress' | null }
 
 export interface Strings {
   htmlLang: string
+  /** The English name, shown under the title in both languages. */
   subtitle: string
-  coupletTranslation: string | null
   playLabel: string
   difficulty: Record<Difficulty, string>
   difficultyHint: Record<Difficulty, string>
@@ -67,8 +62,7 @@ const side = { red: 'Red', black: 'Black' }
 export const STRINGS: Record<Locale, Strings> = {
   en: {
     htmlLang: 'en',
-    subtitle: 'Ink Xiangqi',
-    coupletTranslation: 'With a stroke of ink, a thousand forms arise. With a single move, the universe unfolds.',
+    subtitle: 'Ink Chess',
     playLabel: 'Play against',
     difficulty: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
     difficultyHint: { easy: 'plays at ease', medium: 'plans every move', hard: 'sees the whole board' },
@@ -122,8 +116,7 @@ export const STRINGS: Record<Locale, Strings> = {
 
   zh: {
     htmlLang: 'zh-Hant',
-    subtitle: '水墨象棋',
-    coupletTranslation: null,
+    subtitle: 'Ink Chess',
     playLabel: '對弈',
     difficulty: { easy: '初學', medium: '棋手', hard: '國手' },
     difficultyHint: { easy: '落子從容', medium: '運籌帷幄', hard: '洞見乾坤' },

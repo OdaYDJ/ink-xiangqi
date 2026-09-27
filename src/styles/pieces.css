@@ -1,4 +1,5 @@
-.piece { transition: transform 240ms cubic-bezier(0.3, 0.7, 0.3, 1); }
+/* 3. Pieces glide across the paper: eased in and out, never linear. */
+.piece { transition: transform var(--move-ms, 280ms) cubic-bezier(0.45, 0.05, 0.25, 1); }
 .piece__body,
 .piece__shadow { transition: transform 200ms ease-out, opacity 200ms ease-out; }
 
@@ -35,30 +36,63 @@
   50% { opacity: 1; transform: scale(1.04); }
 }
 
-/* Captured pieces sink into the paper. */
-.piece.is-captured .piece__body,
-.piece.is-captured .piece__shadow {
-  animation: ink-dissolve 460ms ease-in forwards;
+/* 1. Weight: the moving piece rides a hair above the paper (its shadow loose and light), presses down
+   as it lands, and settles. The landing falls at --move-ms of a --move-ms + 320ms animation (≈ 47%). */
+.piece__lift, .piece__lift-shadow { transform-origin: 0 0; }
+.piece.is-landing .piece__lift { animation: piece-land calc(var(--move-ms, 280ms) + 320ms) linear both; }
+.piece.is-landing .piece__lift-shadow { animation: piece-land-shadow calc(var(--move-ms, 280ms) + 320ms) linear both; }
+@keyframes piece-land {
+  0%, 42% { transform: translateY(-1.6px) scale(1.03); animation-timing-function: ease-in; }
+  49% { transform: translateY(0.7px) scale(0.982); animation-timing-function: ease-out; }
+  64% { transform: translateY(-0.2px) scale(1.004); }
+  100% { transform: none; }
 }
-@keyframes ink-dissolve {
-  0% { opacity: 1; filter: blur(0); }
-  100% { opacity: 0; filter: blur(4px); transform: scale(1.08); }
+@keyframes piece-land-shadow {
+  0%, 42% { transform: translate(1.8px, 3px) scale(1.12); opacity: 0.55; animation-timing-function: ease-in; }
+  49% { transform: translate(-0.4px, -0.8px) scale(0.93); opacity: 1; animation-timing-function: ease-out; }
+  100% { transform: none; opacity: 1; }
+}
+/* A capture lands harder. */
+.piece.is-landing.is-impact .piece__lift { animation-name: piece-impact; }
+@keyframes piece-impact {
+  0%, 42% { transform: translateY(-2.2px) scale(1.045); animation-timing-function: ease-in; }
+  48% { transform: translateY(1.3px) scale(0.965); animation-timing-function: ease-out; }
+  62% { transform: translateY(-0.4px) scale(1.008); }
+  100% { transform: none; }
 }
 
-/* Check: a slow, faded cinnabar ring around the General. */
-.piece__check {
-  fill: none;
-  stroke: var(--cinnabar);
-  stroke-width: 2;
-  animation: check-pulse 1.8s ease-in-out infinite;
+/* 5. A captured piece is taken by the ink: it darkens, loses its edges and is gone. */
+.piece.is-captured .piece__lift,
+.piece.is-captured .piece__lift-shadow {
+  animation: ink-absorb 640ms calc(var(--move-ms, 280ms) * 0.75) ease-in both;
 }
-@keyframes check-pulse {
-  0%, 100% { opacity: 0.25; transform: scale(1); }
-  50% { opacity: 0.8; transform: scale(1.06); }
+@keyframes ink-absorb {
+  0% { opacity: 1; filter: none; }
+  35% { opacity: 0.9; filter: blur(0.4px) brightness(0.8); }
+  100% { opacity: 0; filter: blur(3px) brightness(0.55); transform: scale(0.9); }
 }
+
+/* 6. Check: a cinnabar stain soaks in under the General and a circle is brushed round it,
+   pressed in like a seal — then it simply stays, without pulsing, until the check is answered. */
+.piece__check-stain, .piece__check-ring { transform-origin: 0 0; }
+/* It appears as the checking piece lands, not as it sets off. */
+.piece__check-stain { fill: var(--cinnabar); opacity: 0.14; animation: check-stain 900ms calc(var(--move-ms, 280ms) * 0.9) ease-out both; }
+@keyframes check-stain {
+  0% { opacity: 0; transform: scale(0.5); }
+  30% { opacity: 0.3; }
+  100% { opacity: 0.14; transform: scale(1); }
+}
+.piece__check-ring path { fill: var(--cinnabar); }
+.piece__check-ring { opacity: 0.82; animation: check-press 420ms calc(var(--move-ms, 280ms) * 0.9) cubic-bezier(0.2, 0.9, 0.3, 1.15) both; }
+@keyframes check-press {
+  0% { opacity: 0; transform: scale(1.18); }
+  100% { opacity: 0.82; transform: scale(1); }
+}
+.piece__check-reveal { animation: fx-write 400ms calc(var(--move-ms, 280ms) * 0.9 + 60ms) ease-out forwards; }
 
 @media (prefers-reduced-motion: reduce) {
   .piece, .piece__body, .piece__shadow { transition: none; }
-  .piece__halo, .piece__check { animation: none; }
-  .piece__check { opacity: 0.7; }
+  .piece__halo, .piece__lift, .piece__lift-shadow, .piece__check-stain, .piece__check-ring { animation: none !important; }
+  .piece__check-reveal { animation: none; stroke-dashoffset: 0; }
+  .piece.is-captured { display: none; }
 }
