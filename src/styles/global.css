@@ -15,13 +15,12 @@
   --cinnabar: #a34a3c;
   --seal: #ad4637;
 
-  --title-font: 'Zhi Mang Xing', 'Ma Shan Zheng', 'LXGW WenKai TC', 'Kaiti TC', 'STKaiti', serif;
-  --couplet-font: 'Ma Shan Zheng', 'Kaiti SC', 'STKaiti', 'KaiTi', serif;
+  --title-font: 'Zhi Mang Xing', 'LXGW WenKai TC', 'Kaiti TC', 'STKaiti', serif;
   --brush-font: 'LXGW WenKai TC', 'Kaiti TC', 'STKaiti', 'KaiTi', 'BiauKai', serif;
   --song-font: 'Noto Serif TC', 'Songti TC', 'STSong', 'PMingLiU', serif;
   --song-sc: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
 
-  /* Type scale: four text steps, plus clamped display sizes for 墨弈 and the couplet.
+  /* Type scale: four text steps, plus clamped display sizes for 墨弈.
      English (Cormorant, small x-height) sits a step higher than Chinese for the same role;
      Chinese never goes below --t-small so dense strokes stay legible. */
   --t-caption: 0.75rem; /* 12px: English uppercase labels only */
@@ -205,39 +204,39 @@ body {
   gap: clamp(56px, 9vw, 150px);
 }
 .menu__frontispiece { display: flex; flex-direction: column; align-items: center; gap: 26px; }
-.menu__title-block { display: flex; flex-direction: row; align-items: flex-start; gap: clamp(14px, 1.6vw, 24px); }
+/* The title's size is one variable (per screen size below), scaled by the design (--title-scale).
+   The signature column (English name + seal) is sized from it, so it always fits within
+   the title's height: seal 0.48 of a character, name at most 0.12, and the gaps in between. */
+.menu__title-block {
+  --title-size: clamp(6.75rem, 12.4vw, 10.75rem);
+  --title-em: calc(var(--title-size) * var(--title-scale, 1));
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: clamp(14px, 1.6vw, 24px);
+}
 .menu__title {
   writing-mode: vertical-rl;
   font-family: var(--title-font);
   font-weight: 400;
-  font-size: clamp(6.75rem, 12.4vw, 10.75rem);
+  font-size: var(--title-em);
   line-height: 0.92;
   margin: 0;
   color: var(--ink);
-}
-.menu__couplet { font-size: clamp(1.375rem, 1.7vw, 1.625rem); margin-top: 1.4rem; color: var(--ink-2); opacity: 0.88; }
-.menu__translation {
-  margin: 0;
-  max-width: 18rem;
-  text-align: center;
-  font-style: italic;
-  font-size: var(--t-body);
-  line-height: 1.55;
-  color: var(--ink-soft);
-  text-wrap: balance;
 }
 .menu__signature {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: calc(var(--title-em) * 0.1);
   align-self: flex-end;
-  padding-bottom: 0.4rem;
+  padding-bottom: calc(var(--title-em) * 0.04);
 }
+.menu__signature .seal { height: calc(var(--title-em) * 0.48); width: auto; }
 .menu__subtitle {
   writing-mode: vertical-rl;
   margin: 0;
-  font-size: var(--t-caption);
+  font-size: min(var(--t-caption), calc(var(--title-em) * 0.12));
   letter-spacing: 0.45em;
   text-transform: uppercase;
   color: var(--ink-soft);
@@ -418,6 +417,9 @@ body {
   height: 44px;
 }
 .game__title {
+  order: 0;
+  flex: none;
+  white-space: nowrap;
   font-family: var(--title-font);
   font-size: clamp(2.1rem, 7.5vw, 2.6rem);
   line-height: 1;
@@ -427,9 +429,27 @@ body {
   padding: 0;
   cursor: pointer;
 }
-/* (Scoped, so it outranks the couplet's own display rule.) */
-.game__inscription .game__couplet { display: none; margin-top: 0.8rem; font-size: 1.25rem; opacity: 0.88; }
-.game__couplet-block { display: flex; align-items: center; gap: 16px; }
+
+/* The verse. Narrow layouts: one row — verse, title, seal — with the verse as a two-line couplet
+   left of the title (half the width of one line, and it fits the header's height). */
+.game__verse-block { display: contents; }
+.game__verse {
+  order: -1;
+  flex: none;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  /* Brushed in regular script, at its regular weight: an inscription, not a heading. */
+  font-family: var(--brush-font);
+  font-weight: 400;
+  font-size: clamp(12px, 3.4vw, 14px);
+  line-height: 1.45;
+  letter-spacing: 0.18em;
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+.game__seal { order: 1; flex: none; }
 
 .board-wrap {
   grid-area: board;
@@ -525,7 +545,8 @@ body {
   .controls .quiet-button, .menu .quiet-button { min-height: 40px; padding-inline: 4px; }
 }
 
-/* Game over: a seal pressed onto the painting. */
+/* Game over: after the final piece lands (≈0.3s), ink spreads slowly through the sheet, paper rises over it,
+   motes drift off — then the seal is pressed (≈1.3s) and the words appear (≈1.9s). */
 .game-over {
   position: absolute;
   inset: 0;
@@ -534,11 +555,29 @@ body {
   align-items: center;
   justify-content: center;
   gap: 18px;
-  background: radial-gradient(closest-side, rgba(243, 238, 227, 0.88), rgba(243, 238, 227, 0.5) 65%, transparent);
-  animation: screen-in 900ms ease-out both;
   pointer-events: none;
 }
-.game-over__seal { animation: stamp 760ms 250ms cubic-bezier(0.2, 0.9, 0.3, 1.15) both; }
+.game-over > :not(.game-over__ink) { position: relative; }
+.game-over__ink { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.game-over__bloom, .game-over__veil, .game-over__mote { transform-origin: 0 0; }
+.game-over__bloom { fill: var(--ink); opacity: 0; animation: finale-bloom 2600ms 280ms cubic-bezier(0.2, 0.6, 0.3, 1) both; }
+@keyframes finale-bloom {
+  0% { opacity: 0; transform: scale(0.15) rotate(-8deg); }
+  35% { opacity: 0.14; }
+  100% { opacity: 0.07; transform: scale(1) rotate(0deg); }
+}
+.game-over__veil { fill: var(--paper); opacity: 0; animation: finale-veil 2200ms 600ms cubic-bezier(0.2, 0.6, 0.3, 1) both; }
+@keyframes finale-veil {
+  0% { opacity: 0; transform: scale(0.25); }
+  100% { opacity: 0.82; transform: scale(1); }
+}
+.game-over__mote { fill: var(--ink); opacity: 0; animation: finale-mote 1800ms ease-out both; }
+@keyframes finale-mote {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.6); }
+  25% { opacity: 0.5; }
+  100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(1.1); }
+}
+.game-over__seal { animation: stamp 760ms 1300ms cubic-bezier(0.2, 0.9, 0.3, 1.15) both; }
 @keyframes stamp {
   0% { opacity: 0; transform: scale(1.7) rotate(-12deg); }
   55% { opacity: 1; transform: scale(0.94) rotate(-3deg); }
@@ -548,22 +587,8 @@ body {
   font-style: italic;
   font-size: var(--t-lead);
   color: var(--ink);
-  animation: screen-in 700ms 800ms ease-out both;
+  animation: screen-in 700ms 1900ms ease-out both;
 }
-
-/* ——— Couplet: 一墨染，萬象生；一局落，乾坤開 ——— */
-.couplet {
-  display: flex;
-  flex-direction: row-reverse;
-  gap: 0.35em;
-  margin: 0;
-  font-family: var(--couplet-font);
-  font-weight: 400;
-  color: var(--ink-2);
-  line-height: 1.1;
-}
-.couplet__line { writing-mode: vertical-rl; letter-spacing: 0.26em; }
-.couplet__line:last-child { padding-top: 1.1em; } /* the second line starts a little lower, as brushed */
 
 /* ——— English version: the record is a two-column list, Red then Black ——— */
 .lang-en .record {
@@ -596,6 +621,9 @@ body {
 .lang-zh .difficulty__title { letter-spacing: 0.32em; margin-inline-end: -0.32em; font-size: 1.5rem; }
 .lang-zh .difficulty__hint { font-style: normal; letter-spacing: 0.32em; margin-inline-end: -0.32em; font-size: var(--t-small); color: var(--ink-soft); }
 .lang-zh .menu__subtitle { letter-spacing: 0.6em; text-transform: none; font-size: var(--t-small); }
+/* The English name reads the same in both versions. */
+.menu__subtitle[lang='en'],
+.lang-zh .menu__subtitle[lang='en'] { font-family: var(--ui-font); letter-spacing: 0.45em; text-transform: uppercase; font-size: min(var(--t-caption), calc(var(--title-em) * 0.12)); }
 .lang-zh .menu__seed { letter-spacing: 0.3em; text-transform: none; font-size: var(--t-small); }
 .lang-zh .menu__seed-field { width: 6.6em; }
 .lang-zh .menu__seed input { letter-spacing: 0.3em; }
@@ -727,17 +755,35 @@ body {
     align-items: stretch;
     column-gap: clamp(20px, 3.5vw, 56px);
   }
+  /* Wide screens: the title, and to its left the verse as one vertical line with the seal at its foot.
+     Everything is sized from the title, so the group keeps its proportions at any width. */
   .game__inscription {
+    --game-title: clamp(3.375rem, 5.2vw, 4.75rem);
     justify-self: end;
+    align-self: start;
+    flex-direction: row-reverse;
     align-items: flex-start;
-    gap: 16px;
+    gap: calc(var(--game-title) * 0.3);
     height: auto;
     padding-top: 3%;
   }
-  .game__title { writing-mode: vertical-rl; font-size: clamp(3.375rem, 5.2vw, 4.75rem); line-height: 0.95; }
-  .game__inscription .game__couplet { display: flex; }
-  .game__couplet-block { flex-direction: column; }
-  .game__seal { margin-left: 1.2rem; }
+  .game__title { writing-mode: vertical-rl; font-size: var(--game-title); line-height: 0.95; }
+  .game__verse-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: calc(var(--game-title) * 0.22);
+    /* Start a little below the title's top, as an inscription would. */
+    padding-top: calc(var(--game-title) * 0.12);
+  }
+  /* The two halves join into one vertical line. */
+  .game__verse {
+    display: block;
+    writing-mode: vertical-rl;
+    font-size: calc(var(--game-title) * 0.24);
+    letter-spacing: 0.32em;
+    line-height: 1;
+  }
   .board-wrap {
     align-self: center;
     width: min(720px, calc((100vh - 48px) * 0.908), calc(100vw - 480px));
@@ -800,7 +846,7 @@ body {
 /* ——— Menu on narrow portrait screens: one centred column ——— */
 @media (orientation: portrait) and (max-width: 720px) {
   .menu { flex-direction: column; gap: clamp(18px, 3.4vh, 28px); }
-  .menu__title { font-size: min(6.2rem, 12.5vh); }
+  .menu__title-block { --title-size: min(6.2rem, 12.5vh); }
   .menu__choices { align-items: center; padding-left: 0; gap: clamp(20px, 3.6vh, 40px); }
   .menu__section { align-items: center; gap: clamp(10px, 1.8vh, 18px); }
   .menu__choices::before { display: none; }
@@ -813,10 +859,7 @@ body {
 @media (orientation: portrait) and (max-width: 720px) and (max-height: 720px) {
   .menu { gap: 14px; }
   .menu__frontispiece { gap: 12px; }
-  .menu__title { font-size: min(4.6rem, 11vh); }
-  .menu__couplet { font-size: 1.1rem; margin-top: 0.5rem; }
-  .menu__signature { gap: 10px; }
-  .menu__translation { font-size: var(--t-small); }
+  .menu__title-block { --title-size: min(4.6rem, 11vh); }
   .menu__choices { gap: 16px; }
   .menu__section { gap: 8px; }
   .difficulty { gap: 2px; }
@@ -824,11 +867,10 @@ body {
   .difficulty__title, .lang-zh .difficulty__title { font-size: 1.3rem; }
 }
 
-/* The very shortest phones (≈ 568px tall): drop the translation line and tighten once more. */
+/* The very shortest phones (≈ 568px tall): tighten once more. */
 @media (orientation: portrait) and (max-width: 720px) and (max-height: 600px) {
-  .menu__translation { display: none; }
   .menu { gap: 10px; }
-  .menu__title { font-size: 4rem; }
+  .menu__title-block { --title-size: 4rem; }
   .menu__choices { gap: 12px; }
   .difficulty__option { min-height: 32px; }
 }
@@ -842,9 +884,7 @@ body {
 @media (orientation: landscape) and (max-height: 540px) {
   .app { align-items: center; }
   .menu { gap: clamp(28px, 6vw, 64px); }
-  .menu__title { font-size: min(5.6rem, 22vh); }
-  .menu__couplet { font-size: 1.05rem; margin-top: 0.6rem; }
-  .menu__translation { display: none; }
+  .menu__title-block { --title-size: min(5.6rem, 22vh); }
   .menu__choices { gap: 14px; padding-left: clamp(20px, 4vw, 40px); }
   /* The hairline normally runs past the column; on a screen this short it must stay within it. */
   .menu__choices::before { top: 0; bottom: 0; }
@@ -862,5 +902,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .menu__seed-input.is-drawn, .menu__seed-draw.is-drawn svg,
   .screen, .landscape, .game-over, .game-over__seal, .game-over__text, .landscape__birds,
+  .game-over__bloom, .game-over__veil, .game-over__mote,
   .bamboo-sway, .bamboo-flutter { animation: none; }
+  /* The finished painting, without the motion that led to it. */
+  .game-over__bloom { opacity: 0.07; }
+  .game-over__veil { opacity: 0.82; }
 }

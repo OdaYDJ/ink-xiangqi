@@ -1,8 +1,5 @@
 # 墨弈 · Ink Xiangqi
 
-> 一墨染，万象生；一局落，乾坤开。
-> *With a stroke of ink, a thousand forms arise. With a single move, the universe unfolds.*
-
 **墨弈** is a quiet game of Xiangqi (Chinese chess) that you play inside an ink-wash painting. The board is brushed onto Xuan paper, mist drifts across the river, bamboo moves in the wind at the edges of the page, and a soft pipa melody plays in the background.
 
 The rules are the ones Xiangqi players have always known. What changes is the opening: instead of the fixed traditional line-up, each game can deal a **new starting formation**. Every piece keeps its familiar role and its usual rank, but chariots, horses, elephants, cannons and even the General find new places — so the first moves of each game ask you to read the board afresh.
@@ -31,7 +28,7 @@ The whole interface is available in Traditional Chinese and English; switch at a
   - **Medium** — alpha-beta, quiescence, mobility / General-safety evaluation (~500 ms)
   - **Hard** — iterative deepening, PVS, transposition table, killer/history ordering (~2 s)
 - Pass & play for two people on one device.
-- **Two language versions**, switchable at any time (中文 / English on the menu and in the game; remembered, defaults to the browser language, or `?lang=zh` / `?lang=en`). The Chinese version is set in Traditional Chinese with a vertically written colophon and notation like 炮二平五; the English version uses WXF notation (C2.5). The motto 一墨染，万象生；一局落，乾坤开。 appears as a brush regular-script (楷書) couplet to the right of the title in both.
+- **Two language versions**, switchable at any time (中文 / English on the menu and in the game; remembered, defaults to the browser language, or `?lang=zh` / `?lang=en`). The Chinese version is set in Traditional Chinese with a vertically written colophon and notation like 炮二平五; the English version uses WXF notation (C2.5).
 - An ink-painting interface: every board line is a tapered brush stroke on exact geometry, a dry-brush frame, a misty river, carved paper and charcoal pieces, and a procedurally painted landscape (mountains in mist, water, birds, a bamboo stand and a hanging bamboo spray) behind the game.
 - A hanging-scroll layout: vertical title and inscription with a carved seal on the left, the game record in Chinese notation (炮二平五, 馬8進7…) and quiet controls on the right; on phones the board comes first.
 - Ink-inspired motion: the board spreads into the paper on start, a soft halo marks the selected piece, a ripple marks the landing point, a small splash marks captures, and a seal is stamped when the game ends. Optional quiet sounds; reduced-motion respected.
@@ -61,15 +58,23 @@ The game expects the track at `public/audio/pipa-xiangqi.mp3`. If the file is ab
 
 Used under the [Pixabay Content License](https://pixabay.com/service/license-summary/), which allows use in this game without attribution (credit is given here with thanks). The track is **not** covered by this project's copyright notice below and remains the work of its author. The license does not permit taking the audio file out of the game and distributing it on its own; if you want the track, download it from its Pixabay page.
 
+## Move sounds
+
+Placing a piece plays a single soft water droplet over a faint wooden touch, with a very short room tail; a capture uses a slightly lower, fuller version. Nothing sounds on selection, hovering, or illegal moves. The in-game *Sound on / off* button toggles them.
+
+The droplet is [“Water Drop Sound”](https://freesound.org/people/metaepitome/sounds/165206/) by **metaepitome** on Freesound, released under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (credit given with thanks). It lives at `public/audio/water-drop.wav`; if it is missing, a synthesized droplet is used instead.
+
 ## Credits
 
 Fonts are loaded from [Google Fonts](https://fonts.google.com/) and are used under the [SIL Open Font License 1.1](https://openfontlicense.org/):
 
 - **Zhi Mang Xing** — the 墨弈 title
-- **Ma Shan Zheng** — the couplet
+- **Liu Jian Mao Cao** — the 墨弈 title in the ink-and-water design
 - **LXGW WenKai TC** — piece characters and the river
 - **Noto Serif TC** — Chinese text and notation
 - **Cormorant Garamond** — English text
+
+The 中国象棋 seal on the title page is drawn from the outlines of **Noto Serif CJK TC** Black ([Noto CJK](https://github.com/notofonts/noto-cjk), SIL Open Font License 1.1), the same design as the Noto Serif TC used for the other seals.
 
 The game is built with [React](https://react.dev/), [Vite](https://vite.dev/) and [TypeScript](https://www.typescriptlang.org/), each under its own open-source license.
 

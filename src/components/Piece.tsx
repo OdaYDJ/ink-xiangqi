@@ -1,5 +1,7 @@
+import { useId, useMemo } from 'react'
 import type { PieceCode } from '../game/piece'
 import { pointOf } from '../rendering/boardRenderer'
+import { checkInk } from '../rendering/inkFx'
 import { PIECE_RADIUS, pieceLook } from '../rendering/pieceRenderer'
 
 interface PieceProps {
@@ -8,34 +10,66 @@ interface PieceProps {
   selected?: boolean
   captured?: boolean
   inCheck?: boolean
+  /** Set (to the move number) on the piece that just moved: it glides, lands with weight and settles. */
+  land?: number
+  /** The landing was a capture: a heavier impact. */
+  impact?: boolean
 }
 
 const R = PIECE_RADIUS
+
+/**
+ * The cinnabar mark of check: a stain soaking into the paper under the General
+ * and a circle brushed round it, pressed in like a seal. It stays, quietly, for as long as the check lasts.
+ */
+function CheckMark({ square }: { square: number }) {
+  const id = 'check' + useId().replace(/[^a-zA-Z0-9]/g, '')
+  const ink = useMemo(() => checkInk(square, R), [square])
+  return (
+    <g className="piece__check" aria-hidden="true">
+      <path className="piece__check-stain" d={ink.stain} filter="url(#ink-wash)" />
+      <mask id={id} maskUnits="userSpaceOnUse" x={-60} y={-60} width={120} height={120}>
+        <path className="fx-reveal piece__check-reveal" d={ink.ring.line} pathLength={1} fill="none" stroke="#fff" strokeWidth={ink.ring.width * 2.8} strokeLinecap="round" />
+      </mask>
+      <g className="piece__check-ring" mask={`url(#${id})`}>
+        <path d={ink.ring.d} filter="url(#brush-edge)" />
+      </g>
+    </g>
+  )
+}
 
 /**
  * A carved piece: a softly shadowed disc (warm paper for Red, charcoal ink
  * for Black) with grain, an engraved ring and a calligraphic character.
  * Filters and patterns are defined once in <Board>.
  */
-export default function Piece({ code, square, selected, captured, inCheck }: PieceProps) {
+export default function Piece({ code, square, selected, captured, inCheck, land, impact }: PieceProps) {
   const { char, side } = pieceLook(code)
   const { x, y } = pointOf(square)
-  const classes = ['piece', `piece--${side}`, selected && 'is-selected', captured && 'is-captured', inCheck && 'is-checked']
+  const classes = [
+    'piece', `piece--${side}`, selected && 'is-selected', captured && 'is-captured', inCheck && 'is-checked',
+    land && 'is-landing', land && impact && 'is-impact',
+  ]
   return (
     <g className={classes.filter(Boolean).join(' ')} style={{ transform: `translate(${x}px, ${y}px)` }}>
-      {inCheck && <circle className="piece__check" r={R + 7} filter="url(#brush-edge)" />}
+      {inCheck && <CheckMark square={square} />}
       {selected && <circle className="piece__halo" r={R + 15} fill="url(#ink-halo)" />}
-      <ellipse className="piece__shadow" cx={1.5} cy={3.2} rx={R} ry={R * 0.96} filter="url(#piece-shadow)" />
-      <g className="piece__body">
-        <g filter="url(#piece-edge)">
-          <circle className="piece__disc" r={R} />
-          <circle className="piece__grain" r={R} fill="url(#piece-grain)" />
+      {/* Keyed by the move, so the landing plays afresh each time this piece moves. */}
+      <g key={`shadow-${land ?? 0}`} className="piece__lift-shadow">
+        <ellipse className="piece__shadow" cx={1.5} cy={3.2} rx={R} ry={R * 0.96} filter="url(#piece-shadow)" />
+      </g>
+      <g key={`body-${land ?? 0}`} className="piece__lift">
+        <g className="piece__body">
+          <g filter="url(#piece-edge)">
+            <circle className="piece__disc" r={R} />
+            <circle className="piece__grain" r={R} fill="url(#piece-grain)" />
+          </g>
+          <circle className="piece__groove-light" r={R - 5} cy={0.9} />
+          <circle className="piece__groove" r={R - 5} />
+          <text className="piece__char" dominantBaseline="central" textAnchor="middle" y={1}>
+            {char}
+          </text>
         </g>
-        <circle className="piece__groove-light" r={R - 5} cy={0.9} />
-        <circle className="piece__groove" r={R - 5} />
-        <text className="piece__char" dominantBaseline="central" textAnchor="middle" y={1}>
-          {char}
-        </text>
       </g>
     </g>
   )

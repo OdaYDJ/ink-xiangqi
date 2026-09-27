@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react'
 import Game from './components/Game'
 import Landscape from './components/Landscape'
+import WaterScene from './components/WaterScene'
 import MusicControl from './components/MusicControl'
 import { music } from './audio/musicController'
+import { initSfx } from './audio/sfx'
 import { useLocale } from './i18n/locale'
 import MainMenu, { type GameConfig } from './components/MainMenu'
 import { parseFen } from './game/board'
 import { createGame } from './game/gameState'
 import { randomInk, toSeed } from './game/inkColors'
 import { normalizeSeed, type GameMode } from './game/randomizer'
+import { UI_VERSION } from './theme'
+
+const Scene = UI_VERSION === 'v2' ? WaterScene : Landscape
 
 const load = (key: string) => {
   try {
@@ -50,6 +55,7 @@ export default function App() {
 
   // One music element for the whole app; it waits for the first interaction before making a sound.
   useEffect(() => music.init(), [])
+  useEffect(() => initSfx(), [])
   const [soundOn, setSoundOn] = useState(load('ink.sound') !== 'off')
   const initialMode: GameMode = urlSeed ? 'random' : load('ink.mode') === 'classic' ? 'classic' : 'random'
 
@@ -64,8 +70,8 @@ export default function App() {
   }
 
   return (
-    <main className={`app lang-${locale} ${config ? 'is-playing' : 'is-menu'}`}>
-      <Landscape spreadKey={config ? `game-${config.seed}-${config.opponent}` : 'menu'} />
+    <main className={`app ui-${UI_VERSION} lang-${locale} ${config ? 'is-playing' : 'is-menu'}`}>
+      <Scene spreadKey={config ? `game-${config.seed}-${config.opponent}` : 'menu'} />
       {config ? (
         <Game
           config={config}

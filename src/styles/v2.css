@@ -1,0 +1,181 @@
+/* ——— V2: ink and watercolour ———
+   A pale painted sheet (the board) floating on jade water. Every rule is scoped
+   under .ui-v2, so V1 is untouched; see src/theme.ts to switch back. */
+
+/* Palette. The page is dark water, so its text is warm off-white;
+   the board is a pale sheet, so it goes back to dark ink (see .board-wrap). */
+.ui-v2 {
+  --v2-abyss: #0a2624;
+  --v2-teal: #124440;
+  --v2-forest: #1b4a3b;
+  --v2-emerald: #2d6a54;
+  --v2-jade: #4f9a78;
+  --v2-mint: #cfe7d0;
+  --v2-parchment: #e9e8d6;
+
+  --ink: #f2efe3;
+  --ink-2: #eaf0e6;
+  --ink-soft: rgba(234, 241, 231, 0.93);
+  --paper: #0f3a35;
+  --paper-light: #f4f1e6;
+  --cinnabar: #e39a86;
+  --seal: #c65a44;
+  color-scheme: dark;
+}
+
+html.ui-v2,
+html.ui-v2 body {
+  background: var(--v2-teal) none;
+}
+html.ui-v2 body { color: var(--ink); }
+
+/* Keep light text legible where the water brightens: a tight dark edge plus a soft halo.
+   The title keeps a gentler glow; the board sets its own. */
+.ui-v2 .screen { text-shadow: 0 0 1px rgba(2, 18, 16, 0.6), 0 1px 3px rgba(2, 18, 16, 0.75), 0 2px 16px rgba(2, 18, 16, 0.65); }
+.ui-v2 .menu__title,
+.ui-v2 .game__title { text-shadow: 0 1px 12px rgba(4, 26, 24, 0.7), 0 0 3px rgba(4, 26, 24, 0.45); }
+.ui-v2 .quiet-button:disabled { opacity: 0.5; }
+.ui-v2 .menu__seed input::placeholder { opacity: 0.8; }
+.ui-v2 .record--empty { opacity: 0.6; }
+
+/* ——— The water ———
+   A shader draws it (WaterCanvas); this CSS wash sits beneath as the fallback
+   and shows for the moment before the first frame. */
+.water__depth,
+.water__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.water__depth {
+  background:
+    radial-gradient(ellipse 60% 45% at 66% 82%, rgba(150, 205, 140, 0.4), transparent 70%),
+    radial-gradient(ellipse 120% 90% at 55% 50%, transparent 45%, rgba(3, 20, 20, 0.6)),
+    linear-gradient(170deg, #06201f 0%, #0d3935 35%, #1d5846 65%, #3f8661 100%);
+}
+.water__canvas { display: block; opacity: 0; transition: opacity 1.6s ease; }
+.water__canvas.is-ready { opacity: 1; }
+
+/* A branch hanging close to the eye: sunlit leaves, slightly out of focus, like a lens's shallow depth of field. */
+.ui-v2 .water .ink-fill { fill: #4f8f5c; }
+.ui-v2 .water__branch {
+  opacity: 0.8;
+  filter: blur(1.2px) drop-shadow(0 24px 18px rgba(2, 16, 14, 0.55));
+}
+.ui-v2 .water__branch.is-crowded { opacity: 0.4; }
+
+/* ——— The board: a sheet of paper floating on the water ——— */
+.ui-v2 .board-wrap {
+  --ink: #173a35;
+  --ink-2: #2f4f49;
+  --ink-soft: #5a776f;
+  --ink-wash: #2f6f5f;
+  --paper: #efece0;
+  --paper-deep: var(--v2-parchment);
+  --paper-light: #f6f4ea;
+  --cinnabar: #9b3b2d;
+  --seal: #a8412f;
+
+  /* Pieces: red in warm parchment and cinnabar; black in blue-green ink. */
+  --piece-paper: #f1ebda;
+  --piece-paper-edge: #b7ae93;
+  --charcoal: #1e3532;
+  --charcoal-edge: #11211f;
+  --piece-ink-text: #e3ecdf;
+
+  color: var(--ink);
+  text-shadow: none;
+}
+/* The sheet itself: Xuan paper with a crisp edge, fine grain and soft light,
+   resting on the water with a layered shadow. It is drawn behind the board's SVG
+   (the SVG's own blurred wash is hidden) and matches its extent: 20 of 632 × 696 units in. */
+.ui-v2 .board-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 2.87% 3.16%;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 2px;
+  background-color: #ebe8d8;
+  background-image:
+    radial-gradient(ellipse 90% 70% at 28% 18%, rgba(255, 255, 248, 0.45), transparent 65%),
+    radial-gradient(ellipse 75% 70% at 50% 50%, transparent 62%, rgba(110, 104, 72, 0.14)),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='f'><feTurbulence type='fractalNoise' baseFrequency='0.85 0.5' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.35 0 0 0 0 0.33 0 0 0 0 0.25 0 0 0 0.09 0'/></filter><rect width='100%' height='100%' filter='url(%23f)'/></svg>"),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><filter id='m'><feTurbulence type='fractalNoise' baseFrequency='0.006' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.45 0 0 0 0 0.43 0 0 0 0 0.3 0 0 0 0.12 -0.02'/></filter><rect width='100%' height='100%' filter='url(%23m)'/></svg>");
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 250, 0.35),
+    0 1px 2px rgba(2, 18, 16, 0.3),
+    0 10px 22px -4px rgba(2, 18, 16, 0.45),
+    0 34px 70px -12px rgba(2, 18, 16, 0.6);
+}
+.ui-v2 .board__wash { display: none; }
+.ui-v2 .board__river text { fill: var(--ink-wash); fill-opacity: 0.7; }
+.ui-v2 .piece--black .piece__groove-light { stroke: #6f9a8c; opacity: 0.4; }
+.ui-v2 .piece--red .piece__groove { opacity: 0.45; }
+
+/* ——— Page details that were drawn in dark ink on paper ——— */
+.ui-v2 .record__move.is-red { color: rgba(236, 168, 148, 0.95); }
+.ui-v2 .menu__choices::before {
+  background: linear-gradient(to bottom, transparent, rgba(242, 239, 227, 0.4) 20%, rgba(242, 239, 227, 0.4) 80%, transparent);
+}
+.ui-v2 .menu__seed-field { border-bottom-color: rgba(242, 239, 227, 0.45); }
+.ui-v2 .menu__seed-draw:hover,
+.ui-v2 .menu__seed-draw:focus-visible { background-color: rgba(242, 239, 227, 0.08); }
+.ui-v2 .menu__footer-dot { background: var(--ink-soft); }
+
+/* Music mark: a small disc of misted glass. */
+.ui-v2 .music__button {
+  border-color: rgba(242, 239, 227, 0.28);
+  background: rgba(10, 44, 40, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.ui-v2 .music__button:hover,
+.ui-v2 .music__button:focus-visible { border-color: rgba(242, 239, 227, 0.5); }
+.ui-v2 .music--inline .music__panel { background: rgba(10, 44, 40, 0.85); }
+.ui-v2 .music__slash { stroke: var(--cinnabar); }
+
+
+/* ——— Type: Song serifs for the Chinese text, Garamond for the English ———
+   The title is brushed in Liu Jian Mao Cao (柳建毛草), a running-cursive hand,
+   against the quiet Song text around it. Pieces and the river keep the regular-script (楷) brush. */
+.ui-v2 {
+  --title-font: 'Liu Jian Mao Cao', 'Zhi Mang Xing', 'Kaiti TC', 'STKaiti', serif;
+}
+/* Liu Jian Mao Cao has one weight: keep it at 400 so the browser never fakes a bold. */
+.ui-v2 { --title-scale: 0.88; }
+.ui-v2 .menu__title {
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 0.95;
+}
+.ui-v2 .game__title { font-weight: 400; letter-spacing: 0.04em; }
+.ui-v2 .difficulty__title { font-weight: 400; }
+
+/* ——— Phones: a little more air between the 墨弈 title and everything below it ——— */
+@media (orientation: portrait) and (max-width: 720px) {
+  .ui-v2 .menu__frontispiece { margin-bottom: 14px; }
+}
+@media (orientation: portrait) and (max-width: 720px) and (max-height: 720px) {
+  .ui-v2 .menu__frontispiece { margin-bottom: 10px; }
+}
+@media (orientation: portrait) and (max-width: 720px) and (max-height: 600px) {
+  .ui-v2 .menu__frontispiece { margin-bottom: 6px; }
+}
+/* The brushed title is light and airy: on phones it needs more size to hold the page.
+   (The English name and the seal beside it scale with it.) Short phones get less, so the menu still fits. */
+@media (orientation: portrait) and (max-width: 720px) {
+  .ui-v2 .menu__title-block { --title-scale: 1.15; }
+}
+@media (orientation: portrait) and (max-width: 720px) and (max-height: 720px) {
+  .ui-v2 .menu__title-block { --title-scale: 1; }
+}
+
+/* In a game (stacked layout): a larger title, and the header grows to hold it (44 → 58px)
+   plus 10px of air below; the board's height budget gives up the same 24px. */
+@media (orientation: portrait), (orientation: landscape) and (max-width: 559.98px) {
+  .ui-v2 .game__inscription { height: 58px; margin-bottom: 10px; }
+  .ui-v2 .game__title { font-size: clamp(2.6rem, 11vw, 3.1rem); }
+  .ui-v2 .game { --chrome: calc(215px + 4 * var(--gap) + 2 * var(--pad)); }
+}

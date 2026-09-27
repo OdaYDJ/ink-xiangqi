@@ -13,7 +13,7 @@ const FLUTTER_PERIODS = [4.3, 5.2, 3.8, 4.9, 5.7, 4.5, 3.6]
  * root; every leaf cluster also flutters around its own twig, each on its own
  * period and phase, so the motion never looks mechanical.
  */
-function Bamboo({ plant, sway, swayPeriod, flutter }: { plant: BambooPlant; sway: number; swayPeriod: number; flutter: number }) {
+export function Bamboo({ plant, sway, swayPeriod, flutter }: { plant: BambooPlant; sway: number; swayPeriod: number; flutter: number }) {
   const origin = (x: number, y: number): CSSProperties => ({ transformOrigin: `${x}px ${y}px` })
   return (
     <g
@@ -47,7 +47,7 @@ const SPRAY_ASPECT = SPRAY_VIEWBOX.width / SPRAY_VIEWBOX.height
  * Keeps the top-right bamboo in proportion to the window and clear of the
  * content, re-measuring whenever the window or the content changes size.
  */
-function useCornerSpray(): CornerFit | null {
+export function useCornerSpray(): CornerFit | null {
   const [fit, setFit] = useState<CornerFit | null>(null)
 
   useEffect(() => {
