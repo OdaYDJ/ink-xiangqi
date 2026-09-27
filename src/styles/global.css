@@ -87,6 +87,8 @@ body {
   position: fixed;
   inset: 0;
   z-index: 0;
+  /* The painting ends at the screen's edge: swaying bamboo must never extend the page. */
+  overflow: hidden;
   pointer-events: none;
   animation: wash-in 2.8s ease-out both;
 }
@@ -807,14 +809,45 @@ body {
   .menu__modes { justify-content: center; }
 }
 
+/* ——— Menu on short portrait phones (e.g. 320×568, 375×667): everything on one screen ——— */
+@media (orientation: portrait) and (max-width: 720px) and (max-height: 720px) {
+  .menu { gap: 14px; }
+  .menu__frontispiece { gap: 12px; }
+  .menu__title { font-size: min(4.6rem, 11vh); }
+  .menu__couplet { font-size: 1.1rem; margin-top: 0.5rem; }
+  .menu__signature { gap: 10px; }
+  .menu__translation { font-size: var(--t-small); }
+  .menu__choices { gap: 16px; }
+  .menu__section { gap: 8px; }
+  .difficulty { gap: 2px; }
+  .difficulty__option { flex-direction: row; align-items: baseline; gap: 0.9em; min-height: 36px; }
+  .difficulty__title, .lang-zh .difficulty__title { font-size: 1.3rem; }
+}
+
+/* The very shortest phones (≈ 568px tall): drop the translation line and tighten once more. */
+@media (orientation: portrait) and (max-width: 720px) and (max-height: 600px) {
+  .menu__translation { display: none; }
+  .menu { gap: 10px; }
+  .menu__title { font-size: 4rem; }
+  .menu__choices { gap: 12px; }
+  .difficulty__option { min-height: 32px; }
+}
+
+/* The corner music mark floats above the page: keep the menu's last line clear of it on phones. */
+@media (max-width: 560px) {
+  .app.is-menu { padding-bottom: max(60px, env(safe-area-inset-bottom)); }
+}
+
 /* ——— Menu on short landscape screens (phones on their side): compact, side by side ——— */
 @media (orientation: landscape) and (max-height: 540px) {
   .app { align-items: center; }
   .menu { gap: clamp(28px, 6vw, 64px); }
-  .menu__title { font-size: min(5.6rem, 24vh); }
+  .menu__title { font-size: min(5.6rem, 22vh); }
   .menu__couplet { font-size: 1.05rem; margin-top: 0.6rem; }
   .menu__translation { display: none; }
   .menu__choices { gap: 14px; padding-left: clamp(20px, 4vw, 40px); }
+  /* The hairline normally runs past the column; on a screen this short it must stay within it. */
+  .menu__choices::before { top: 0; bottom: 0; }
   .menu__section { gap: 8px; }
   .difficulty { gap: 0.4em; }
   .difficulty__option { flex-direction: row; align-items: baseline; gap: 0.8em; }
