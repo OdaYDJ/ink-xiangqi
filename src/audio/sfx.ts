@@ -2,16 +2,18 @@
  * Sound effects: 水滴落纸，棋子入局。
  *
  * Each effect is a small recipe of layers played through one shared chain:
- *   a very soft wooden contact → a water droplet (a CC0 sample) → a faint room tail.
- * The droplet leads; the wood is felt more than heard. Everything stays well
+ *   a very soft wooden contact → a water splash (a sample) → a faint room tail.
+ * The splash leads; the wood is felt more than heard. Everything stays well
  * below the background music.
  *
  * New ink-inspired sounds are added as entries in RECIPES. The sample loads
  * on the player's first gesture (always before their first move); until it
- * has decoded, a synthesized droplet stands in.
+ * has decoded, a synthesized droplet stands in. Where the splash begins and
+ * how long it rings are measured from the sample itself (see measureSplash),
+ * so the sound lands with the piece whatever silence the file opens with.
  */
 
-export const DROP_SRC = `${import.meta.env.BASE_URL}audio/water-drop.wav`
+export const DROP_SRC = `${import.meta.env.BASE_URL}audio/water-splash.mp3`
 
 export type SfxName = 'move' | 'capture'
 
@@ -39,15 +41,23 @@ const RECIPES: Record<SfxName, Recipe> = {
   },
 }
 
-/** Where the droplet itself begins in the sample (it opens with a little pre-noise), and how much to keep. */
-const DROP_OFFSET = 0.03
-const DROP_LENGTH = 0.2
+/** The splash is taken from just before it first reaches this share of its peak… */
+const ONSET_LEVEL = 0.3
+const PRE_ROLL = 0.02
+/** …until it has fallen below this share for good, and never for longer than MAX_LENGTH seconds. */
+const END_LEVEL = 0.05
+const MAX_LENGTH = 1.1
+/** Fades at either end of the excerpt: in, so a cut into rising sound never clicks; out, over this share of it. */
+const FADE_IN = 0.01
+const FADE_OUT_SHARE = 0.5
 const TAIL_SECONDS = 0.7
 
 let ctx: AudioContext | null = null
 let dry: GainNode | null = null
 let wet: ConvolverNode | null = null
 let drop: AudioBuffer | null = null
+/** The part of the sample that is the splash: start and length, in seconds. */
+let splash = { offset: 0, length: 0.2 }
 let loading = false
 
 function context(): AudioContext | null {
@@ -89,9 +99,36 @@ async function loadDrop(): Promise<void> {
     const response = await fetch(DROP_SRC)
     if (!response.ok) throw new Error(response.statusText)
     drop = await ac.decodeAudioData(await response.arrayBuffer())
+    splash = measureSplash(drop)
   } catch {
     loading = false // the synthesized droplet carries on; try again on the next sound
   }
+}
+
+/**
+ * Finds the splash in the sample from its loudness over time (10 ms windows, all channels):
+ * it starts a moment before the sound first gets loud, and ends once it has died away.
+ */
+function measureSplash(buffer: AudioBuffer): { offset: number; length: number } {
+  const win = Math.max(1, Math.floor(buffer.sampleRate * 0.01))
+  const windows = Math.ceil(buffer.length / win)
+  const env = new Float32Array(windows)
+  for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+    const data = buffer.getChannelData(ch)
+    for (let i = 0; i < data.length; i++) {
+      const w = (i / win) | 0
+      const v = Math.abs(data[i])
+      if (v > env[w]) env[w] = v
+    }
+  }
+  const peak = env.reduce((m, v) => Math.max(m, v), 0)
+  if (peak === 0) return { offset: 0, length: Math.min(MAX_LENGTH, buffer.duration) }
+  const onset = env.findIndex((v) => v >= peak * ONSET_LEVEL)
+  let end = windows - 1
+  while (end > onset && env[end] < peak * END_LEVEL) end--
+  const offset = Math.max(0, (onset * win) / buffer.sampleRate - PRE_ROLL)
+  const length = Math.min(MAX_LENGTH, ((end + 1) * win) / buffer.sampleRate - offset, buffer.duration - offset)
+  return { offset, length }
 }
 
 /** Route a layer to the dry output and, more faintly, to the room. */
@@ -135,12 +172,14 @@ function droplet(ac: AudioContext, at: number, r: Recipe) {
     const source = ac.createBufferSource()
     source.buffer = drop
     source.playbackRate.value = rate
-    const length = DROP_LENGTH / rate
-    level.gain.setValueAtTime(gain, start)
-    level.gain.setValueAtTime(gain, start + length * 0.6)
+    // The excerpt plays slower (and so longer) when the recipe lowers its pitch.
+    const length = splash.length / rate
+    level.gain.setValueAtTime(0, start)
+    level.gain.linearRampToValueAtTime(gain, start + FADE_IN)
+    level.gain.setValueAtTime(gain, start + length * (1 - FADE_OUT_SHARE))
     level.gain.linearRampToValueAtTime(0, start + length)
     source.connect(soften)
-    source.start(start, DROP_OFFSET, DROP_LENGTH)
+    source.start(start, splash.offset, splash.length)
     return
   }
 
@@ -167,7 +206,7 @@ export function playSfx(name: SfxName): void {
   droplet(ac, at, recipe)
 }
 
-/** Load the droplet on the first gesture so the first move already sounds right. Safe to call repeatedly. */
+/** Load the splash on the first gesture so the first move already sounds right. Safe to call repeatedly. */
 export function initSfx(): () => void {
   if (typeof window === 'undefined') return () => undefined
   const types = ['pointerdown', 'keydown', 'touchstart'] as const

@@ -32,8 +32,7 @@ html.ui-v2 body { color: var(--ink); }
 /* Keep light text legible where the water brightens: a tight dark edge plus a soft halo.
    The title keeps a gentler glow; the board sets its own. */
 .ui-v2 .screen { text-shadow: 0 0 1px rgba(2, 18, 16, 0.6), 0 1px 3px rgba(2, 18, 16, 0.75), 0 2px 16px rgba(2, 18, 16, 0.65); }
-.ui-v2 .menu__title,
-.ui-v2 .game__title { text-shadow: 0 1px 12px rgba(4, 26, 24, 0.7), 0 0 3px rgba(4, 26, 24, 0.45); }
+.ui-v2 .menu__title { text-shadow: 0 1px 12px rgba(4, 26, 24, 0.7), 0 0 3px rgba(4, 26, 24, 0.45); }
 .ui-v2 .quiet-button:disabled { opacity: 0.5; }
 .ui-v2 .menu__seed input::placeholder { opacity: 0.8; }
 .ui-v2 .record--empty { opacity: 0.6; }
@@ -150,10 +149,9 @@ html.ui-v2 body { color: var(--ink); }
   letter-spacing: 0;
   line-height: 0.95;
 }
-.ui-v2 .game__title { font-weight: 400; letter-spacing: 0.04em; }
 .ui-v2 .difficulty__title { font-weight: 400; }
 
-/* ——— Phones: a little more air between the 墨弈 title and everything below it ——— */
+/* ——— Phones: a little more air between the 象奇 title and everything below it ——— */
 @media (orientation: portrait) and (max-width: 720px) {
   .ui-v2 .menu__frontispiece { margin-bottom: 14px; }
 }
@@ -170,12 +168,4 @@ html.ui-v2 body { color: var(--ink); }
 }
 @media (orientation: portrait) and (max-width: 720px) and (max-height: 720px) {
   .ui-v2 .menu__title-block { --title-scale: 1; }
-}
-
-/* In a game (stacked layout): a larger title, and the header grows to hold it (44 → 58px)
-   plus 10px of air below; the board's height budget gives up the same 24px. */
-@media (orientation: portrait), (orientation: landscape) and (max-width: 559.98px) {
-  .ui-v2 .game__inscription { height: 58px; margin-bottom: 10px; }
-  .ui-v2 .game__title { font-size: clamp(2.6rem, 11vw, 3.1rem); }
-  .ui-v2 .game { --chrome: calc(215px + 4 * var(--gap) + 2 * var(--pad)); }
 }

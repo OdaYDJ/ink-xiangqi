@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import Game from './components/Game'
 import Landscape from './components/Landscape'
 import WaterScene from './components/WaterScene'
+import PondScene from './components/PondScene'
 import MusicControl from './components/MusicControl'
 import { music } from './audio/musicController'
 import { initSfx } from './audio/sfx'
@@ -13,7 +14,7 @@ import { randomInk, toSeed } from './game/inkColors'
 import { normalizeSeed, type GameMode } from './game/randomizer'
 import { UI_VERSION } from './theme'
 
-const Scene = UI_VERSION === 'v2' ? WaterScene : Landscape
+const Scene = { v1: Landscape, v2: WaterScene, v3: PondScene }[UI_VERSION]
 
 const load = (key: string) => {
   try {

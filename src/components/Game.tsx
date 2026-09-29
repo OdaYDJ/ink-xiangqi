@@ -19,6 +19,8 @@ import Board, { type PieceView } from './Board'
 import GameControls from './GameControls'
 import MoveRecord from './MoveRecord'
 import Seal from './Seal'
+import CarvedPanel from './CarvedPanel'
+import { UI_VERSION } from '../theme'
 import type { GameConfig } from './MainMenu'
 
 interface GameProps {
@@ -162,22 +164,16 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
 
   return (
     <section className="game screen">
-      <aside className="game__inscription">
-        <button type="button" className="game__title" onClick={onMenu} aria-label={`墨弈 · ${t.backToMenu}`} lang="zh-Hant">
-          墨弈
-        </button>
-        {/* The verse and its seal: one vertical line beside the title on wide screens; on narrow ones,
-            a two-line couplet left of the title, with the seal after it. */}
-        <div className="game__verse-block">
-          <p className="game__verse" lang="zh-Hant">
-            <span className="game__verse-line">一墨入山水，</span>
-            <span className="game__verse-line">一局落乾坤。</span>
-          </p>
-          <Seal text="棋" size={30} script="outline" className="game__seal" />
-        </div>
-      </aside>
-
       <div className="board-wrap">
+        {UI_VERSION === 'v3' && (
+          <>
+            {/* The board rests on the water: a soft shadow and the frame's reflection beneath it. */}
+            <div className="board-shadow" aria-hidden="true" />
+            <CarvedPanel className="board-frame" thickness={{ share: 26 / 632 }} surface="#0a2624" surfaceAlpha={72} seed={11} />
+            {/* A light, translucent white veil over the play surface, beneath the grid and pieces. */}
+            <div className="board-veil" aria-hidden="true" />
+          </>
+        )}
         <Board
           pieces={pieces}
           ghosts={ghost ? [ghost] : []}
@@ -281,7 +277,7 @@ function GameOver({ game, vsAi, t }: { game: GameState; vsAi: boolean; t: String
           </g>
         ))}
       </svg>
-      <Seal text={glyph} size={112} script="outline" className="game-over__seal" title={glyph} />
+      <Seal text={glyph} size={112} script={UI_VERSION === 'v3' ? 'pixel' : 'outline'} className="game-over__seal" title={glyph} />
       <span className="game-over__text">{t.outcome(outcomeOf(game, vsAi))}</span>
     </div>
   )
