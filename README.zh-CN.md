@@ -1,14 +1,8 @@
 [English](README.md) · **简体中文**
 
-<<<<<<< HEAD
 # 象奇 · Chess Unbound
 
 **象奇**是一款在水墨画中对弈的中国象棋游戏。棋盘是一张浮在碧水上的宣纸：水底光影流转，页边枝叶轻摇，雨滴在水面荡开涟漪，湖水声若有若无。每一步棋都以墨回应——落子时笔锋随棋子掠过，墨色在纸上缓缓晕开；将帅被将军时，一抹朱砂随之浮现。
-=======
-# 墨弈 · Ink Chess
-
-**墨弈**是一款在水墨画中对弈的中国象棋游戏。棋盘是一张浮在碧水上的宣纸：水底光影流转，页边枝叶轻摇，雨滴在水面荡开涟漪，琵琶声若有若无。每一步棋都以墨回应——落子时笔锋随棋子掠过，墨色在纸上缓缓晕开；将帅被将军时，一抹朱砂随之浮现。
->>>>>>> origin/main
 
 规则仍是传统象棋；不同的是开局——每一局都可以得到一个**新的布局**。棋子的职能与所在行列不变，车马象炮乃至将帅却换了位置，每一局都需要重新观局、重新思量。
 
@@ -37,13 +31,8 @@
 ## 语言、声音与设置
 
 - **双语**：随时在首页或对局中切换 中文（繁体）与 English，选择会被记住。
-<<<<<<< HEAD
 - **背景音**：第一次点击后，湖水声会轻轻响起。角落里的 ♫ 记号可暂停，或在三档音量间选择。
 - **落子声**：每一步是一声轻柔的水花，伴着极轻的木质触感；吃子时声音略低沉。可在对局中点 有聲 关闭。
-=======
-- **音乐**：第一次点击后，琵琶曲会轻轻响起。角落里的 ♫ 记号可暂停音乐，或在三档音量间选择。
-- **落子声**：每一步是一声轻柔的水滴，伴着极轻的木质触感；吃子时声音略低沉。可在对局中点 有聲 关闭。
->>>>>>> origin/main
 - 若设备开启了“减弱动态效果”，水墨效果将保持静止。
 
 ## 版权与致谢
@@ -54,7 +43,6 @@
 
 第三方素材遵循各自的条款：
 
-<<<<<<< HEAD
 - **背景音**：[*Lake in Almere*](https://pixabay.com/sound-effects/nature-lake-in-almere-19106/)，来自 Pixabay，依 [Pixabay 内容许可](https://pixabay.com/service/license-summary/) 使用（在此致谢）。
 - **落子声**：[*Water Splash*](https://pixabay.com/sound-effects/film-special-effects-water-splash-199583/)，来自 Pixabay，依 [Pixabay 内容许可](https://pixabay.com/service/license-summary/) 使用（在此致谢）。
 - 以上两段录音不属于上述版权范围，仍归原作者所有；许可不允许将音频从游戏中取出单独分发——如需使用，请到其 Pixabay 页面下载。
@@ -62,13 +50,6 @@
   - **[Fusion Pixel Font（缝合像素字体）](https://github.com/TakWolf/fusion-pixel-font)**，TakWolf 作——锦鲤池塘像素风格中的全部文字、棋子、楚河汉界与印章（随游戏附带，仅保留用到的字符；其许可文件见 `src/assets/fonts`）
   - **Liu Jian Mao Cao（柳建毛草）**——“象奇”标题
   - **Zhi Mang Xing（智莽行）**——原版设计中的“象奇”标题
-=======
-- **音乐**：**RainStreetCat** 的《烟雨江南 · Mist Over Jiangnan》，来自 [Pixabay](https://pixabay.com/music/rnb-%E7%83%9F%E9%9B%A8%E6%B1%9F%E5%8D%97-mist-over-jiangnan-428654/)，依 [Pixabay 内容许可](https://pixabay.com/service/license-summary/) 使用（在此致谢）。该曲不属于上述版权范围，仍归原作者所有；许可不允许将音频从游戏中取出单独分发——如需此曲，请到其 Pixabay 页面下载。
-- **落子声**：Freesound 上 **metaepitome** 的 [*Water Drop Sound*](https://freesound.org/people/metaepitome/sounds/165206/)，以 [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) 发布（在此致谢）。
-- **字体**，均依 [SIL 开放字体许可 1.1](https://openfontlicense.org/) 使用：
-  - **Liu Jian Mao Cao（柳建毛草）**——“墨弈”标题
-  - **Zhi Mang Xing（智莽行）**——原版设计中的“墨弈”标题
->>>>>>> origin/main
   - **LXGW WenKai TC（霞鹜文楷）**——棋子、楚河汉界及标题旁的诗句
   - **Noto Serif TC** 与 **Noto Serif CJK TC**——中文正文、棋谱与印章
   - **Cormorant Garamond**——英文正文

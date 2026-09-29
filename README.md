@@ -28,7 +28,6 @@ Every random formation is named by an ink colour (墨色): the five tones 焦墨
 
 Random formations are always fair to begin: no side starts in check, the Generals never face each other, and neither side can win material on the first move.
 
-<<<<<<< HEAD
 ## Languages, sound and settings
 
 - **Two languages.** Switch between 中文 (Traditional Chinese) and English at any time, on the title page or in a game. Your choice is remembered.
@@ -37,49 +36,6 @@ Random formations are always fair to begin: no side starts in check, the General
 - If your device asks for reduced motion, the ink effects are kept still.
 
 ## License and credits
-=======
-The game ends in checkmate, when a side has no legal move (which loses, as in Xiangqi), or in a draw by repetition or by long play without progress.
-
-## Formations named by ink
-
-Every random formation is named by an ink colour (墨色): the five tones 焦墨 · 濃墨 · 重墨 · 淡墨 · 清墨, and inks such as 松煙 or 潑墨. The same ink always deals the same board, in either language (焦墨 = *Scorched Ink*).
-
-- On the title page, leave 墨色 *Ink seed* blank for a random ink, tap the shuffle mark to draw one, or type a name.
-- To share a formation, send its name — or a link such as `https://odaydj.github.io/ink-xiangqi/?seed=焦墨` — and your friend can play the very same board.
-
-Random formations are always fair to begin: no side starts in check, the Generals never face each other, and neither side can win material on the first move.
-
-## Languages, sound and settings
-
-- **Two languages.** Switch between 中文 (Traditional Chinese) and English at any time, on the title page or in a game. Your choice is remembered.
-- **Music.** The pipa track starts quietly after your first tap. Use the small ♫ mark in the corner to pause it or choose one of three volumes.
-- **Move sounds.** Each move plays a single soft water drop over a faint wooden touch; captures sound a little deeper. Turn them off with 有聲 *Sound on* in the game.
-- If your device asks for reduced motion, the ink effects are kept still.
-
-Used under the [Pixabay Content License](https://pixabay.com/service/license-summary/), which allows use in this game without attribution (credit is given here with thanks). The track is **not** covered by this project's copyright notice below and remains the work of its author. The license does not permit taking the audio file out of the game and distributing it on its own; if you want the track, download it from its Pixabay page.
-
-## Move sounds
-
-Placing a piece plays a single soft water droplet over a faint wooden touch, with a very short room tail; a capture uses a slightly lower, fuller version. Nothing sounds on selection, hovering, or illegal moves. The in-game *Sound on / off* button toggles them.
-
-The droplet is [“Water Drop Sound”](https://freesound.org/people/metaepitome/sounds/165206/) by **metaepitome** on Freesound, released under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (credit given with thanks). It lives at `public/audio/water-drop.wav`; if it is missing, a synthesized droplet is used instead.
-
-## Credits
-
-Fonts are loaded from [Google Fonts](https://fonts.google.com/) and are used under the [SIL Open Font License 1.1](https://openfontlicense.org/):
-
-- **Zhi Mang Xing** — the 墨弈 title
-- **Liu Jian Mao Cao** — the 墨弈 title in the ink-and-water design
-- **LXGW WenKai TC** — piece characters and the river
-- **Noto Serif TC** — Chinese text and notation
-- **Cormorant Garamond** — English text
-
-The 中国象棋 seal on the title page is drawn from the outlines of **Noto Serif CJK TC** Black ([Noto CJK](https://github.com/notofonts/noto-cjk), SIL Open Font License 1.1), the same design as the Noto Serif TC used for the other seals.
-
-The game is built with [React](https://react.dev/), [Vite](https://vite.dev/) and [TypeScript](https://www.typescriptlang.org/), each under its own open-source license.
-
-## Copyright
->>>>>>> origin/main
 
 © 2026 Oda Jin. All rights reserved.
 
@@ -87,7 +43,6 @@ The game, its artwork (the brushwork, water, board, pieces and seals, all drawn 
 
 Third-party material keeps its own terms:
 
-<<<<<<< HEAD
 - **Background sound** — [*Lake in Almere*](https://pixabay.com/sound-effects/nature-lake-in-almere-19106/), from Pixabay, used under the [Pixabay Content License](https://pixabay.com/service/license-summary/) (credit given with thanks).
 - **Move sound** — [*Water Splash*](https://pixabay.com/sound-effects/film-special-effects-water-splash-199583/), from Pixabay, used under the [Pixabay Content License](https://pixabay.com/service/license-summary/) (credit given with thanks).
 - Both recordings are not covered by the copyright above and remain the work of their authors; the license does not allow taking the audio out of the game and distributing it on its own — if you would like a recording, download it from its Pixabay page.
@@ -95,13 +50,6 @@ Third-party material keeps its own terms:
   - **[Fusion Pixel Font](https://github.com/TakWolf/fusion-pixel-font)** by TakWolf — every word, the pieces, the river and the stamps in the pixel-art koi-pond design (bundled with the game, reduced to the characters it uses; its licenses are in `src/assets/fonts`)
   - **Liu Jian Mao Cao** — the 象奇 title
   - **Zhi Mang Xing** — the 象奇 title in the original design
-=======
-- **Music** — *烟雨江南 · Mist Over Jiangnan* by **RainStreetCat**, from [Pixabay](https://pixabay.com/music/rnb-%E7%83%9F%E9%9B%A8%E6%B1%9F%E5%8D%97-mist-over-jiangnan-428654/), used under the [Pixabay Content License](https://pixabay.com/service/license-summary/) (credit given with thanks). The track is not covered by the copyright above and remains the work of its author; the license does not allow taking the audio out of the game and distributing it on its own — if you would like the track, download it from its Pixabay page.
-- **Move sound** — [*Water Drop Sound*](https://freesound.org/people/metaepitome/sounds/165206/) by **metaepitome** on Freesound, released under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (credit given with thanks).
-- **Fonts**, all under the [SIL Open Font License 1.1](https://openfontlicense.org/):
-  - **Liu Jian Mao Cao** — the 墨弈 title
-  - **Zhi Mang Xing** — the 墨弈 title in the original design
->>>>>>> origin/main
   - **LXGW WenKai TC** — the pieces, the river and the verse beside the title
   - **Noto Serif TC** and **Noto Serif CJK TC** — Chinese text, notation and the seals
   - **Cormorant Garamond** — English text
