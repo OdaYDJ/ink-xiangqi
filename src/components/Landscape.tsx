@@ -40,7 +40,7 @@ export function Bamboo({ plant, sway, swayPeriod, flutter }: { plant: BambooPlan
 }
 
 /** The blocks of each screen the corner bamboo must leave readable. */
-const CONTENT_BLOCKS = '.menu__frontispiece, .menu__choices, .game__inscription, .board-wrap, .game__colophon > *'
+const CONTENT_BLOCKS = '.menu__frontispiece, .menu__choices, .board-wrap, .game__colophon > *'
 const SPRAY_ASPECT = SPRAY_VIEWBOX.width / SPRAY_VIEWBOX.height
 
 /**

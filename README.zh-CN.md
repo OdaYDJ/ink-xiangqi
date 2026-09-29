@@ -1,8 +1,8 @@
 [English](README.md) · **简体中文**
 
-# 墨弈 · Ink Chess
+# 象奇 · Chess Unbound
 
-**墨弈**是一款在水墨画中对弈的中国象棋游戏。棋盘是一张浮在碧水上的宣纸：水底光影流转，页边枝叶轻摇，雨滴在水面荡开涟漪，琵琶声若有若无。每一步棋都以墨回应——落子时笔锋随棋子掠过，墨色在纸上缓缓晕开；将帅被将军时，一抹朱砂随之浮现。
+**象奇**是一款在水墨画中对弈的中国象棋游戏。棋盘是一张浮在碧水上的宣纸：水底光影流转，页边枝叶轻摇，雨滴在水面荡开涟漪，琵琶声若有若无。每一步棋都以墨回应——落子时笔锋随棋子掠过，墨色在纸上缓缓晕开；将帅被将军时，一抹朱砂随之浮现。
 
 规则仍是传统象棋；不同的是开局——每一局都可以得到一个**新的布局**。棋子的职能与所在行列不变，车马象炮乃至将帅却换了位置，每一局都需要重新观局、重新思量。
 
@@ -46,8 +46,8 @@
 - **音乐**：**RainStreetCat** 的《烟雨江南 · Mist Over Jiangnan》，来自 [Pixabay](https://pixabay.com/music/rnb-%E7%83%9F%E9%9B%A8%E6%B1%9F%E5%8D%97-mist-over-jiangnan-428654/)，依 [Pixabay 内容许可](https://pixabay.com/service/license-summary/) 使用（在此致谢）。该曲不属于上述版权范围，仍归原作者所有；许可不允许将音频从游戏中取出单独分发——如需此曲，请到其 Pixabay 页面下载。
 - **落子声**：Freesound 上 **metaepitome** 的 [*Water Drop Sound*](https://freesound.org/people/metaepitome/sounds/165206/)，以 [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) 发布（在此致谢）。
 - **字体**，均依 [SIL 开放字体许可 1.1](https://openfontlicense.org/) 使用：
-  - **Liu Jian Mao Cao（柳建毛草）**——“墨弈”标题
-  - **Zhi Mang Xing（智莽行）**——原版设计中的“墨弈”标题
+  - **Liu Jian Mao Cao（柳建毛草）**——“象奇”标题
+  - **Zhi Mang Xing（智莽行）**——原版设计中的“象奇”标题
   - **LXGW WenKai TC（霞鹜文楷）**——棋子、楚河汉界及标题旁的诗句
   - **Noto Serif TC** 与 **Noto Serif CJK TC**——中文正文、棋谱与印章
   - **Cormorant Garamond**——英文正文

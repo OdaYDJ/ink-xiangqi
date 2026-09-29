@@ -62,7 +62,7 @@ const side = { red: 'Red', black: 'Black' }
 export const STRINGS: Record<Locale, Strings> = {
   en: {
     htmlLang: 'en',
-    subtitle: 'Ink Chess',
+    subtitle: 'Chess Unbound',
     playLabel: 'Play against',
     difficulty: { easy: 'Easy', medium: 'Medium', hard: 'Hard' },
     difficultyHint: { easy: 'plays at ease', medium: 'plans every move', hard: 'sees the whole board' },
@@ -72,7 +72,7 @@ export const STRINGS: Record<Locale, Strings> = {
     seedPlaceholder: 'drawn at random',
     seedError: 'Ink seeds use letters, digits, spaces and “-”.',
     seedDraw: 'Draw another ink',
-    twoPlayers: 'Two players, one board',
+    twoPlayers: 'Two players',
     switchLanguage: '中文',
     switchLanguageLabel: 'Switch to Chinese',
     controls: {
@@ -116,7 +116,7 @@ export const STRINGS: Record<Locale, Strings> = {
 
   zh: {
     htmlLang: 'zh-Hant',
-    subtitle: 'Ink Chess',
+    subtitle: 'Chess Unbound',
     playLabel: '對弈',
     difficulty: { easy: '初學', medium: '棋手', hard: '國手' },
     difficultyHint: { easy: '落子從容', medium: '運籌帷幄', hard: '洞見乾坤' },

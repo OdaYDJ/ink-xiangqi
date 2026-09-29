@@ -29,7 +29,7 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.lang = STRINGS[locale].htmlLang
-    document.title = locale === 'zh' ? '墨弈 · 水墨象棋' : '墨弈 · Ink Xiangqi'
+    document.title = locale === 'zh' ? '象奇 · 水墨象棋' : '象奇 · Chess Unbound'
   }, [locale])
 
   const setLocale = (l: Locale) => {

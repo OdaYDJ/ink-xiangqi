@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, type CSSProperties, type PointerEvent } from 'react'
+import { useEffect, useId, useMemo, useRef, type CSSProperties, type PointerEvent } from 'react'
 import type { Move } from '../game/move'
 import type { PieceCode } from '../game/piece'
 import {
@@ -9,7 +9,10 @@ import { PIECE_RADIUS } from '../rendering/pieceRenderer'
 import { MOVE_MS } from '../rendering/animations'
 import { moveInk, type BrushMark } from '../rendering/inkFx'
 import { useLocale } from '../i18n/locale'
+import { UI_VERSION } from '../theme'
 import Piece from './Piece'
+import { BronzeGrid, LacquerDefs, PondFxOver, PondFxUnder, useGlyphScale, usePondFx } from './BoardV3'
+import { SPLASH_EVENT, type SplashDetail } from './PondScene'
 import '../styles/board.css'
 import '../styles/pieces.css'
 
@@ -33,6 +36,9 @@ interface BoardProps {
   interactive?: boolean
   onPointClick?: (square: number) => void
 }
+
+/** V3 (the koi pond) swaps the brushwork for a bronze grid, lacquer pieces and water effects. */
+const V3 = UI_VERSION === 'v3'
 
 const paint = (list: Stroke[]) => list.map((s, i) => <path key={i} d={s.d} fillOpacity={s.opacity} />)
 
@@ -77,9 +83,24 @@ export default function Board({
   const gameSeed = useMemo(() => Math.random().toString(36).slice(2, 8), [])
   const fxKey = useForwardMove(moveKey)
   const fx = useMemo(
-    () => (fxKey && lastMove ? moveInk(`${gameSeed}-${fxKey}-${lastMove.from}-${lastMove.to}`, pointOf(lastMove.from), pointOf(lastMove.to), lastWasCapture, PIECE_RADIUS) : null),
+    () => (!V3 && fxKey && lastMove ? moveInk(`${gameSeed}-${fxKey}-${lastMove.from}-${lastMove.to}`, pointOf(lastMove.from), pointOf(lastMove.to), lastWasCapture, PIECE_RADIUS) : null),
     [fxKey, lastMove, lastWasCapture, gameSeed],
   )
+
+  const glyphPx = useGlyphScale(svgRef)
+  const pondFx = usePondFx(V3 && lastMove ? fxKey : 0, lastWasCapture)
+
+  // V3: when the piece lands, tell the pond below, so its water ripples and the koi scatter.
+  useEffect(() => {
+    if (!V3 || !fxKey || !lastMove) return
+    const timer = window.setTimeout(() => {
+      const ctm = svgRef.current?.getScreenCTM()
+      if (!ctm) return
+      const at = new DOMPoint(pointOf(lastMove.to).x, pointOf(lastMove.to).y).matrixTransform(ctm)
+      window.dispatchEvent(new CustomEvent<SplashDetail>(SPLASH_EVENT, { detail: { x: at.x, y: at.y, strength: lastWasCapture ? 2 : 1 } }))
+    }, MOVE_MS * 0.8)
+    return () => window.clearTimeout(timer)
+  }, [fxKey]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePointer = (e: PointerEvent<SVGSVGElement>) => {
     if (!interactive || !onPointClick || !svgRef.current) return
@@ -90,8 +111,10 @@ export default function Board({
     if (square !== null) onPointClick(square)
   }
 
-  const landing = fx && lastMove ? pointOf(lastMove.to) : null
-  const fxStyle = fx
+  const landing = (fx || pondFx) && lastMove ? pointOf(lastMove.to) : null
+  const fxStyle = pondFx
+    ? ({ '--fx-land': `${Math.round(MOVE_MS * 0.8)}ms` } as CSSProperties)
+    : fx
     ? ({
         '--fx-land': `${Math.round(MOVE_MS * 0.8) + fx.jitter.delay}ms`,
         '--fx-alpha': fx.jitter.alpha.toFixed(2),
@@ -111,6 +134,7 @@ export default function Board({
       onPointerDown={handlePointer}
     >
       <defs>
+        {V3 && <LacquerDefs />}
         {/* Fine irregularity on every brush edge. */}
         <filter id="brush-edge" x="-5%" y="-5%" width="110%" height="110%">
           <feTurbulence type="fractalNoise" baseFrequency="0.3" numOctaves="2" seed="3" result="n" />
@@ -181,6 +205,7 @@ export default function Board({
         filter="url(#paper-wash)"
       />
 
+      {V3 ? <BronzeGrid glyphPx={glyphPx} /> : (
       <g className="board__ink">
         <g className="board__river" aria-hidden="true">
           <rect x={pointX(0)} y={RIVER_TOP} width={pointX(8) - pointX(0)} height={RIVER_BOTTOM - RIVER_TOP} fill="url(#river-mist)" filter="url(#paper-wash)" />
@@ -192,6 +217,7 @@ export default function Board({
         <g className="board__grid" filter="url(#brush-edge)">{paint(GRID_STROKES)}</g>
         <g className="board__markers">{paint(MARKER_STROKES)}</g>
       </g>
+      )}
 
       {lastMove && (
         <g className="board__last-move" aria-hidden="true">
@@ -200,7 +226,7 @@ export default function Board({
       )}
 
       <g className="board__ghosts">
-        {ghosts.map((p) => <Piece key={p.id} code={p.code} square={p.square} captured />)}
+        {ghosts.map((p) => <Piece key={p.id} code={p.code} square={p.square} captured glyphPx={glyphPx} />)}
       </g>
 
       {/* Ink under the pieces: the brush's path, and the ink the landing piece presses into the paper
@@ -216,6 +242,10 @@ export default function Board({
         </g>
       )}
 
+      {pondFx && landing && lastMove && (
+        <PondFxUnder key={`under-${fxKey}`} at={landing} from={pointOf(lastMove.from)} capture={lastWasCapture} style={fxStyle} />
+      )}
+
       <g className="board__pieces">
         {pieces.map((p) => (
           <Piece
@@ -224,8 +254,9 @@ export default function Board({
             square={p.square}
             selected={p.square === selected}
             inCheck={p.square === checkSquare}
-            land={fx && p.square === lastMove?.to ? fxKey : undefined}
+            land={(fx || pondFx) && p.square === lastMove?.to ? fxKey : undefined}
             impact={lastWasCapture}
+            glyphPx={glyphPx}
           />
         ))}
       </g>
@@ -243,6 +274,8 @@ export default function Board({
           </g>
         </g>
       )}
+
+      {pondFx && landing && <PondFxOver key={`over-${fxKey}`} fx={pondFx} at={landing} capture={lastWasCapture} style={fxStyle} />}
 
       <g className="board__targets" aria-hidden="true">
         {targets.map((t) =>

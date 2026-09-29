@@ -6,6 +6,7 @@ import { LocaleProvider } from './i18n/locale'
 import './theme'
 import './styles/global.css'
 import './styles/v2.css'
+import './styles/v3.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

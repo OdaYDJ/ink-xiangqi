@@ -1,8 +1,8 @@
 **English** · [简体中文](README.zh-CN.md)
 
-# 墨弈 · Ink Chess
+# 象奇 · Chess Unbound
 
-**墨弈** is a quiet game of Xiangqi (Chinese chess) played inside an ink-and-water painting. The board is a sheet of Xuan paper floating on jade water; light shifts on the riverbed, leaves sway at the edge of the page, raindrops ripple the surface, and a soft pipa melody plays in the background. Every move answers in ink: the brush sweeps along the piece's path, ink spreads into the paper where it lands, and a cinnabar mark appears when a General is in check.
+**象奇** is a quiet game of Xiangqi (Chinese chess) played inside an ink-and-water painting. The board is a sheet of Xuan paper floating on jade water; light shifts on the riverbed, leaves sway at the edge of the page, raindrops ripple the surface, and a soft pipa melody plays in the background. Every move answers in ink: the brush sweeps along the piece's path, ink spreads into the paper where it lands, and a cinnabar mark appears when a General is in check.
 
 The rules are the ones Xiangqi players have always known. What changes is the opening: instead of the fixed traditional line-up, each game can deal a **new starting formation**. Every piece keeps its familiar role and its usual rank, but chariots, horses, elephants, cannons and even the General find new places — so the first moves of each game ask you to read the board afresh.
 
@@ -46,8 +46,8 @@ Third-party material keeps its own terms:
 - **Music** — *烟雨江南 · Mist Over Jiangnan* by **RainStreetCat**, from [Pixabay](https://pixabay.com/music/rnb-%E7%83%9F%E9%9B%A8%E6%B1%9F%E5%8D%97-mist-over-jiangnan-428654/), used under the [Pixabay Content License](https://pixabay.com/service/license-summary/) (credit given with thanks). The track is not covered by the copyright above and remains the work of its author; the license does not allow taking the audio out of the game and distributing it on its own — if you would like the track, download it from its Pixabay page.
 - **Move sound** — [*Water Drop Sound*](https://freesound.org/people/metaepitome/sounds/165206/) by **metaepitome** on Freesound, released under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (credit given with thanks).
 - **Fonts**, all under the [SIL Open Font License 1.1](https://openfontlicense.org/):
-  - **Liu Jian Mao Cao** — the 墨弈 title
-  - **Zhi Mang Xing** — the 墨弈 title in the original design
+  - **Liu Jian Mao Cao** — the 象奇 title
+  - **Zhi Mang Xing** — the 象奇 title in the original design
   - **LXGW WenKai TC** — the pieces, the river and the verse beside the title
   - **Noto Serif TC** and **Noto Serif CJK TC** — Chinese text, notation and the seals
   - **Cormorant Garamond** — English text

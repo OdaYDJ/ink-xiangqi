@@ -5,7 +5,8 @@ import { randomInk, seedLabel, toSeed } from '../game/inkColors'
 import { normalizeSeed, type GameMode } from '../game/randomizer'
 import DifficultySelector from './DifficultySelector'
 import LanguageToggle from './LanguageToggle'
-import Seal from './Seal'
+import CarvedPanel from './CarvedPanel'
+import { UI_VERSION } from '../theme'
 
 export type Opponent = Difficulty | 'human'
 
@@ -51,15 +52,13 @@ export default function MainMenu({ initialMode, seed, onSeedChange: setSeed, onS
     <section className="menu screen">
       <div className="menu__frontispiece">
         <div className="menu__title-block">
-          <h1 className="menu__title" lang="zh-Hant" aria-label={`墨弈 · ${t.subtitle}`}>墨弈</h1>
-          <div className="menu__signature">
-            <p className="menu__subtitle" lang="en" aria-hidden="true">{t.subtitle}</p>
-            <Seal text="中国象棋" size={72} variant="carved" script="outline" layout="column" title="中国象棋" />
-          </div>
+          <h1 className="menu__title" lang="zh-Hant" aria-label={`象奇 · ${t.subtitle}`}>象奇</h1>
+          <p className="menu__subtitle" lang="en" aria-hidden="true">{t.subtitle}</p>
         </div>
       </div>
 
       <div className="menu__choices">
+        {UI_VERSION === 'v3' && <CarvedPanel className="menu__panel" thickness={7} surface="#0b2624" surfaceAlpha={205} seed={3} />}
         <section className="menu__section" aria-labelledby="menu-play">
           <p className="label" id="menu-play">{t.playLabel}</p>
           <DifficultySelector onSelect={start} />
@@ -121,7 +120,9 @@ export default function MainMenu({ initialMode, seed, onSeedChange: setSeed, onS
 
         <footer className="menu__footer">
           <button type="button" className="quiet-button menu__local" onClick={() => start('human')}>
-            {t.twoPlayers}
+            {/* The short name stands in on narrow screens (CSS shows one; the hidden one is not read out). */}
+            <span className="menu__local-full">{t.twoPlayers}</span>
+            <span className="menu__local-short">{t.meta.twoPlayers}</span>
           </button>
           <span className="menu__footer-dot" aria-hidden="true" />
           <LanguageToggle className="menu__language" />

@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import { PIXEL_GLYPHS } from '../rendering/pixelGlyphs'
 import { SEAL_GLYPHS } from '../rendering/sealGlyphs'
 
 interface SealProps {
@@ -13,8 +14,9 @@ interface SealProps {
   /**
    * 'type': set in the Song typeface. 'outline': drawn from the outlines in SEAL_GLYPHS
    * (when it has every character), each centred on its exact ink, with a fine border to match.
+   * 'pixel': one character from PIXEL_GLYPHS, drawn crisp on the pixel grid (V3).
    */
-  script?: 'type' | 'outline'
+  script?: 'type' | 'outline' | 'pixel'
   /** For outlined seals: 'column' sets every character in one vertical line, read top to bottom. */
   layout?: 'grid' | 'column'
 }
@@ -36,6 +38,9 @@ const cellCentres = (count: number, from: number, to: number) =>
 export default function Seal({ text, size = 48, variant = 'carved', className = '', title, script = 'type', layout = 'grid' }: SealProps) {
   const id = 'seal' + useId().replace(/[^a-zA-Z0-9]/g, '')
   const chars = [...text]
+  if (script === 'pixel' && chars.length === 1 && chars[0] in PIXEL_GLYPHS) {
+    return <PixelSeal char={chars[0]} size={size} variant={variant} className={className} title={title} />
+  }
   const seed = chars.reduce((s, c) => s + c.charCodeAt(0), 0) % 97
   const outline = script === 'outline' && chars.every((c) => c in SEAL_GLYPHS) && chars.length !== 3
   const column = outline && (layout === 'column' || chars.length === 2)
@@ -119,4 +124,36 @@ function outlineLayout(chars: string[], w: number, h: number, edge: number, colu
   const cell = column ? FINE.glyph : (Math.min((w - 2 * edge) / cols, (h - 2 * edge) / rows) - 2 * FINE.pad) * fill
   const scale = cell / largest
   return chars.map((c, i) => ({ c, x: xs[Math.floor(i / rows)], y: ys[i % rows], scale }))
+}
+
+/** The pixel seal's grid: 17 pixels square, so an 11-pixel glyph sits inside a one-pixel border with a pixel of air all round. */
+const GRID = 17
+const P = 100 / GRID
+
+/**
+ * A seal drawn as pixel art, for V3: a square with its corner pixels knocked off, a one-pixel
+ * border inset by a pixel, and the character from the pixel font, centred on its visual centre.
+ * No ink texture: every edge falls on the grid, like the type around it.
+ */
+function PixelSeal({ char, size, variant, className, title }: { char: string; size: number; variant: 'carved' | 'raised'; className: string; title?: string }) {
+  const a = P, b = 100 - P
+  const ground = `M${a} 0H${b}V${a}H100V${b}H${b}V100H${a}V${b}H0V${a}H${a}Z`
+  const ring = `M${a} ${a}H${b}V${b}H${a}Z M${2 * P} ${2 * P}V${100 - 2 * P}H${100 - 2 * P}V${2 * P}Z`
+  return (
+    <svg
+      className={`seal seal--${variant} seal--pixel ${className}`}
+      viewBox="0 0 100 100"
+      width={size}
+      height={size}
+      shapeRendering="crispEdges"
+      role={title ? 'img' : undefined}
+      aria-label={title}
+      aria-hidden={title ? undefined : true}
+    >
+      {variant === 'carved' && <path className="seal__ground" d={ground} />}
+      {/* The border takes the glyph's colour: paper cut into the red (carved), or red on paper (raised). */}
+      <path className="seal__glyph" d={ring} fillRule="evenodd" />
+      <path className="seal__glyph" d={PIXEL_GLYPHS[char]} transform={`translate(50 50) scale(${P})`} />
+    </svg>
+  )
 }

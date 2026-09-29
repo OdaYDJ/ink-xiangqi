@@ -20,7 +20,7 @@
   --song-font: 'Noto Serif TC', 'Songti TC', 'STSong', 'PMingLiU', serif;
   --song-sc: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
 
-  /* Type scale: four text steps, plus clamped display sizes for 墨弈.
+  /* Type scale: four text steps, plus clamped display sizes for 象奇.
      English (Cormorant, small x-height) sits a step higher than Chinese for the same role;
      Chinese never goes below --t-small so dense strokes stay legible. */
   --t-caption: 0.75rem; /* 12px: English uppercase labels only */
@@ -204,38 +204,32 @@ body {
   gap: clamp(56px, 9vw, 150px);
 }
 .menu__frontispiece { display: flex; flex-direction: column; align-items: center; gap: 26px; }
-/* The title's size is one variable (per screen size below), scaled by the design (--title-scale).
-   The signature column (English name + seal) is sized from it, so it always fits within
-   the title's height: seal 0.48 of a character, name at most 0.12, and the gaps in between. */
+/* The title's size is one variable (per screen size below), scaled by the design (--title-scale);
+   the English name beneath it and the space between are sized from it, so the pair keeps its proportions. */
 .menu__title-block {
   --title-size: clamp(6.75rem, 12.4vw, 10.75rem);
   --title-em: calc(var(--title-size) * var(--title-scale, 1));
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: clamp(14px, 1.6vw, 24px);
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--title-em) * 0.16);
 }
+/* 象奇, read left to right. */
 .menu__title {
-  writing-mode: vertical-rl;
   font-family: var(--title-font);
   font-weight: 400;
   font-size: var(--title-em);
-  line-height: 0.92;
+  line-height: 1;
+  text-align: center;
   margin: 0;
   color: var(--ink);
+  letter-spacing: 0.06em;
+  /* Letter-spacing also trails the last character: take it back so the title is centred on its glyphs. */
+  margin-inline-end: -0.06em;
 }
-.menu__signature {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: calc(var(--title-em) * 0.1);
-  align-self: flex-end;
-  padding-bottom: calc(var(--title-em) * 0.04);
-}
-.menu__signature .seal { height: calc(var(--title-em) * 0.48); width: auto; }
 .menu__subtitle {
-  writing-mode: vertical-rl;
-  margin: 0;
+  margin: 0 -0.45em 0 0;
+  text-align: center;
   font-size: min(var(--t-caption), calc(var(--title-em) * 0.12));
   letter-spacing: 0.45em;
   text-transform: uppercase;
@@ -385,71 +379,30 @@ body {
 .menu__seed input::placeholder { color: var(--ink-soft); opacity: 0.55; font-style: italic; text-transform: none; letter-spacing: 0.04em; }
 .menu__error { color: var(--cinnabar); font-size: var(--t-small); margin: -8px 0 0; }
 .menu__local { font-size: var(--t-body); }
+.menu__local-short { display: none; }
 .menu__language { font-size: var(--t-body); }
 
 /* ——— In game ———
    Three layouts, chosen by the shape of the screen:
      stacked (default)  portrait phones and tablets: title, status, board, record, controls in one column;
      side               landscape screens: the board sized by the height, a quiet panel beside it;
-     scroll             large landscape screens: inscription, painting and colophon, like a hanging scroll.
+     scroll             large landscape screens: the painting centred, its colophon beside it, like a hanging scroll.
    In every layout the board's width is one expression bounded by both width and height,
    so it never leaves the screen. 0.908 = the board's width ÷ height (632 × 696). */
 .game {
   /* Stacked layout: every row but the board has a fixed height, so the board
-     gets exactly what is left: header 44 + status 45 + record 22 + controls 80,
-     four gaps, and the page's own top and bottom padding. */
+     gets exactly what is left: status 45 + record 22 + controls 80,
+     three gaps, and the page's own top and bottom padding. */
   --gap: clamp(4px, 1.2vh, 12px);
-  --chrome: calc(191px + 4 * var(--gap) + 2 * var(--pad));
+  --chrome: calc(147px + 3 * var(--gap) + 2 * var(--pad));
   width: 100%;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  grid-template-areas: 'header' 'info' 'board' 'record' 'controls';
+  grid-template-areas: 'info' 'board' 'record' 'controls';
   justify-items: center;
   align-content: center;
   row-gap: var(--gap);
 }
-
-.game__inscription {
-  grid-area: header;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  height: 44px;
-}
-.game__title {
-  order: 0;
-  flex: none;
-  white-space: nowrap;
-  font-family: var(--title-font);
-  font-size: clamp(2.1rem, 7.5vw, 2.6rem);
-  line-height: 1;
-  color: var(--ink);
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-}
-
-/* The verse. Narrow layouts: one row — verse, title, seal — with the verse as a two-line couplet
-   left of the title (half the width of one line, and it fits the header's height). */
-.game__verse-block { display: contents; }
-.game__verse {
-  order: -1;
-  flex: none;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  /* Brushed in regular script, at its regular weight: an inscription, not a heading. */
-  font-family: var(--brush-font);
-  font-weight: 400;
-  font-size: clamp(12px, 3.4vw, 14px);
-  line-height: 1.45;
-  letter-spacing: 0.18em;
-  white-space: nowrap;
-  color: var(--ink-2);
-}
-.game__seal { order: 1; flex: none; }
 
 .board-wrap {
   grid-area: board;
@@ -724,8 +677,8 @@ body {
     width: auto;
     max-width: 100%;
     grid-template-columns: auto minmax(0, 300px);
-    grid-template-rows: auto auto auto 1fr auto;
-    grid-template-areas: 'board header' 'board info' 'board record' 'board .' 'board controls';
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas: 'board info' 'board record' 'board .' 'board controls';
     column-gap: clamp(20px, 3.5vw, 48px);
     row-gap: 10px;
     justify-items: start;
@@ -747,42 +700,13 @@ body {
 }
 
 /* ——— Scroll layout: large landscape screens ———
-   Inscription, painting and colophon side by side, with room around them. */
+   The painting centred with room around it, the colophon beside it; the empty left column balances the right. */
 @media (orientation: landscape) and (min-width: 1180px) and (min-height: 600px) {
   .game {
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-    grid-template-areas: 'header board side';
+    grid-template-areas: '. board side';
     align-items: stretch;
     column-gap: clamp(20px, 3.5vw, 56px);
-  }
-  /* Wide screens: the title, and to its left the verse as one vertical line with the seal at its foot.
-     Everything is sized from the title, so the group keeps its proportions at any width. */
-  .game__inscription {
-    --game-title: clamp(3.375rem, 5.2vw, 4.75rem);
-    justify-self: end;
-    align-self: start;
-    flex-direction: row-reverse;
-    align-items: flex-start;
-    gap: calc(var(--game-title) * 0.3);
-    height: auto;
-    padding-top: 3%;
-  }
-  .game__title { writing-mode: vertical-rl; font-size: var(--game-title); line-height: 0.95; }
-  .game__verse-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: calc(var(--game-title) * 0.22);
-    /* Start a little below the title's top, as an inscription would. */
-    padding-top: calc(var(--game-title) * 0.12);
-  }
-  /* The two halves join into one vertical line. */
-  .game__verse {
-    display: block;
-    writing-mode: vertical-rl;
-    font-size: calc(var(--game-title) * 0.24);
-    letter-spacing: 0.32em;
-    line-height: 1;
   }
   .board-wrap {
     align-self: center;
@@ -837,6 +761,9 @@ body {
   .lang-zh .game__meta .game__seed { text-orientation: mixed; letter-spacing: 0.1em; }
   .lang-zh .record { max-height: none; flex: 0 1 auto; margin: 0 6px; }
   .lang-zh .controls { flex-direction: row; flex-wrap: nowrap; gap: 1.1em; margin-inline-start: auto; }
+  /* Set vertically, a button's padding runs along the column: keep it at the sides only, so the first
+     control starts level with the status, meta and record columns, and the gap alone spaces the controls. */
+  .lang-zh .controls .quiet-button { padding: 0 0.25em; }
   .lang-zh .controls .quiet-button::after { left: auto; right: 0.1em; bottom: 0; top: 0; width: 1px; height: 100%; transform: scaleY(0); transform-origin: top; }
   .lang-zh .controls .quiet-button:hover:not(:disabled)::after,
   .lang-zh .controls .quiet-button:focus-visible::after { transform: scaleY(1); }
