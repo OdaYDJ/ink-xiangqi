@@ -19,6 +19,8 @@ interface PieceProps {
   impact?: boolean
   /** V3: board units per glyph pixel, snapped by the board to whole screen pixels (see useGlyphScale). */
   glyphPx?: number
+  /** The character is turned to face the player across the board (two players at one table). */
+  flipped?: boolean
 }
 
 const R = PIECE_RADIUS
@@ -49,8 +51,9 @@ function CheckMark({ square }: { square: number }) {
  * for Black) with grain, an engraved ring and a calligraphic character.
  * Filters and patterns are defined once in <Board>.
  */
-export default function Piece({ code, square, selected, captured, inCheck, land, impact, glyphPx = GLYPH_PX }: PieceProps) {
+export default function Piece({ code, square, selected, captured, inCheck, land, impact, glyphPx = GLYPH_PX, flipped }: PieceProps) {
   const { char, side } = pieceLook(code)
+  const turn = flipped ? ' rotate(180)' : ''
   const { x, y } = pointOf(square)
   const classes = [
     'piece', `piece--${side}`, selected && 'is-selected', captured && 'is-captured', inCheck && 'is-checked',
@@ -79,9 +82,9 @@ export default function Piece({ code, square, selected, captured, inCheck, land,
             {/* Pixel glyphs pre-centred on their visual centre (see pixelGlyphs.ts): the same optical
                 middle for every character, at any size, with no dependence on font metrics. */}
             {/* A crisp shadow exactly one glyph pixel below the character: it darkens the one-pixel gaps
-                inside dense characters, so their strokes stay apart. */}
-            <path className="piece__char piece__char--cut" d={PIXEL_GLYPHS[char]} transform={`translate(0 ${glyphPx}) scale(${glyphPx})`} />
-            <path className="piece__char" d={PIXEL_GLYPHS[char]} transform={`scale(${glyphPx})`} />
+                inside dense characters, so their strokes stay apart. It stays below even when the character is turned. */}
+            <path className="piece__char piece__char--cut" d={PIXEL_GLYPHS[char]} transform={`translate(0 ${glyphPx})${turn} scale(${glyphPx})`} />
+            <path className="piece__char" d={PIXEL_GLYPHS[char]} transform={`${turn} scale(${glyphPx})`} />
           </g>
         ) : (
           <g className="piece__body">
@@ -91,7 +94,7 @@ export default function Piece({ code, square, selected, captured, inCheck, land,
             </g>
             <circle className="piece__groove-light" r={R - 5} cy={0.9} />
             <circle className="piece__groove" r={R - 5} />
-            <text className="piece__char" dominantBaseline="central" textAnchor="middle" y={1}>
+            <text className="piece__char" dominantBaseline="central" textAnchor="middle" y={1} transform={turn || undefined}>
               {char}
             </text>
           </g>

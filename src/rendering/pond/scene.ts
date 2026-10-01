@@ -29,6 +29,9 @@ export interface Box {
 }
 
 interface Rect { x0: number; y0: number; x1: number; y1: number }
+/** The lantern's pixel unit, and the smallest bank that holds it: small and in scale with the stones around it. */
+const LANTERN_U = 2
+const LANTERN_MIN_R = 44
 type ClusterKind = 'bamboo' | 'blossom' | 'lantern' | 'rocks'
 interface Cluster { x: number; y: number; r: number; kind: ClusterKind; corner: boolean }
 interface Pad { x: number; y: number; sprite: HTMLCanvasElement; ox: number; oy: number; r: number; phase: number; flower: HTMLCanvasElement | null; fx: number; fy: number }
@@ -202,8 +205,8 @@ export class PondEngine {
       r = Math.min(r, small * (a.corner ? 0.3 : 0.2))
       if (r < Math.max(12, small * 0.05)) return
       let kind: ClusterKind = a.corner ? cornerKinds[i] : R() < 0.45 ? 'rocks' : R() < 0.5 ? 'blossom' : 'bamboo'
-      if (kind === 'lantern' && (lanternPlaced || r < 30)) kind = 'rocks'
-      if (!lanternPlaced && !a.corner && r >= 34 && a.x < 0) kind = 'lantern'
+      if (kind === 'lantern' && (lanternPlaced || r < LANTERN_MIN_R)) kind = 'rocks'
+      if (!lanternPlaced && !a.corner && r >= LANTERN_MIN_R && a.x < 0) kind = 'lantern'
       if (kind === 'lantern') lanternPlaced = true
       this.clusters.push({ x: a.x, y: a.y, r, kind, corner: a.corner })
     })
@@ -229,8 +232,10 @@ export class PondEngine {
         const sx = c.x + Math.cos(toWater) * c.r * 0.12, sy = c.y + Math.sin(toWater) * c.r * 0.12
         this.petalSources.push(...drawBlossomShrub(mid, sx, sy, c.r * 0.5, s + 7))
       } else if (c.kind === 'lantern') {
-        const lx = Math.round(c.x + Math.cos(toWater) * c.r * 0.34), ly = Math.round(c.y + Math.sin(toWater) * c.r * 0.34 + c.r * 0.2)
-        const u = c.r >= 70 ? 3 : c.r >= 44 ? 2 : 1
+        // Wholly on screen: its roof is 11 units wide, and it stands 15 units tall above its base.
+        const u = LANTERN_U
+        const lx = clamp(Math.round(c.x + Math.cos(toWater) * c.r * 0.34), 7 * u, W - 7 * u)
+        const ly = clamp(Math.round(c.y + Math.sin(toWater) * c.r * 0.34 + c.r * 0.2), 16 * u, H - 3 * u)
         drawRock(mid, lx, ly + u, 6 * u, 3.6 * u, s + 3, 0.7)
         const glow = drawLantern(mid, lx, ly, u)
         this.lanterns.push({ x: glow.x, y: glow.y, r: u * 12 })
@@ -559,12 +564,13 @@ export class PondEngine {
     // Lantern light: a warm pool that breathes like a flame.
     for (const l of this.lanterns) {
       const flicker = 0.75 + 0.15 * Math.sin(time * 3.1) + 0.1 * Math.sin(time * 7.3 + 1)
-      const g = ctx.createRadialGradient(l.x, l.y, 0, l.x, l.y, l.r * 2.4)
-      g.addColorStop(0, `rgba(${LANTERN_GLOW.join(',')},${0.28 * flicker})`)
+      const g = ctx.createRadialGradient(l.x, l.y, 0, l.x, l.y, l.r * 1.4)
+      g.addColorStop(0, `rgba(${LANTERN_GLOW.join(',')},${0.5 * flicker})`)
+      g.addColorStop(0.35, `rgba(${LANTERN_GLOW.join(',')},${0.16 * flicker})`)
       g.addColorStop(1, 'rgba(255,207,122,0)')
       ctx.globalCompositeOperation = 'lighter'
       ctx.fillStyle = g
-      ctx.fillRect(l.x - l.r * 2.4, l.y - l.r * 2.4, l.r * 4.8, l.r * 4.8)
+      ctx.fillRect(l.x - l.r * 1.4, l.y - l.r * 1.4, l.r * 2.8, l.r * 2.8)
       ctx.globalCompositeOperation = 'source-over'
     }
   }

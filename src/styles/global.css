@@ -342,7 +342,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  /* Measured in the input's own type size: the longest ink name plus the shuffle mark, with a little room. */
+  /* Measured in the input's own type size: the longest game name plus the shuffle mark, with a little room. */
   font-size: var(--t-body);
   width: 10em;
   border-bottom: 1px solid rgba(37, 39, 43, 0.22);
@@ -458,6 +458,7 @@ body {
 }
 
 .game__dot { margin: 0 0.5em; }
+.game__meta-part { white-space: nowrap; }
 .game__seed { user-select: all; font-variant-numeric: tabular-nums; }
 
 /* Move record. Stacked: the last two moves on one line. Side: a few more. Scroll: the full colophon. */

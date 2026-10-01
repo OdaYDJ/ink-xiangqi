@@ -15,16 +15,16 @@ The rules are the ones Xiangqi players have always known. What changes is the op
 1. **Choose an opponent** — 初學 *Easy*, 棋手 *Medium* or 國手 *Hard* — or 雙人對弈 *Two players, one board* to play a friend on the same device.
 2. **Choose a starting formation** — 奇局 *Random* for a newly dealt formation, or 古局 *Classic* for the traditional one.
 3. **Play Red.** Tap a piece to see where it can go, then tap its destination. Standard Xiangqi rules apply throughout, including the flying General, blocked horse legs and blocked elephant eyes.
-4. **During the game**, 悔棋 *Undo* takes back your last move, 重來 *Restart* replays the same formation, and 易墨 *New ink* deals a new one. The move record is kept beside the board, in Chinese notation (炮二平五) or, in English, WXF notation (C2.5).
+4. **During the game**, 悔棋 *Undo* takes back your last move, 重來 *Restart* replays the same formation, and 變局 *New seed* deals a new one. The move record is kept beside the board, in Chinese notation (炮二平五) or, in English, WXF notation (C2.5).
 
 The game ends in checkmate, when a side has no legal move (which loses, as in Xiangqi), or in a draw by repetition or by long play without progress.
 
-## Formations named by ink
+## Formations with poetic names
 
-Every random formation is named by an ink colour (墨色): the five tones 焦墨 · 濃墨 · 重墨 · 淡墨 · 清墨, and inks such as 松煙 or 潑墨. The same ink always deals the same board, in either language (焦墨 = *Scorched Ink*).
+Every random formation has a seed (局號): a four-character poetic phrase such as 寒江獨釣, 空山新雨 or 魚戲蓮葉. The same name always deals the same board, in either language (寒江獨釣 = *Lone Angler*).
 
-- On the title page, leave 墨色 *Ink seed* blank for a random ink, tap the shuffle mark to draw one, or type a name.
-- To share a formation, send its name — or a link such as `https://odaydj.github.io/ink-xiangqi/?seed=焦墨` — and your friend can play the very same board.
+- On the title page, leave 局號 *Seed* blank for a random name, tap the shuffle mark to draw one, or type your own.
+- To share a formation, send its name — or a link such as `https://odaydj.github.io/ink-xiangqi/?seed=寒江獨釣` — and your friend can play the very same board.
 
 Random formations are always fair to begin: no side starts in check, the Generals never face each other, and neither side can win material on the first move.
 

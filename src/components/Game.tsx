@@ -185,6 +185,7 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
           checkSquare={checkSquare}
           interactive={humanTurn}
           onPointClick={handlePoint}
+          flipBlack={!vsAi}
         />
         {game.status !== 'playing' && <GameOver game={game} vsAi={vsAi} t={t} />}
       </div>
@@ -196,11 +197,14 @@ export default function Game({ config, soundOn, onToggleSound, onNewFormation, o
             <span className="visually-hidden">{announceLastMove(game, t, locale === 'zh')}</span>
           </p>
           <p className="game__meta">
-            {level ? t.difficulty[level] : t.meta.twoPlayers}
-            <span className="game__dot" aria-hidden="true">·</span>
-            {formation.seed ? (
-              <span className="game__seed" title={t.meta.seedTitle}>{seedLabel(formation.seed, locale)}</span>
-            ) : config.fen ? t.meta.custom : t.meta.classic}
+            {/* Each part stays whole: a long seed wraps to the next line with its dot, never mid-name. */}
+            <span className="game__meta-part">{level ? t.difficulty[level] : t.meta.twoPlayers}</span><wbr />
+            <span className="game__meta-part">
+              <span className="game__dot" aria-hidden="true">·</span>
+              {formation.seed ? (
+                <span className="game__seed" title={t.meta.seedTitle}>{seedLabel(formation.seed, locale)}</span>
+              ) : config.fen ? t.meta.custom : t.meta.classic}
+            </span>
           </p>
         </div>
         <MoveRecord initialBoard={game.initialBoard} history={game.history} />

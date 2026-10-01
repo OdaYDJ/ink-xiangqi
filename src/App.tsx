@@ -31,7 +31,7 @@ const save = (key: string, value: string) => {
   }
 }
 
-/** A shared link like …/ink-xiangqi/?seed=焦墨 (or ?seed=Scorched%20Ink) opens the menu with that formation. */
+/** A shared link like …/ink-xiangqi/?seed=寒江獨釣 (or ?seed=Lone%20Angler) opens the menu with that formation. */
 const urlSeed = (() => {
   const s = new URLSearchParams(window.location.search).get('seed')
   return s ? toSeed(normalizeSeed(s)) : null

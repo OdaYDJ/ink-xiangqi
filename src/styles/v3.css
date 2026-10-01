@@ -471,7 +471,7 @@ html.ui-v3 body { color: var(--ink); }
 .ui-v3 .menu__modes { gap: 24px; }
 .ui-v3 .menu__seed { align-items: center; gap: 12px; }
 .ui-v3 .menu__seed-field { width: 9em; font-size: 18px; }
-.ui-v3.lang-zh .menu__seed-field { width: 6.5em; }
+.ui-v3.lang-zh .menu__seed-field { width: 7em; }
 .ui-v3 .menu__seed input,
 .ui-v3.lang-zh .menu__seed input { font-size: 18px; line-height: 1.25; letter-spacing: 0.04em; }
 .ui-v3.lang-zh .menu__seed input { letter-spacing: 0.2em; }

@@ -20,7 +20,7 @@ export interface GameConfig {
 
 interface MainMenuProps {
   initialMode: GameMode
-  /** The 墨色 field (a canonical ink or free text). Kept by the app so it survives trips to the game and back. */
+  /** The 局號 field (a canonical game name or free text). Kept by the app so it survives trips to the game and back. */
   seed: string
   onSeedChange: (seed: string) => void
   onStart: (config: GameConfig) => void
@@ -37,7 +37,7 @@ export default function MainMenu({ initialMode, seed, onSeedChange: setSeed, onS
   const cleanSeed = normalizeSeed(seed)
   const seedError = cleanSeed !== '' && !SEED_PATTERN.test(cleanSeed)
 
-  // The small shuffle mark draws a different ink colour; the field is otherwise left exactly as the player set it.
+  // The small shuffle mark draws a different game name; the field is otherwise left exactly as the player set it.
   const drawInkName = () => {
     setSeed(randomInk(seed))
     setDraws((n) => n + 1)

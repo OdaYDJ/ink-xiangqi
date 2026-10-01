@@ -1,5 +1,5 @@
 import {
-  BAMBOO, BARK, BLOSSOM, GROUND, LANTERN_GLOW, LEAF, LOTUS, LOTUS_HEART, MOSS, PAD, RIPPLE, SHADOW, STONE,
+  BAMBOO, BARK, BLOSSOM, GROUND, LEAF, LOTUS, LOTUS_HEART, MOSS, PAD, RIPPLE, SHADOW, STONE,
 } from './palette'
 import { PixelCanvas, bayer, clamp, fbm, noise, ramp, rng, scale, white, type RGB } from './pixels'
 
@@ -320,8 +320,9 @@ export function drawLantern(pc: PixelCanvas, cx: number, baseY: number, u: numbe
         const k = (x + half) / (w * u)
         const px = Math.round(cx + x), py = y
         let col: RGB
+        // The chamber: a thin dark opening, lit only by the scene's breathing glow (no flat block of colour).
         if (kind === 'window' && k > 0.2 && k < 0.8 && j > 0 && j < h * u - 1) {
-          col = LANTERN_GLOW
+          col = STONE[1]
           glow = { x: cx, y: py }
         } else if (kind === 'roof') col = ramp(STONE, 0.75 - k * 0.55 + (j === 0 ? -0.2 : 0), px, py)
         else if (kind === 'dark') col = STONE[1]

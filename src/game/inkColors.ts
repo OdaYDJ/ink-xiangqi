@@ -1,8 +1,8 @@
 /**
- * The ink colours (墨色) that name random formations.
+ * The game names (局號) that name random formations: four-character poetic phrases.
  *
- * A formation's seed is the ink's Chinese name — the canonical key — so 焦墨
- * and "Scorched Ink" deal the same board in either language. Anything else a
+ * A formation's seed is the name's Chinese form — the canonical key — so 寒江獨釣
+ * and "Lone Angler" deal the same board in either language. Anything else a
  * player types is used as-is.
  */
 export interface InkColor {
@@ -12,20 +12,24 @@ export interface InkColor {
 }
 
 export const INK_COLORS: readonly InkColor[] = [
-  // 墨分五色: the five tones of ink.
-  { zh: '焦墨', en: 'Scorched Ink' },
-  { zh: '濃墨', en: 'Dense Ink' },
-  { zh: '重墨', en: 'Heavy Ink' },
-  { zh: '淡墨', en: 'Light Ink' },
-  { zh: '清墨', en: 'Clear Ink' },
-  // Inks and the ways they are laid down.
-  { zh: '松煙', en: 'Pine Soot' },
-  { zh: '油煙', en: 'Oil Soot' },
-  { zh: '宿墨', en: 'Aged Ink' },
-  { zh: '潑墨', en: 'Splashed Ink' },
-  { zh: '破墨', en: 'Broken Ink' },
-  { zh: '積墨', en: 'Layered Ink' },
-  { zh: '枯墨', en: 'Dry Ink' },
+  // Rivers, hills and night, after the Tang poets.
+  { zh: '寒江獨釣', en: 'Lone Angler' },
+  { zh: '楓橋夜泊', en: 'Maple Bridge' },
+  { zh: '空山新雨', en: 'Fresh Rain' },
+  { zh: '明月松間', en: 'Pine Moon' },
+  { zh: '清泉石上', en: 'Rock Spring' },
+  { zh: '曲徑通幽', en: 'Winding Path' },
+  { zh: '秋水長天', en: 'Autumn Sky' },
+  { zh: '落霞孤鶩', en: 'Last Light' },
+  { zh: '月落烏啼', en: 'Moonset' },
+  // Water, cloud and the garden by the pond.
+  { zh: '行雲流水', en: 'Cloud Drift' },
+  { zh: '高山流水', en: 'Hill Stream' },
+  { zh: '煙雨江南', en: 'Misty South' },
+  { zh: '疏影暗香', en: 'Plum Shade' },
+  { zh: '竹林聽雨', en: 'Bamboo Rain' },
+  { zh: '一葦渡江', en: 'Reed Ferry' },
+  { zh: '魚戲蓮葉', en: 'Lotus Koi' },
 ]
 
 const byName = new Map<string, InkColor>()
@@ -36,16 +40,16 @@ for (const ink of INK_COLORS) {
 
 const find = (text: string) => byName.get(text.trim()) ?? byName.get(text.trim().toLowerCase())
 
-/** The seed for what the player sees or typed: an ink's canonical name, or the text itself. */
+/** The seed for what the player sees or typed: a game name's canonical form, or the text itself. */
 export const toSeed = (text: string): string => find(text)?.zh ?? text
 
-/** How a seed reads in the current language: an ink's localized name, or the seed itself. */
+/** How a seed reads in the current language: a game name in that language, or the seed itself. */
 export const seedLabel = (seed: string, locale: 'en' | 'zh'): string => {
   const ink = find(seed)
   return ink ? ink[locale] : seed
 }
 
-/** A random ink colour's seed, different from `current` when possible. */
+/** A random game name's seed, different from `current` when possible. */
 export function randomInk(current?: string, random: () => number = Math.random): string {
   const exclude = current ? toSeed(current) : null
   const choices = INK_COLORS.filter((ink) => ink.zh !== exclude)

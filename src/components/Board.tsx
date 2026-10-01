@@ -1,6 +1,6 @@
 import { useEffect, useId, useMemo, useRef, type CSSProperties, type PointerEvent } from 'react'
 import type { Move } from '../game/move'
-import type { PieceCode } from '../game/piece'
+import { sideOf, type PieceCode } from '../game/piece'
 import {
   FRAME_STROKES, GRID_STROKES, HEIGHT, MARGIN, MARKER_STROKES, RIVER_BOTTOM, RIVER_STROKES, RIVER_TOP, RIVER_Y, WIDTH,
   pointAt, pointOf, pointX, type Stroke,
@@ -35,6 +35,8 @@ interface BoardProps {
   checkSquare?: number | null
   interactive?: boolean
   onPointClick?: (square: number) => void
+  /** Two players face to face: Black's characters are turned to be read from the top of the board. */
+  flipBlack?: boolean
 }
 
 /** V3 (the koi pond) swaps the brushwork for a bronze grid, lacquer pieces and water effects. */
@@ -73,7 +75,7 @@ function useForwardMove(moveKey: number): number {
 
 export default function Board({
   pieces, ghosts = [], selected = null, targets = [], lastMove = null, moveKey = 0, lastWasCapture = false,
-  checkSquare = null, interactive = false, onPointClick,
+  checkSquare = null, interactive = false, onPointClick, flipBlack = false,
 }: BoardProps) {
   const svgRef = useRef<SVGSVGElement>(null)
   const { t } = useLocale()
@@ -226,7 +228,7 @@ export default function Board({
       )}
 
       <g className="board__ghosts">
-        {ghosts.map((p) => <Piece key={p.id} code={p.code} square={p.square} captured glyphPx={glyphPx} />)}
+        {ghosts.map((p) => <Piece key={p.id} code={p.code} square={p.square} captured glyphPx={glyphPx} flipped={flipBlack && sideOf(p.code) === 'black'} />)}
       </g>
 
       {/* Ink under the pieces: the brush's path, and the ink the landing piece presses into the paper
@@ -257,6 +259,7 @@ export default function Board({
             land={(fx || pondFx) && p.square === lastMove?.to ? fxKey : undefined}
             impact={lastWasCapture}
             glyphPx={glyphPx}
+            flipped={flipBlack && sideOf(p.code) === 'black'}
           />
         ))}
       </g>

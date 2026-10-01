@@ -5,7 +5,7 @@ import { useLocale } from '../i18n/locale'
 /**
  * A small seal-like mark: fixed in the corner on wide screens, or inline with
  * the game's settings on phones and tablets (CSS shows one or the other). Tap to play or pause the music;
- * hover (or keyboard focus) reveals its name and three ink dots for volume.
+ * hover (or keyboard focus) reveals its name and three ink dots for volume, so it needs no tooltip.
  * Hidden entirely when the track is not available.
  */
 export default function MusicControl({ placement = 'corner' }: { placement?: 'corner' | 'inline' }) {
@@ -28,7 +28,6 @@ export default function MusicControl({ placement = 'corner' }: { placement?: 'co
               role="radio"
               aria-checked={i === level}
               aria-label={t.music.levels[i]}
-              title={t.music.levels[i]}
               className={`music__level music__level--${i}${i === level ? ' is-active' : ''}`}
               onClick={() => music.setVolume(v)}
             />
@@ -45,7 +44,6 @@ export default function MusicControl({ placement = 'corner' }: { placement?: 'co
         }}
         aria-pressed={playing}
         aria-label={playing ? t.music.pause : t.music.play}
-        title={t.music.label}
       >
         <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
           {/* Two beamed notes (♫), drawn with a light brush. */}
